@@ -1,0 +1,5 @@
+{
+  "extends": "../_outils/tsconfig.base.json",
+  "include": ["src", "../_outils/_types/filarr.d.ts"],
+  "exclude": ["src/__tests__"]
+}
