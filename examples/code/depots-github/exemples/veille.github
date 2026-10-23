@@ -1,0 +1,30 @@
+{
+  "format": "filarr-depots",
+  "version": 1,
+  "depots": [
+    {
+      "nom": "yjs/yjs",
+      "releve": {
+        "etoiles": 18870,
+        "issues": 139,
+        "version": "v13.6.24",
+        "publiee": "2026-06-02T08:15:00.000Z",
+        "le": "2026-09-01T07:30:00.000Z"
+      }
+    },
+    {
+      "nom": "evanw/esbuild",
+      "releve": {
+        "etoiles": 38900,
+        "issues": 610,
+        "version": "v0.25.4",
+        "publiee": "2026-08-20T19:02:00.000Z",
+        "le": "2026-09-01T07:30:05.000Z"
+      }
+    },
+    {
+      "nom": "jsdom/jsdom",
+      "releve": null
+    }
+  ]
+}

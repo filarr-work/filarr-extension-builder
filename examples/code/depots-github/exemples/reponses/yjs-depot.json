@@ -1,0 +1,24 @@
+{
+  "id": 10450,
+  "node_id": "MDEwOlJlcG9zaXRvcnkxMDQ1MA==",
+  "name": "yjs",
+  "full_name": "yjs/yjs",
+  "private": false,
+  "owner": {
+    "login": "yjs",
+    "type": "Organization"
+  },
+  "html_url": "https://github.com/yjs/yjs",
+  "description": "Shared data types for building collaborative software",
+  "fork": false,
+  "stargazers_count": 19012,
+  "watchers_count": 19012,
+  "forks_count": 712,
+  "open_issues_count": 143,
+  "license": {
+    "key": "mit",
+    "name": "MIT License"
+  },
+  "default_branch": "main",
+  "pushed_at": "2026-10-21T09:12:44Z"
+}

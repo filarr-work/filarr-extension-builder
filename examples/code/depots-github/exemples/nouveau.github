@@ -1,0 +1,10 @@
+{
+  "format": "filarr-depots",
+  "version": 1,
+  "depots": [
+    {
+      "nom": "yjs/yjs",
+      "releve": null
+    }
+  ]
+}

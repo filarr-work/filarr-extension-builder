@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "depots-github",
+    "name": "Dépôts GitHub",
+    "version": "0.1.0",
+    "description": "Suivez des dépôts GitHub (fichiers .github) : étoiles, tickets ouverts, dernière version, et ce qui a changé depuis le dernier relevé. Interroge api.github.com et rien d'autre ; chaque requête vous est montrée avant de partir. Un jeton GitHub facultatif se saisit dans Filarr : l'extension ne le voit jamais. Application de bureau uniquement.",
+    "extensions": ["github"],
+    "icon": "🐙",
+    "category": "data",
+    "capabilities": {
+      "network": {
+        "domains": ["api.github.com"],
+        "secrets": [
+          { "id": "jeton_github", "label": "Jeton GitHub, sous la forme « Bearer ghp_… »", "header": "authorization" }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : dépôts suivis, relevés, nouvelles versions signalées, jeton facultatif.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}

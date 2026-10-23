@@ -1,0 +1,14 @@
+{
+  "edition": [
+    { "saisir": "input.gh-champ", "valeur": "https://github.com/excalidraw/excalidraw-{n}.git" },
+    { "cliquer": "[data-action=suivre]" },
+    { "cliquer": ".gh-depot:first-child [data-action=actualiser]" }
+  ],
+  "reseau": [
+    { "prefixe": "https://api.github.com/repos/yjs/yjs/releases/latest", "statut": 200, "fichier": "exemples/reponses/yjs-version.json" },
+    { "prefixe": "https://api.github.com/repos/yjs/yjs", "statut": 200, "fichier": "exemples/reponses/yjs-depot.json" },
+    { "prefixe": "https://api.github.com/repos/excalidraw/", "statut": 404, "corps": "{\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest\",\"status\":\"404\"}" },
+    { "prefixe": "https://api.github.com/repos/evanw/esbuild/releases/latest", "statut": 403, "corps": "{\"message\":\"API rate limit exceeded for 203.0.113.7.\"}" },
+    { "prefixe": "https://api.github.com/repos/", "statut": 200, "fichier": "exemples/reponses/yjs-depot.json" }
+  ]
+}
