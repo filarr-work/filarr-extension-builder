@@ -1,0 +1,37 @@
+{
+  "name": "@filarr/extension-devhost",
+  "version": "1.0.0",
+  "description": "Le simulateur local des extensions Filarr : la page bac à sable de Filarr, un hôte qui rejoue le protocole v2, et des services simulés.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "filarr-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/server.mjs",
+      "default": "./dist/server.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "vendor",
+    "vendor.json"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "sync": "node scripts/sync-vendor.mjs",
+    "sync:check": "node scripts/sync-vendor.mjs --check",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "esbuild": "^0.24.2"
+  },
+  "keywords": [
+    "filarr",
+    "extension",
+    "simulator"
+  ]
+}

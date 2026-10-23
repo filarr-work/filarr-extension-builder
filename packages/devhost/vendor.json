@@ -1,0 +1,29 @@
+{
+  "source": "filarg",
+  "files": [
+    {
+      "from": "public/plugin-sandbox.html",
+      "to": "vendor/plugin-sandbox.html",
+      "header": "none",
+      "sha256": "57058a617064d3ee033a7e1224b8b60117266084517d1ddc9b4a3012fbc88d75"
+    },
+    {
+      "from": "src/services/plugins/sandbox/sandboxProtocol.ts",
+      "to": "src/vendor/sandbox/sandboxProtocol.ts",
+      "header": "ts",
+      "sha256": "f3adaa409700f6f4b0f6eb6bc76cbf27306e0b784e6c1c6190252ed419970763"
+    },
+    {
+      "from": "src/services/plugins/sandbox/sandboxBridgeCore.ts",
+      "to": "src/vendor/sandbox/sandboxBridgeCore.ts",
+      "header": "ts",
+      "sha256": "0899188d904d936931bb3aea52ef86bdbca9f0e47480289fa5737e2112cbb3e9"
+    },
+    {
+      "from": "src/services/plugins/capabilities/extensionCapabilities.ts",
+      "to": "src/vendor/capabilities/extensionCapabilities.ts",
+      "header": "ts",
+      "sha256": "1a17172424142c65f1cfe7ee29e8afa3d36091f811a6b1379ec90a4d062431b6"
+    }
+  ]
+}

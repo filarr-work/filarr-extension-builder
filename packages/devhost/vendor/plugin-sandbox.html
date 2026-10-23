@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<!--
+  LA PAGE BAC À SABLE des greffons Filarr.
+
+  Chargée dans une iframe sandbox="allow-scripts" SANS allow-same-origin
+  (origine opaque : aucun accès au storage/DOM/cookies de l'app). Cette page
+  porte SA propre CSP — 'unsafe-eval' y est le MÉCANISME d'exécution du code
+  de greffon, pas une faiblesse : la page n'a aucun secret, aucune origine,
+  aucun réseau. Ne JAMAIS répondre à un problème d'héritage de CSP en
+  élargissant celle de l'APP (worker.js / _headers / electron main.ts) :
+  c'est ouvrir l'XSS sur toute l'application E2EE — la page servie est la
+  bonne réponse, c'est pour ça qu'elle existe.
+
+  `webrtc 'block'` est posé ICI AUSSI (pas seulement dans les en-têtes
+  serveur) : default-src/connect-src ne régissent PAS RTCPeerConnection — sans
+  ce token, la meta-CSP « filet de fond » laisserait ouvert le seul canal
+  réseau restant.
+
+  `worker-src blob:` et `media-src blob: data:` (docs/plugins/CAPACITES.md,
+  palier 1) : un worker créé depuis un blob: HÉRITE de la CSP de cette page —
+  pas de réseau, pas d'importScripts distant ; il ne fait que déplacer du
+  calcul hors du fil principal. Les médias ne lisent que des octets déjà dans
+  la page.
+
+  VERSION 2 : le protocole de sandboxProtocol.ts. Une page et un hôte sont
+  livrés ensemble ; la page refuse tout autre numéro.
+
+  CO-ÉDITION (capacité `collab`) : `host.collab` n'existe qu'en salle. Des
+  octets dans les deux sens — l'extension tient SON Y.Doc, envoie ses updates,
+  applique celles des autres ; jamais de document partagé ni de présence.
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src blob: data:; worker-src blob:; form-action 'none'; base-uri 'none'; webrtc 'block'" />
+<title>Filarr — plugin isolé</title>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; }
+</style>
+</head>
+<body>
+<div id="plugin-root" style="position:fixed;inset:0"></div>
+<script>
+'use strict';
+(function () {
+  var VERSION = 2;
+  var BOOTSTRAP_TYPE = 'filarr-sandbox-bootstrap';
+  var MAX_BYTES = 64 * 1024 * 1024;
+  var COLLAB_SEND_MAX = 1024 * 1024;
+  var COLLAB_QUEUE_MAX = 4096;
+  var THEME_NAME = /^--[a-z0-9-]{1,48}$/;
+  var THEME_FORBIDDEN = /[;{}<>\\]|url\s*\(/i;
+
+  var port = null;
+  var instance = null;
+  var booted = false;
+  var mode = 'editor';
+  var functions = null;
+  var theme = { scheme: 'light', tokens: {} };
+  var locale = 'fr';
+  var themeListeners = [];
+  // La salle : updates des autres (gardées tant que personne n'écoute) et élu.
+  var collabListeners = [];
+  var collabQueue = [];
+  var responsibleListeners = [];
+  var responsible = false;
+
+  function post(msg, transfer) {
+    if (!port) return;
+    try { port.postMessage(msg, transfer || []); } catch (e) { /* port fermé */ }
+  }
+
+  function fatal(message) {
+    post({ kind: 'fatal', message: String(message || 'sandbox_error').slice(0, 2000) });
+  }
+
+  function errorMessage(e, fallback) {
+    return String((e && e.message) || fallback).slice(0, 2000);
+  }
+
+  /** Une COPIE détachable des octets, quel que soit ce que le greffon a passé. */
+  function toBuffer(bytes) {
+    if (typeof bytes === 'string') return new TextEncoder().encode(bytes).buffer;
+    if (bytes instanceof ArrayBuffer) return bytes.slice(0);
+    return new Uint8Array(bytes).slice().buffer;
+  }
+
+  window.addEventListener('error', function (e) { fatal(e && e.message); });
+  window.addEventListener('unhandledrejection', function (e) {
+    fatal(e && e.reason && e.reason.message ? e.reason.message : 'unhandled_rejection');
+  });
+
+  // Le bootstrap : UN message, du parent seulement, portant UN MessagePort.
+  window.addEventListener('message', function (event) {
+    if (booted) return;
+    if (event.source !== window.parent) return;
+    if (!event.data || event.data.type !== BOOTSTRAP_TYPE) return;
+    if (!event.ports || !event.ports[0]) return;
+    booted = true;
+    port = event.ports[0];
+    port.onmessage = function (ev) { handleHostMessage(ev.data); };
+    post({ kind: 'ready', version: VERSION });
+  });
+
+  function handleHostMessage(data) {
+    if (!data || typeof data !== 'object') return;
+    if (data.kind === 'init') { onInit(data); return; }
+    if (data.kind === 'get-bytes') { onGetBytes(data); return; }
+    if (data.kind === 'save-result') { onSaveResult(data); return; }
+    if (data.kind === 'response') { onResponse(data); return; }
+    if (data.kind === 'theme') { applyTheme(data.theme); notifyTheme(); return; }
+    if (data.kind === 'call') { onCall(data); return; }
+    if (data.kind === 'collab-update') { onCollabUpdate(data); return; }
+    if (data.kind === 'collab-state') {
+      responsible = !!data.responsible;
+      for (var r = 0; r < responsibleListeners.length; r++) {
+        try { responsibleListeners[r](responsible); } catch (e) { /* le greffon répond de son écouteur */ }
+      }
+      return;
+    }
+    if (data.kind === 'destroy') {
+      try { if (instance) instance.destroy(); } catch (e) { /* déjà mort */ }
+      instance = null;
+      try { if (port) port.close(); } catch (e) { /* déjà fermé */ }
+      return;
+    }
+  }
+
+  // ── Le thème de l'hôte, en variables CSS sur #plugin-root ──────────────────
+  function applyTheme(raw) {
+    var root = document.getElementById('plugin-root');
+    var next = { scheme: raw && raw.scheme === 'dark' ? 'dark' : 'light', tokens: {} };
+    var tokens = raw && raw.tokens && typeof raw.tokens === 'object' ? raw.tokens : {};
+    // Refiltré ICI aussi : la page ne pose rien qu'elle n'aurait pas validé.
+    for (var nom in theme.tokens) {
+      if (Object.prototype.hasOwnProperty.call(theme.tokens, nom)) root.style.removeProperty(nom);
+    }
+    var n = 0;
+    for (var k in tokens) {
+      if (!Object.prototype.hasOwnProperty.call(tokens, k) || n >= 64) continue;
+      var v = tokens[k];
+      if (!THEME_NAME.test(k) || typeof v !== 'string' || v.length > 80 || THEME_FORBIDDEN.test(v)) continue;
+      root.style.setProperty(k, v);
+      next.tokens[k] = v;
+      n++;
+    }
+    root.style.colorScheme = next.scheme;
+    theme = next;
+  }
+
+  function notifyTheme() {
+    for (var i = 0; i < themeListeners.length; i++) {
+      try { themeListeners[i](theme); } catch (e) { /* le greffon répond de son écouteur */ }
+    }
+  }
+
+  // ── La co-édition : des octets, dans les deux sens ─────────────────────────
+  function onCollabUpdate(data) {
+    if (!(data.bytes instanceof ArrayBuffer)) return;
+    var bytes = new Uint8Array(data.bytes);
+    if (collabListeners.length === 0) {
+      if (collabQueue.length < COLLAB_QUEUE_MAX) collabQueue.push(bytes);
+      return;
+    }
+    for (var i = 0; i < collabListeners.length; i++) {
+      try { collabListeners[i](bytes); } catch (e) { /* le greffon répond de son écouteur */ }
+    }
+  }
+
+  function makeCollab(init, readOnly) {
+    responsible = !!init.responsible;
+    var aSeme = false;
+    var deja = [];
+    var src = Array.isArray(init.updates) ? init.updates : [];
+    for (var i = 0; i < src.length; i++) {
+      if (src[i] instanceof ArrayBuffer) deja.push(new Uint8Array(src[i]));
+    }
+    function retirer(liste, cb) {
+      return function () {
+        var j = liste.indexOf(cb);
+        if (j >= 0) liste.splice(j, 1);
+      };
+    }
+    return {
+      /** Vrai : la salle est vide, et c'est à CETTE page d'y verser le document. */
+      seed: !!init.seed,
+      /** Ce que la salle contenait au montage, à appliquer avant tout. */
+      initialUpdates: deja,
+      isResponsible: function () { return responsible; },
+      onResponsibleChange: function (cb) {
+        if (typeof cb !== 'function') return function () {};
+        responsibleListeners.push(cb);
+        return retirer(responsibleListeners, cb);
+      },
+      onRemoteUpdate: function (cb) {
+        if (typeof cb !== 'function') return function () {};
+        collabListeners.push(cb);
+        var attente = collabQueue;
+        collabQueue = [];
+        for (var k = 0; k < attente.length; k++) {
+          try { cb(attente[k]); } catch (e) { /* le greffon répond de son écouteur */ }
+        }
+        return retirer(collabListeners, cb);
+      },
+      sendUpdate: function (bytes) {
+        if (readOnly) throw new Error('read_only');
+        var buf = toBuffer(bytes);
+        if (buf.byteLength === 0) return;
+        if (buf.byteLength > COLLAB_SEND_MAX) throw new Error('collab_update_too_large');
+        post({ kind: 'collab-send', bytes: buf }, [buf]);
+      },
+      /** À appeler une fois, juste après avoir semé une salle vide. */
+      seeded: function () {
+        if (!init.seed || aSeme) return;
+        aSeme = true;
+        post({ kind: 'collab-seeded' });
+      }
+    };
+  }
+
+  // ── Requêtes vers l'hôte : corrélées, jamais devinées ──────────────────────
+  var nextRequestId = 1;
+  var pendingRequests = {};
+  function request(op, args, transfer) {
+    return new Promise(function (resolve, reject) {
+      var requestId = nextRequestId++;
+      pendingRequests[requestId] = { resolve: resolve, reject: reject };
+      var msg = { kind: 'request', requestId: requestId, op: op };
+      for (var k in args) if (Object.prototype.hasOwnProperty.call(args, k)) msg[k] = args[k];
+      post(msg, transfer);
+    });
+  }
+  function onResponse(data) {
+    var pending = pendingRequests[data.requestId];
+    if (!pending) return;
+    delete pendingRequests[data.requestId];
+    if (data.ok) pending.resolve(data.value);
+    else pending.reject(new Error(String(data.error || 'request_failed')));
+  }
+
+  // saveBytes corrélé : la promesse du greffon attend save-result.
+  var nextSaveId = 1;
+  var pendingSaves = {};
+  function onSaveResult(data) {
+    var pending = pendingSaves[data.requestId];
+    if (!pending) return;
+    delete pendingSaves[data.requestId];
+    if (data.ok) pending.resolve();
+    else pending.reject(new Error(String(data.errorMessage || 'save_failed')));
+  }
+
+  /**
+   * Les API que les capacités ACCORDÉES ouvrent. Une capacité absente = une API
+   * absente : un greffon teste `host.storage` avant de s'en servir. Tricher ici
+   * ne sert à rien — le pont refuse de son côté ce qui n'est pas accordé.
+   */
+  function withGrants(host, grants) {
+    if (grants.storage) {
+      host.storage = {
+        get: function (key) {
+          return request('storage-get', { key: String(key) }).then(function (v) {
+            return v instanceof ArrayBuffer ? new Uint8Array(v) : null;
+          });
+        },
+        set: function (key, bytes) {
+          var buf = toBuffer(bytes);
+          return request('storage-set', { key: String(key), bytes: buf }, [buf]).then(function () {});
+        },
+        delete: function (key) {
+          return request('storage-delete', { key: String(key) }).then(function () {});
+        },
+        keys: function () { return request('storage-list', {}); }
+      };
+    }
+    if (grants.picker) {
+      host.pick = function (opts) {
+        return request('pick', { multiple: !!(opts && opts.multiple) });
+      };
+      host.readPicked = function (handle) {
+        return request('picked-read', { handle: String(handle) }).then(function (v) {
+          return new Uint8Array(v);
+        });
+      };
+      if (grants.picker.access === 'readwrite') {
+        host.writePicked = function (handle, bytes) {
+          var buf = toBuffer(bytes);
+          return request('picked-write', { handle: String(handle), bytes: buf }, [buf]).then(function () {});
+        };
+      }
+    }
+    if (grants.network) {
+      // Les noms d'en-têtes voyagent en minuscules (le pont refuse le reste).
+      var lowerHeaders = function (h) {
+        var out = {};
+        if (!h || typeof h !== 'object') return out;
+        Object.keys(h).forEach(function (k) { out[String(k).toLowerCase()] = String(h[k]); });
+        return out;
+      };
+      host.network = {
+        request: function (r) {
+          r = r || {};
+          var body = r.body === undefined || r.body === null ? null : toBuffer(r.body);
+          return request('net-request', {
+            method: String(r.method || 'GET').toUpperCase(),
+            url: String(r.url || ''),
+            headers: lowerHeaders(r.headers),
+            body: body
+          }, body ? [body] : []).then(function (v) {
+            return { status: v.status, contentType: v.contentType, body: new Uint8Array(v.body) };
+          });
+        }
+      };
+    }
+    return host;
+  }
+
+  function onInit(data) {
+    try {
+      if (data.version !== VERSION) { fatal('sandbox_version_mismatch'); return; }
+      if (typeof data.code !== 'string' || !(data.bytes instanceof ArrayBuffer)) {
+        fatal('sandbox_bad_init'); return;
+      }
+      if (data.mode !== 'editor' && data.mode !== 'function' && data.mode !== 'block' && data.mode !== 'widget') {
+        fatal('sandbox_bad_init'); return;
+      }
+      if (data.bytes.byteLength > MAX_BYTES) { fatal('sandbox_bytes_too_large'); return; }
+      mode = data.mode;
+      locale = String(data.locale || 'fr').slice(0, 35);
+      applyTheme(data.theme);
+      var grants = data.grants && typeof data.grants === 'object' ? data.grants : {};
+
+      // Exécution du bundle : IIFE qui pose globalThis.filarrSandboxedPlugin.
+      new Function('globalThis', data.code)(globalThis);
+      var plugin = globalThis.filarrSandboxedPlugin;
+      if (!plugin) { fatal('sandbox_no_plugin'); return; }
+
+      if (mode === 'function') {
+        // Une page de FONCTIONS ne monte rien et ne reçoit aucune API : ni
+        // stockage, ni sélecteur, ni réseau. Elle répond aux appels, c'est tout.
+        if (!plugin.functions || typeof plugin.functions !== 'object') { fatal('sandbox_no_functions'); return; }
+        functions = plugin.functions;
+        post({ kind: 'mounted' });
+        return;
+      }
+
+      var entry = null;
+      if (mode === 'editor') {
+        if (!plugin.editors) { fatal('sandbox_no_plugin'); return; }
+        for (var i = 0; i < plugin.editors.length; i++) {
+          if (plugin.editors[i].id === data.editorId) { entry = plugin.editors[i]; break; }
+        }
+        if (!entry) { fatal('sandbox_editor_not_found'); return; }
+      } else {
+        entry = mode === 'block' ? plugin.block : plugin.widget;
+        if (!entry || typeof entry.mount !== 'function') { fatal('sandbox_no_' + mode); return; }
+      }
+
+      // Le miroir d'EditorHost — octets, sauvegarde, dirty, thème, et ce que les
+      // capacités accordées ouvrent. Jamais de jeton, d'identifiant de coffre,
+      // d'URL — par construction.
+      var host = withGrants({
+        mode: mode,
+        container: document.getElementById('plugin-root'),
+        fileName: String(data.fileName),
+        readOnly: !!data.readOnly,
+        initialBytes: new Uint8Array(data.bytes),
+        locale: locale,
+        get theme() { return theme; },
+        onThemeChange: function (cb) {
+          if (typeof cb !== 'function') return function () {};
+          themeListeners.push(cb);
+          return function () {
+            var i = themeListeners.indexOf(cb);
+            if (i >= 0) themeListeners.splice(i, 1);
+          };
+        },
+        saveBytes: function (bytes) {
+          return new Promise(function (resolve, reject) {
+            var requestId = nextSaveId++;
+            pendingSaves[requestId] = { resolve: resolve, reject: reject };
+            var copie = toBuffer(bytes);
+            post({ kind: 'save-request', requestId: requestId, bytes: copie }, [copie]);
+          });
+        },
+        onDirty: function (d) { post({ kind: 'dirty', dirty: !!d }); },
+        collab: mode === 'editor' && grants.collab === true && data.collab && typeof data.collab === 'object'
+          ? makeCollab(data.collab, !!data.readOnly)
+          : undefined
+      }, grants);
+
+      Promise.resolve(entry.mount(host)).then(function (inst) {
+        instance = inst;
+        post({ kind: 'mounted' });
+      }, function (e) {
+        post({ kind: 'mount-error', message: errorMessage(e, 'mount_failed') });
+      });
+    } catch (e) {
+      post({ kind: 'mount-error', message: errorMessage(e, 'mount_failed') });
+    }
+  }
+
+  function onGetBytes(data) {
+    try {
+      if (!instance) { fatal('sandbox_no_instance'); return; }
+      Promise.resolve(instance.getBytes()).then(function (bytes) {
+        var copie = toBuffer(bytes);
+        post({ kind: 'bytes-result', requestId: data.requestId, bytes: copie }, [copie]);
+      }, function (e) {
+        fatal((e && e.message) || 'get_bytes_failed');
+      });
+    } catch (e) {
+      fatal((e && e.message) || 'get_bytes_failed');
+    }
+  }
+
+  /** Mode fonction : un appel, une réponse. La forme est revérifiée par l'hôte. */
+  function onCall(data) {
+    var requestId = data.requestId;
+    function fail(e) {
+      post({ kind: 'call-result', requestId: requestId, ok: false, value: null, error: errorMessage(e, 'function_failed') });
+    }
+    try {
+      if (mode !== 'function' || !functions) { fail(new Error('sandbox_not_function')); return; }
+      var fn = functions[data.fn];
+      if (typeof fn !== 'function') { fail(new Error('function_missing')); return; }
+      var ctx = { fileName: String(data.fileName), to: data.to, locale: locale };
+      Promise.resolve(fn(new Uint8Array(data.bytes), ctx)).then(function (value) {
+        if (value instanceof Uint8Array || value instanceof ArrayBuffer) {
+          var buf = toBuffer(value);
+          post({ kind: 'call-result', requestId: requestId, ok: true, value: buf }, [buf]);
+          return;
+        }
+        post({ kind: 'call-result', requestId: requestId, ok: true, value: value });
+      }, fail);
+    } catch (e) {
+      fail(e);
+    }
+  }
+})();
+</script>
+</body>
+</html>
