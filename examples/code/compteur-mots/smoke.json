@@ -1,0 +1,5 @@
+{
+  "edition": [
+    { "saisir": "textarea", "valeur": "Premier jet, passage {n} : il faut bien commencer quelque part." }
+  ]
+}

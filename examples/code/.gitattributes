@@ -1,0 +1,4 @@
+# Les fichiers d'exemple sont des OCTETS : leurs fins de ligne et leur BOM font
+# partie de ce que les tests vérifient (aller-retour à l'octet près). Aucune
+# conversion de fin de ligne, quel que soit core.autocrlf.
+*/exemples/** -text

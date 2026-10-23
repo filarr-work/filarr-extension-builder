@@ -1,0 +1,23 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "compteur-mots",
+    "name": "Compteur de mots",
+    "version": "0.1.0",
+    "description": "Un éditeur de texte brut qui compte en direct les mots, les caractères et le temps de lecture. Fichiers .wc, aucune capacité demandée.",
+    "extensions": [
+      "wc"
+    ],
+    "icon": "🔢",
+    "category": "editors"
+  },
+  "listing": {
+    "releaseNotes": "Première version : compte des mots et des caractères, temps de lecture.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "code",
+    "entry": "src/index.ts"
+  }
+}
