@@ -1,0 +1,41 @@
+{
+  "format": "filarr-postit",
+  "version": 1,
+  "notes": [
+    {
+      "id": "n-3f9a21",
+      "x": 40,
+      "y": 32,
+      "couleur": "jaune",
+      "texte": "Lundi\nAppeler le plombier avant 10 h"
+    },
+    {
+      "id": "n-a8c410",
+      "x": 264,
+      "y": 48,
+      "couleur": "rose",
+      "texte": "Anniversaire de Léa — jeudi\nIdée : un atlas des oiseaux"
+    },
+    {
+      "id": "n-07d5e2",
+      "x": 488,
+      "y": 32,
+      "couleur": "bleu",
+      "texte": "Courses\n- lait d'avoine\n- tomates\n- café en grains"
+    },
+    {
+      "id": "n-c1b9f0",
+      "x": 56,
+      "y": 216,
+      "couleur": "vert",
+      "texte": "Sport : piscine mardi et vendredi, 7 h 30"
+    },
+    {
+      "id": "n-5e62ab",
+      "x": 296,
+      "y": 232,
+      "couleur": "orange",
+      "texte": "Rendre les livres à la médiathèque (avant le 30)"
+    }
+  ]
+}

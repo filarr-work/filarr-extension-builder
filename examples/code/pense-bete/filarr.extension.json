@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "pense-bete",
+    "name": "Pense-bête",
+    "version": "0.1.0",
+    "description": "Un tableau de notes repositionnables à la souris et au clavier (fichiers .postit). Le zoom et les notes repliées sont gardés sur votre appareil, dans le stockage chiffré de l'extension ; le contenu, lui, reste dans le fichier.",
+    "extensions": ["postit"],
+    "icon": "🗒️",
+    "category": "productivity",
+    "capabilities": {
+      "storage": { "quota": 65536 }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : notes colorées, déplacement au clavier, zoom et repli mémorisés.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}
