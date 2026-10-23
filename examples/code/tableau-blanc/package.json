@@ -1,0 +1,14 @@
+{
+  "name": "@filarr-examples/tableau-blanc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Exemple Filarr : un tableau blanc (.tableau) co-édité en direct, Yjs embarqué (capacité collab).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node ../_outils/build.mjs",
+    "check": "node ../_outils/check.mjs",
+    "smoke": "node ../_outils/smoke.mjs",
+    "test": "vitest run"
+  }
+}

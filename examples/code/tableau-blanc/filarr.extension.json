@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "tableau-blanc",
+    "name": "Tableau blanc",
+    "version": "0.1.0",
+    "description": "Un tableau blanc à plusieurs, en direct, dans un coffre partagé (fichiers .tableau) : traits à main levée et textes, que chacun déplace, efface ou annule. Hors d'un coffre partagé, il s'utilise seul, à l'identique.",
+    "extensions": ["tableau"],
+    "icon": "🧑‍🏫",
+    "category": "productivity",
+    "capabilities": {
+      "collab": true
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : traits, textes, sélection au clavier, co-édition en direct.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}

@@ -1,0 +1,8 @@
+{
+  "edition": [
+    { "pointeur": "svg.tb-surface", "trace": [[200, 200], [260, 240], [330, 260], [400, 250]] },
+    { "cliquer": "[data-action=texte]" },
+    { "saisir": "input.tb-champ", "valeur": "Idée n° {n}" },
+    { "touche": "g.tb-choisi", "cle": "ArrowRight", "shift": true }
+  ]
+}
