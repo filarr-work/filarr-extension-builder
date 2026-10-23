@@ -130,7 +130,6 @@ async function cmdPack(dir: string, args: Args, out: Out): Promise<number> {
   }
   mkdirSync(resolve(target, '..'), { recursive: true });
   writeFileSync(target, bytes);
-  writeBundle(project, result.build.code);
   result.report.ok('pack', `paquet écrit : ${relative(process.cwd(), target) || target} (${formatBytes(bytes.byteLength)})`);
   return emit(result.report, `filarr-ext pack — ${result.manifest.id} ${result.manifest.version}`, json, out, { path: target, bytes: bytes.byteLength });
 }

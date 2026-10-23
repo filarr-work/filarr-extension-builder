@@ -11,9 +11,9 @@
  * ce que le moteur refuserait au montage.
  */
 
-import { build as esbuild, type BuildOptions } from 'esbuild';
+import { build as esbuild, type BuildOptions, type Plugin } from 'esbuild';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import {
   buildNocodeBundle,
   EMBEDDED_ENGINE_SOURCE,
@@ -55,11 +55,9 @@ export async function engineSource(): Promise<string> {
   return engineCache;
 }
 
-/** Les options esbuild d'un bundle d'extension — exportées pour le simulateur. */
-export function codeBuildOptions(project: Project, opts: { minify?: boolean; sourcemap?: boolean } = {}): BuildOptions {
+/** Les options de la CIBLE, communes au bundle et à ses workers. */
+function targetOptions(opts: { minify?: boolean }): BuildOptions {
   return {
-    entryPoints: [projectPath(project.dir, (project.build as { entry: string }).entry, 'build.entry')],
-    absWorkingDir: project.dir,
     bundle: true,
     format: 'iife',
     target: 'es2020',
@@ -67,11 +65,50 @@ export function codeBuildOptions(project: Project, opts: { minify?: boolean; sou
     minify: opts.minify !== false,
     charset: 'ascii',
     legalComments: 'none',
-    sourcemap: opts.sourcemap ? 'inline' : false,
     // Dans le dépôt du Builder, l'API se lit depuis ses sources ; publiée, elle les embarque aussi.
     conditions: ['filarr-source'],
     write: false,
     logLevel: 'silent',
+  };
+}
+
+/**
+ * `import source from './calcul.worker.ts?worker'` : le fichier est construit À
+ * PART, en IIFE, et importé comme TEXTE. L'extension en fait un `Blob`, puis un
+ * `Worker` depuis son URL `blob:` — la seule source que la CSP de la page
+ * permet (`worker-src blob:`) ; le worker hérite de cette CSP, donc d'aucun
+ * réseau. Même convention que les exemples avec code du dépôt.
+ */
+function workerPlugin(opts: { minify?: boolean }): Plugin {
+  return {
+    name: 'filarr-worker-texte',
+    setup(b) {
+      b.onResolve({ filter: /\?worker$/ }, (args) => ({
+        path: resolve(args.resolveDir, args.path.replace(/\?worker$/, '')),
+        namespace: 'filarr-worker',
+      }));
+      b.onLoad({ filter: /.*/, namespace: 'filarr-worker' }, async (args) => {
+        const out = await esbuild({ ...targetOptions(opts), entryPoints: [args.path] });
+        const code = out.outputFiles?.[0]?.text ?? '';
+        try {
+          new Function(code);
+        } catch (e) {
+          return { errors: [{ text: `worker ${args.path} : ne se compile pas comme script (${e instanceof Error ? e.message : String(e)})` }] };
+        }
+        return { contents: `export default ${JSON.stringify(code)};`, loader: 'js', watchFiles: [args.path] };
+      });
+    },
+  };
+}
+
+/** Les options esbuild d'un bundle d'extension — exportées pour le simulateur. */
+export function codeBuildOptions(project: Project, opts: { minify?: boolean; sourcemap?: boolean } = {}): BuildOptions {
+  return {
+    ...targetOptions(opts),
+    entryPoints: [projectPath(project.dir, (project.build as { entry: string }).entry, 'build.entry')],
+    absWorkingDir: project.dir,
+    sourcemap: opts.sourcemap ? 'inline' : false,
+    plugins: [workerPlugin(opts)],
   };
 }
 

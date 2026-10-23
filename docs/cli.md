@@ -80,6 +80,10 @@ transporte **aucune** image d'icône : une entrée `icon.png` serait refusée pa
   page bac à sable comme un **corps de fonction** (`new Function('globalThis', code)`) : un
   `import`/`export` au niveau haut y serait une erreur de syntaxe ; l'IIFE l'exclut par construction.
   Toutes les dépendances sont embarquées (la page n'a aucun réseau).
+- **Workers** : `import source from './calcul.worker.ts?worker'` construit ce fichier **à part**, en
+  IIFE, et l'importe comme **texte**. Faites-en un `Blob`, puis un `Worker` depuis son URL `blob:` —
+  la seule source que la CSP de la page permet (`worker-src blob:`) ; le worker hérite de cette CSP,
+  donc d'aucun réseau. (Même convention que les exemples avec code du dépôt.)
 - **Sans code** : le moteur sans code, puis les deux lignes finales du contrat :
 
   ```js
@@ -157,8 +161,10 @@ Lance `check`, puis assemble le paquet de `PACKAGE.md` (format 1) :
 | `nocode.json`                               | Sans code : **exactement** le JSON de la dernière ligne du bundle       |
 | `screenshots/1.webp` … `screenshots/4.webp` | Les captures, dans l'ordre (le type est lu dans les octets, pas dans le nom) |
 
-`build.tool` vaut `filarr-ext <version>` ; `build.engine`, la version du moteur sans code. Rien
-d'autre n'entre dans l'archive : ni clé, ni signature, ni jeton, ni image d'icône, ni dossier.
+`build.tool` vaut `filarr-ext <version>` ; `build.engine`, la version du moteur sans code. Le
+`build` du paquet ne porte que `kind`, `tool` et `engine` : ni le `entry` ni le `config` du fichier
+de projet, ni son `format`. Rien d'autre n'entre dans l'archive : ni clé, ni signature, ni jeton, ni
+image d'icône, ni dossier. `pack` n'écrit que le paquet (pas `dist/bundle.js`).
 L'archive est reproductible (dates fixes) : deux `pack` du même projet donnent les mêmes octets.
 
 **`pack` refuse ce que Filarr refuserait.** Le paquet assemblé est relu par le même chemin que

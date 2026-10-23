@@ -89,6 +89,9 @@ export function probeBundle(code: string): { ok: true; probe: Probe } | { ok: fa
     URL,
     atob,
     btoa,
+    // Web Crypto et l'horloge existent dans la page ; des bibliothèques (Yjs) les lisent au chargement.
+    crypto: globalThis.crypto,
+    performance: globalThis.performance,
     queueMicrotask: noop,
     setTimeout: () => 0,
     clearTimeout: noop,

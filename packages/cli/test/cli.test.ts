@@ -64,6 +64,28 @@ defineExtension({ id: 'notes-essai', editor: { mount(host: EditorHost) {
     expect(codes(r.report, 'warning')).toEqual(expect.arrayContaining(['uses_fetch', 'uses_localstorage', 'uses_innerhtml', 'no_screenshots']));
   });
 
+  it('lit le projet des exemples avec code ({ format: 1, … }) et construit un import ?worker en texte', async () => {
+    const dir = project('code-worker', {
+      'filarr.extension.json': { format: 1, manifest, listing: { license: 'MIT' }, screenshots: [], build: { kind: 'code', entry: 'src/index.js' } },
+      'src/calcul.worker.js': `self.onmessage = (e) => self.postMessage(e.data * 2);`,
+      'src/index.js': `import source from './calcul.worker.js?worker';
+globalThis.filarrSandboxedPlugin = { editors: [{ id: 'notes-essai-editor', mount(host) {
+  const w = new Worker(URL.createObjectURL(new Blob([source], { type: 'text/javascript' })));
+  return { destroy() { w.terminate(); }, getBytes() { return new Uint8Array(); } };
+} }] };`,
+    });
+    const r = await runCheck(dir);
+    expect(codes(r.report)).toEqual([]);
+    expect(r.build?.code).toContain('self.onmessage');
+    const c = capture();
+    expect(await main(['pack', '--dir', dir], c.out)).toBe(0);
+    const entries = unzipSync(new Uint8Array(readFileSync(join(dir, 'dist', 'notes-essai-0.1.0.filarrext'))));
+    // Le paquet ne porte que kind et tool : ni `entry`, ni le `format` du fichier de projet.
+    expect(JSON.parse(new TextDecoder().decode(entries['filarr-package.json'])).build).toEqual({ kind: 'code', tool: expect.stringMatching(/^filarr-ext /) });
+    // pack n'écrit que le paquet.
+    expect(existsSync(join(dir, 'dist', 'bundle.js'))).toBe(false);
+  });
+
   it('refuse un bundle qui n’est pas un corps de fonction', () => {
     const r = new Report();
     checkBundleShape('export const x = 1;', 20, r);
