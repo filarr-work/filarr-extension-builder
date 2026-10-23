@@ -284,7 +284,9 @@ export function verifyPackage(data: Uint8Array, opts: { engineSource?: string } 
     report.error('unexpected_nocode', `${NOCODE_ENTRY} présent alors que build.kind = "code"`);
   }
 
-  checkEntryPoints(code, desc.manifest, report, { execute: false });
+  // Sans code, le moteur pose `<id>-editor` depuis nocode.json › id, déjà comparé au manifeste :
+  // le lire dans le texte du bundle ne prouverait rien de plus.
+  if (desc.build.kind === 'code') checkEntryPoints(code, desc.manifest, report, { execute: false });
   scanApis(code, report);
   return { report, description: desc };
 }

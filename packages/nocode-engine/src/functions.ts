@@ -284,7 +284,11 @@ export function exportDocument(config: NocodeConfig, bytes: Uint8Array, to: Expo
       if (config.format.type === 'json') return doc.serialize();
       return ENC.encode(JSON.stringify(scopeToPlain(doc.root, doc.root.fields, doc.ctx), null, 2) + '\n');
     case 'csv': {
-      if (config.format.type === 'csv' && decl.field === undefined) return doc.serialize();
+      if (config.format.type === 'csv' && decl.field === undefined) {
+        const bytes = doc.serialize();
+        // Un tableau neuf s'exporte au moins avec son en-tête.
+        return bytes.byteLength > 0 ? bytes : ENC.encode(`${config.fields.map((f) => csvCell(f.key)).join(config.format.delimiter ?? ',')}\n`);
+      }
       const key = decl.field ?? implicitListKey(config.format);
       if (key && resolveField(doc.root.fields, key)?.type === 'list') return ENC.encode(listToCsv(doc.root, key, doc.ctx, lang));
       // Un document sans liste : deux colonnes, champ et valeur.
