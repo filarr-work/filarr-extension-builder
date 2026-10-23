@@ -1,0 +1,37 @@
+{
+  "name": "@filarr/nocode-engine",
+  "version": "1.0.0",
+  "description": "Le moteur sans code des extensions Filarr : une configuration déclarative devient un éditeur complet, et le bundle au format .filarrext.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "filarr-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./engine.js": "./dist/engine.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "scripts/engine.mjs"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@filarr/extension-api": "1.0.0"
+  },
+  "keywords": [
+    "filarr",
+    "extension",
+    "nocode"
+  ]
+}
