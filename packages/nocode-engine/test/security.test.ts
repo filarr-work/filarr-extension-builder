@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-// @ts-expect-error — module JS sans déclarations
 import { buildEngineSourceSync, packageDir } from '../scripts/engine.mjs';
 
 /**

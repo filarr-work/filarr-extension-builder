@@ -13,13 +13,15 @@
       "default": "./dist/index.mjs"
     },
     "./engine.js": "./dist/engine.js",
+    "./scripts/engine.mjs": "./scripts/engine.mjs",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "src",
-    "scripts/engine.mjs"
+    "scripts/engine.mjs",
+    "scripts/engine.d.mts"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",

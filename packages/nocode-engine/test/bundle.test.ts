@@ -10,7 +10,6 @@ import {
   serializeNocodeConfig,
 } from '../src/index';
 import type { NocodeConfig } from '../src/types';
-// @ts-expect-error — module JS sans déclarations
 import { buildEngineSourceSync, engineVersion } from '../scripts/engine.mjs';
 import { recetteConfig } from './fixtures';
 

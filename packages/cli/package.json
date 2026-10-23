@@ -1,0 +1,44 @@
+{
+  "name": "@filarr/extension-cli",
+  "version": "1.0.0",
+  "description": "filarr-ext : construire, simuler, contrôler, empaqueter et remettre à Filarr une extension, avec ou sans code.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "filarr-ext": "bin/filarr-ext.mjs"
+  },
+  "exports": {
+    ".": {
+      "filarr-source": "./src/main.ts",
+      "import": "./dist/cli.mjs",
+      "default": "./dist/cli.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@filarr/extension-devhost": "1.0.0",
+    "esbuild": "^0.24.2",
+    "fflate": "^0.8.2"
+  },
+  "devDependencies": {
+    "@filarr/extension-api": "1.0.0",
+    "@filarr/nocode-engine": "1.0.0"
+  },
+  "keywords": [
+    "filarr",
+    "extension",
+    "cli"
+  ]
+}
