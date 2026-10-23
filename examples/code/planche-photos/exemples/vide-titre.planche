@@ -1,0 +1,16 @@
+{
+  "format": "filarr-planche",
+  "version": 1,
+  "titre": "",
+  "colonnes": 2,
+  "photos": [
+    {
+      "id": "p-aa00bb",
+      "nom": "algue.webp",
+      "legende": "Algue (WebP sans perte)",
+      "largeur": 1,
+      "hauteur": 1,
+      "image": "data:image/webp;base64,UklGRhoAAABXRUJQVlA4TA0AAAAvAAAAEAcQERGIiP4HAA=="
+    }
+  ]
+}

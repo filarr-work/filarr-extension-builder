@@ -1,0 +1,14 @@
+{
+  "edition": [
+    { "cliquer": "[data-action=ajouter]" },
+    { "saisir": ".pp-photo:first-child .pp-legende", "valeur": "Le phare, passage {n}" },
+    { "cliquer": ".pp-photo:first-child [data-action=apres]" },
+    { "saisir": "input.pp-titre", "valeur": "Bretagne {n}" }
+  ],
+  "selection": [
+    "exemples/photos/phare.png",
+    "exemples/photos/galet.jpg",
+    "exemples/photos/algue.webp",
+    "exemples/photos/pas-une-image.png"
+  ]
+}

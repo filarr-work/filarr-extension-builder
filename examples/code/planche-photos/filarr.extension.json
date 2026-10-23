@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "planche-photos",
+    "name": "Planche photos",
+    "version": "0.1.0",
+    "description": "Composez une planche de photos (fichiers .planche) à partir d'images que vous choisissez dans Filarr : titre, légendes, ordre, nombre de colonnes. L'extension ne voit que les images que vous lui donnez, et la planche en garde une copie réduite — elle se rouvre et se partage sans les originaux.",
+    "extensions": ["planche"],
+    "icon": "🖼️",
+    "category": "media",
+    "capabilities": {
+      "picker": { "access": "read", "extensions": ["png", "jpg", "jpeg", "webp"] }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : photos choisies dans Filarr, vignettes embarquées, légendes et réordonnancement au clavier.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}
