@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "croquis",
+    "name": "Croquis",
+    "version": "0.1.0",
+    "description": "Dessin à main levée à la souris, au stylet ou au clavier, avec annuler et rétablir (fichiers .croquis). Les cartes de fichier montrent une vignette du dessin ; on l'exporte en page web (SVG) ou en JSON.",
+    "extensions": ["croquis"],
+    "icon": "✏️",
+    "category": "media",
+    "capabilities": {
+      "newDocument": [
+        {
+          "ext": "croquis",
+          "label": "Croquis vierge",
+          "seed": "eyJmb3JtYXQiOiJmaWxhcnItY3JvcXVpcyIsInZlcnNpb24iOjEsImxhcmdldXIiOjEyMDAsImhhdXRldXIiOjgwMCwiZm9uZCI6IiNmZmZmZmYiLCJ0cmFpdHMiOltdfQo="
+        }
+      ],
+      "maxBytes": 67108864,
+      "functions": {
+        "thumbnail": true,
+        "exports": [
+          { "to": "html", "label": "Page web (dessin SVG)" },
+          { "to": "json", "label": "Traits en JSON" }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : crayon huit couleurs, cinq épaisseurs, annuler et rétablir, vignette et exports.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}

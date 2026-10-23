@@ -1,0 +1,11 @@
+{
+  "edition": [
+    { "pointeur": "svg.cq-toile", "trace": [[100, 100], [140, 120], [200, 160], [260, 150]] },
+    { "touche": "svg.cq-toile", "cle": "Enter" },
+    { "touche": "svg.cq-toile", "cle": "ArrowRight", "shift": true },
+    { "touche": "svg.cq-toile", "cle": "ArrowDown" },
+    { "touche": "svg.cq-toile", "cle": "Enter" },
+    { "cliquer": "[data-action=annuler]" },
+    { "cliquer": "[data-action=retablir]" }
+  ]
+}
