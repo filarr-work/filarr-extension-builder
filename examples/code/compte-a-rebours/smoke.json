@@ -1,0 +1,16 @@
+{
+  "edition": [
+    { "cliquer": "[data-action=ajouter]" },
+    { "saisir": ".cr-carte[data-dernier] .cr-titre", "valeur": "Réunion de rentrée {n}" },
+    { "saisir": ".cr-carte[data-dernier] .cr-date", "valeur": "2027-01-15T10:30" },
+    { "saisir": ".cr-carte:first-child .cr-note", "valeur": "Penser aux billets ({n})" }
+  ],
+  "bloc": {
+    "fichier": "exemples/bloc-anniversaire.json",
+    "edition": [
+      { "cliquer": "[data-action=regler]" },
+      { "saisir": ".crb-titre", "valeur": "Anniversaire de Léa ({n})" },
+      { "saisir": ".crb-date", "valeur": "2027-03-02T19:00" }
+    ]
+  }
+}

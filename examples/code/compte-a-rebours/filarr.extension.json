@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "compte-a-rebours",
+    "name": "Compte à rebours",
+    "version": "0.1.0",
+    "description": "Une liste d'évènements datés (fichiers .rebours), chacun avec son compte à rebours qui avance à la seconde. Et un bloc à glisser dans vos notes, qui affiche le temps qui reste avant un moment choisi.",
+    "extensions": ["rebours"],
+    "icon": "⏳",
+    "category": "productivity",
+    "capabilities": {
+      "noteBlock": { "label": "Compte à rebours" }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : évènements datés, compte à rebours à la seconde, bloc de note.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}

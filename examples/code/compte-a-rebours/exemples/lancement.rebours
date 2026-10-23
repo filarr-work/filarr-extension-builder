@@ -1,0 +1,24 @@
+{
+  "format": "filarr-rebours",
+  "version": 1,
+  "evenements": [
+    {
+      "id": "e-aa0001",
+      "titre": "Gel des fonctionnalités",
+      "date": "2026-11-06T17:00:00.000Z",
+      "note": ""
+    },
+    {
+      "id": "e-aa0002",
+      "titre": "Version candidate",
+      "date": "2026-11-20T09:00:00.000Z",
+      "note": "Tests de bout en bout sur les trois plateformes."
+    },
+    {
+      "id": "e-aa0003",
+      "titre": "Lancement",
+      "date": "2026-12-01T08:00:00.000Z",
+      "note": "Annonce à 9 h, heure de Paris."
+    }
+  ]
+}

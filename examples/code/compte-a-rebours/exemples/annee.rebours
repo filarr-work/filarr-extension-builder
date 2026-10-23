@@ -1,0 +1,36 @@
+{
+  "format": "filarr-rebours",
+  "version": 1,
+  "evenements": [
+    {
+      "id": "e-5a01c2",
+      "titre": "Rendu du mémoire",
+      "date": "2026-06-30T16:00:00.000Z",
+      "note": "Version imprimée en deux exemplaires."
+    },
+    {
+      "id": "e-7b33d4",
+      "titre": "Départ en vacances",
+      "date": "2026-12-19T17:42:00.000Z",
+      "note": "Train de 18 h 42, gare de Lyon, voiture 14."
+    },
+    {
+      "id": "e-91e0aa",
+      "titre": "Réveillon",
+      "date": "2026-12-31T23:00:00.000Z",
+      "note": "Chez Inès — apporter le dessert."
+    },
+    {
+      "id": "e-0c4f18",
+      "titre": "Semi-marathon de Paris",
+      "date": "2027-03-07T07:45:00.000Z",
+      "note": "Sas C, dossard à retirer la veille."
+    },
+    {
+      "id": "e-d2b7e9",
+      "titre": "Fin du bail",
+      "date": "2027-08-31T22:00:00.000Z",
+      "note": "Préavis à envoyer trois mois avant."
+    }
+  ]
+}
