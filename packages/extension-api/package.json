@@ -1,0 +1,35 @@
+{
+  "name": "@filarr/extension-api",
+  "version": "1.0.0",
+  "description": "Le contrat des extensions Filarr : types de l'hôte, defineExtension, manifeste, capacités et paquet .filarrext.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "filarr-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "vendor.json"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "sync": "node scripts/sync-vendor.mjs",
+    "sync:check": "node scripts/sync-vendor.mjs --check",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "filarr",
+    "extension",
+    "plugin"
+  ]
+}
