@@ -305,7 +305,9 @@ async function main() {
   } else ok.push('aucune capacité');
 
   verifierPackageJson(dossier, m.id);
-  if (!existsSync(join(dossier, 'README.md'))) faute('README.md absent');
+  // Un exemple sans explication n'apprend rien : le README doit dire ce qu'il montre.
+  const readme = join(dossier, 'README.md');
+  if (!existsSync(readme) || readFileSync(readme, 'utf8').trim().length < 200) faute('README.md absent ou vide');
   const n = verifierSources(dossier);
   ok.push(`${n} source(s) sans puits HTML ni API absente de la page`);
   typecheck(dossier);

@@ -87,6 +87,16 @@ function racineDe(page) {
   return [...page.container.children].find((e) => e.tagName !== 'STYLE') ?? page.container;
 }
 
+/** Le texte que l'on voit : sans les feuilles de style posées dans le conteneur. */
+function texteVisible(page) {
+  return [...page.container.children]
+    .filter((e) => e.tagName !== 'STYLE')
+    .map((e) => e.textContent)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function alertes(page) {
   return [...page.container.querySelectorAll('[role="alert"]')]
     .filter((e) => !e.hidden && !e.closest('[hidden]') && e.textContent.trim() !== '')
@@ -346,7 +356,7 @@ async function scenariosEditeur(dossier, code, m, fixtures, exemples) {
     const textes = [];
     for (const langue of ['fr', 'en']) {
       const a = await monter(code, m, { octets, nomFichier, langue });
-      textes.push(a.page.container.textContent.replace(/\s+/g, ' ').trim());
+      textes.push(texteVisible(a.page));
       await detruire(a);
     }
     exiger(textes[0] !== textes[1], "l'interface est identique en fr et en en");
@@ -462,7 +472,7 @@ async function scenariosBloc(dossier, code, m, fixtures) {
     await detruire(vide, 'destroy (bloc vide)');
 
     const a = await monter(code, m, { mode: 'block', octets, nomFichier: m.name });
-    exiger(a.page.container.textContent.trim() !== '', 'le bloc ne montre rien');
+    exiger(texteVisible(a.page) !== '', 'le bloc ne montre rien');
     await jouer(a.page, bloc.edition);
     await a.page.horloge.avancer(DELAI_MIN_MS - 10);
     exiger(a.hote.traces.enregistrements.length === 0, 'bloc : sauvegarde avant 2 s');
@@ -495,7 +505,7 @@ async function scenariosWidget(dossier, code, m, fixtures) {
     await scenario(nom, async () => {
       const a = await monter(code, m, { mode: 'widget', octets: octets ?? config, nomFichier: m.name, lectureSeule: true, reseau });
       await a.page.horloge.avancer(1000);
-      const texte = a.page.container.textContent.replace(/\s+/g, ' ').trim();
+      const texte = texteVisible(a.page);
       exiger(texte !== '', 'le widget ne montre rien');
       exiger(a.hote.traces.enregistrements.length === 0, 'un widget ne réécrit jamais rien');
       await a.page.horloge.avancer(60 * 60 * 1000);
