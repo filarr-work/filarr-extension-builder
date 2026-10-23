@@ -1,0 +1,25 @@
+{
+  "name": "create-filarr-extension",
+  "version": "1.0.0",
+  "description": "npm create filarr-extension@latest <nom> — un projet d'extension Filarr prêt, avec ou sans code.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-filarr-extension": "bin/index.mjs"
+  },
+  "files": [
+    "bin",
+    "src"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "keywords": [
+    "filarr",
+    "extension",
+    "create"
+  ]
+}
