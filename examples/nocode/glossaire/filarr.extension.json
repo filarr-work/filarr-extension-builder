@@ -1,0 +1,28 @@
+{
+  "manifest": {
+    "id": "glossaire",
+    "name": "Glossaire",
+    "version": "1.0.0",
+    "description": "Un glossaire en texte brut, une définition par ligne : « terme: définition ». Ajout, retrait, renommage des termes.",
+    "extensions": [
+      "glossaire"
+    ],
+    "icon": "📖",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "extractText": true
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

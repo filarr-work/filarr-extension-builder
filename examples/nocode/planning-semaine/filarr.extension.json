@@ -1,0 +1,28 @@
+{
+  "manifest": {
+    "id": "planning-semaine",
+    "name": "Planning de la semaine",
+    "version": "1.0.0",
+    "description": "Une semaine par fichier : une section par jour, chacune avec sa liste de tâches à cocher, et la progression de la semaine.",
+    "extensions": [
+      "semaine"
+    ],
+    "icon": "🗓️",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "extractText": true
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "nocode": 1,
+  "id": "suivi-habitudes",
+  "format": {
+    "type": "csv",
+    "delimiter": ","
+  },
+  "accent": "#7c3aed",
+  "fields": [
+    {
+      "key": "habitude",
+      "type": "text",
+      "label": {
+        "fr": "Habitude",
+        "en": "Habit"
+      }
+    },
+    {
+      "key": "lun",
+      "type": "boolean",
+      "label": {
+        "fr": "Lun",
+        "en": "Mon"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    },
+    {
+      "key": "mar",
+      "type": "boolean",
+      "label": {
+        "fr": "Mar",
+        "en": "Tue"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    },
+    {
+      "key": "mer",
+      "type": "boolean",
+      "label": {
+        "fr": "Mer",
+        "en": "Wed"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    },
+    {
+      "key": "jeu",
+      "type": "boolean",
+      "label": {
+        "fr": "Jeu",
+        "en": "Thu"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    },
+    {
+      "key": "ven",
+      "type": "boolean",
+      "label": {
+        "fr": "Ven",
+        "en": "Fri"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    },
+    {
+      "key": "sam",
+      "type": "boolean",
+      "label": {
+        "fr": "Sam",
+        "en": "Sat"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    },
+    {
+      "key": "dim",
+      "type": "boolean",
+      "label": {
+        "fr": "Dim",
+        "en": "Sun"
+      },
+      "trueValue": "x",
+      "falseValue": ""
+    }
+  ],
+  "view": [
+    {
+      "type": "table",
+      "columns": [
+        "habitude",
+        "lun",
+        "mar",
+        "mer",
+        "jeu",
+        "ven",
+        "sam",
+        "dim"
+      ],
+      "label": {
+        "fr": "Cette semaine",
+        "en": "This week"
+      },
+      "addLabel": {
+        "fr": "Ajouter une habitude",
+        "en": "Add a habit"
+      }
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Bilan",
+        "en": "Summary"
+      },
+      "blocks": [
+        {
+          "type": "total",
+          "label": {
+            "fr": "Habitudes suivies",
+            "en": "Habits tracked"
+          },
+          "compute": {
+            "op": "count"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Lundi",
+            "en": "Monday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "lun"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Mardi",
+            "en": "Tuesday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "mar"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Mercredi",
+            "en": "Wednesday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "mer"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Jeudi",
+            "en": "Thursday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "jeu"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Vendredi",
+            "en": "Friday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "ven"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Samedi",
+            "en": "Saturday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "sam"
+          }
+        },
+        {
+          "type": "total",
+          "label": {
+            "fr": "Dimanche",
+            "en": "Sunday"
+          },
+          "compute": {
+            "op": "countChecked",
+            "of": "dim"
+          }
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "fields": [
+      {
+        "key": "habitudes",
+        "compute": {
+          "op": "count"
+        }
+      },
+      {
+        "key": "lun",
+        "compute": {
+          "op": "countChecked",
+          "of": "lun"
+        }
+      },
+      {
+        "key": "mar",
+        "compute": {
+          "op": "countChecked",
+          "of": "mar"
+        }
+      },
+      {
+        "key": "mer",
+        "compute": {
+          "op": "countChecked",
+          "of": "mer"
+        }
+      },
+      {
+        "key": "jeu",
+        "compute": {
+          "op": "countChecked",
+          "of": "jeu"
+        }
+      },
+      {
+        "key": "ven",
+        "compute": {
+          "op": "countChecked",
+          "of": "ven"
+        }
+      },
+      {
+        "key": "sam",
+        "compute": {
+          "op": "countChecked",
+          "of": "sam"
+        }
+      },
+      {
+        "key": "dim",
+        "compute": {
+          "op": "countChecked",
+          "of": "dim"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@filarr-examples/liste-courses",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Exemple sans code : liste de courses (.courses).",
+  "license": "MIT",
+  "scripts": {
+    "build": "filarr-ext build",
+    "check": "filarr-ext check",
+    "pack": "filarr-ext pack"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "nocode": 1,
+  "id": "carnet-degustation",
+  "format": {
+    "type": "json"
+  },
+  "accent": "#9f1239",
+  "fields": [
+    {
+      "key": "nom",
+      "type": "text",
+      "label": {
+        "fr": "Nom",
+        "en": "Name"
+      },
+      "placeholder": {
+        "fr": "Domaine, cuvée, millésime…",
+        "en": "Estate, cuvée, vintage…"
+      }
+    },
+    {
+      "key": "type",
+      "type": "choice",
+      "label": {
+        "fr": "Type",
+        "en": "Type"
+      },
+      "default": "vin",
+      "options": [
+        {
+          "value": "vin",
+          "label": {
+            "fr": "Vin",
+            "en": "Wine"
+          },
+          "color": "#9f1239"
+        },
+        {
+          "value": "the",
+          "label": {
+            "fr": "Thé",
+            "en": "Tea"
+          },
+          "color": "#15803d"
+        },
+        {
+          "value": "cafe",
+          "label": {
+            "fr": "Café",
+            "en": "Coffee"
+          },
+          "color": "#78350f"
+        },
+        {
+          "value": "fromage",
+          "label": {
+            "fr": "Fromage",
+            "en": "Cheese"
+          },
+          "color": "#ca8a04"
+        },
+        {
+          "value": "autre",
+          "label": {
+            "fr": "Autre",
+            "en": "Other"
+          },
+          "color": "#64748b"
+        }
+      ]
+    },
+    {
+      "key": "date",
+      "type": "date",
+      "label": {
+        "fr": "Date",
+        "en": "Date"
+      }
+    },
+    {
+      "key": "lieu",
+      "type": "text",
+      "label": {
+        "fr": "Lieu",
+        "en": "Place"
+      }
+    },
+    {
+      "key": "prix",
+      "type": "number",
+      "label": {
+        "fr": "Prix",
+        "en": "Price"
+      },
+      "min": 0,
+      "decimals": 2,
+      "unit": "€"
+    },
+    {
+      "key": "note",
+      "type": "rating",
+      "label": {
+        "fr": "Note",
+        "en": "Rating"
+      },
+      "max": 5,
+      "default": 0
+    },
+    {
+      "key": "aromes",
+      "type": "tags",
+      "label": {
+        "fr": "Arômes",
+        "en": "Aromas"
+      }
+    },
+    {
+      "key": "commentaire",
+      "type": "longtext",
+      "label": {
+        "fr": "Commentaire",
+        "en": "Notes"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "title",
+      "field": "nom"
+    },
+    {
+      "type": "badges",
+      "items": [
+        {
+          "field": "type"
+        },
+        {
+          "field": "date"
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "field": "note"
+    },
+    {
+      "type": "tags",
+      "field": "aromes"
+    },
+    {
+      "type": "fields",
+      "fields": [
+        "lieu",
+        "prix"
+      ]
+    },
+    {
+      "type": "longtext",
+      "field": "commentaire",
+      "rows": 5
+    }
+  ],
+  "functions": {
+    "fields": [
+      {
+        "key": "note",
+        "field": "note"
+      },
+      {
+        "key": "date",
+        "field": "date"
+      },
+      {
+        "key": "type",
+        "field": "type"
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "manifest": {
+    "id": "fiche-personnage",
+    "name": "Fiche de personnage",
+    "version": "1.0.0",
+    "description": "Une fiche de personnage de jeu de rôle : classe, niveau, points de vie, caractéristiques en barres, traits, inventaire et histoire.",
+    "extensions": [
+      "perso"
+    ],
+    "icon": "🧙",
+    "category": "fun",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "newDocument": [
+        {
+          "ext": "perso",
+          "label": "Nouveau personnage",
+          "seed": "ewogICJub20iOiAiIiwKICAiY2xhc3NlIjogImd1ZXJyaWVyIiwKICAibml2ZWF1IjogMSwKICAicHYiOiAxMCwKICAicHZfbWF4IjogMTAsCiAgImNhcmFjdGVyaXN0aXF1ZXMiOiB7CiAgICAiZm9yY2UiOiAxMCwKICAgICJkZXh0ZXJpdGUiOiAxMCwKICAgICJjb25zdGl0dXRpb24iOiAxMCwKICAgICJpbnRlbGxpZ2VuY2UiOiAxMCwKICAgICJzYWdlc3NlIjogMTAsCiAgICAiY2hhcmlzbWUiOiAxMAogIH0sCiAgInRyYWl0cyI6IFtdLAogICJpbnZlbnRhaXJlIjogWwogICAgewogICAgICAib2JqZXQiOiAiU2FjIMOgIGRvcyIsCiAgICAgICJxdWFudGl0ZSI6IDEKICAgIH0sCiAgICB7CiAgICAgICJvYmpldCI6ICJSYXRpb25zIChqb3VycykiLAogICAgICAicXVhbnRpdGUiOiAzCiAgICB9LAogICAgewogICAgICAib2JqZXQiOiAiVG9yY2hlcyIsCiAgICAgICJxdWFudGl0ZSI6IDIKICAgIH0KICBdLAogICJoaXN0b2lyZSI6ICIiCn0K"
+        }
+      ],
+      "functions": {
+        "extractText": true,
+        "fields": [
+          {
+            "key": "niveau",
+            "label": "Niveau",
+            "type": "number"
+          },
+          {
+            "key": "classe",
+            "label": "Classe",
+            "type": "text"
+          }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

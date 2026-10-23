@@ -1,0 +1,40 @@
+{
+  "nom": "Elwen Feuillesombre",
+  "classe": "voleur",
+  "niveau": 4,
+  "pv": 19,
+  "pv_max": 27,
+  "caracteristiques": {
+    "force": 9,
+    "dexterite": 17,
+    "constitution": 12,
+    "intelligence": 14,
+    "sagesse": 11,
+    "charisme": 13
+  },
+  "traits": [
+    "discrète",
+    "curieuse",
+    "dette envers la guilde"
+  ],
+  "inventaire": [
+    {
+      "objet": "Dague",
+      "quantite": 2
+    },
+    {
+      "objet": "Outils de voleur",
+      "quantite": 1
+    },
+    {
+      "objet": "Corde (15 m)",
+      "quantite": 1
+    },
+    {
+      "objet": "Pièces d’or",
+      "quantite": 37
+    }
+  ],
+  "histoire": "Née sur les quais de Port-Brume, Elwen a appris à ouvrir les serrures avant de savoir lire.",
+  "campagne": "Les Brumes d’Asterre"
+}

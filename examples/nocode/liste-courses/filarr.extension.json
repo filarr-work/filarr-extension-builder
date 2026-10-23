@@ -1,0 +1,23 @@
+{
+  "manifest": {
+    "id": "liste-courses",
+    "name": "Liste de courses",
+    "version": "1.0.0",
+    "description": "Une liste à cocher en texte brut, une ligne par article : « [ ] lait », « [x] pain ». Titres et notes gardés.",
+    "extensions": [
+      "courses"
+    ],
+    "icon": "🛒",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)"
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

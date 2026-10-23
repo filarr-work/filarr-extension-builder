@@ -1,0 +1,218 @@
+{
+  "nocode": 1,
+  "id": "carnet-recettes",
+  "format": {
+    "type": "json"
+  },
+  "accent": "#c2410c",
+  "fields": [
+    {
+      "key": "titre",
+      "type": "text",
+      "label": {
+        "fr": "Titre",
+        "en": "Title"
+      },
+      "placeholder": {
+        "fr": "Nom de la recette",
+        "en": "Recipe name"
+      }
+    },
+    {
+      "key": "categorie",
+      "type": "choice",
+      "label": {
+        "fr": "Catégorie",
+        "en": "Category"
+      },
+      "default": "plat",
+      "options": [
+        {
+          "value": "entree",
+          "label": {
+            "fr": "Entrée",
+            "en": "Starter"
+          },
+          "color": "#15803d"
+        },
+        {
+          "value": "plat",
+          "label": {
+            "fr": "Plat",
+            "en": "Main"
+          },
+          "color": "#c2410c"
+        },
+        {
+          "value": "dessert",
+          "label": {
+            "fr": "Dessert",
+            "en": "Dessert"
+          },
+          "color": "#be185d"
+        },
+        {
+          "value": "boisson",
+          "label": {
+            "fr": "Boisson",
+            "en": "Drink"
+          },
+          "color": "#0369a1"
+        }
+      ]
+    },
+    {
+      "key": "portions",
+      "type": "number",
+      "label": {
+        "fr": "Portions",
+        "en": "Servings"
+      },
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "key": "temps",
+      "type": "number",
+      "label": {
+        "fr": "Temps",
+        "en": "Time"
+      },
+      "unit": "min",
+      "min": 0,
+      "step": 5,
+      "default": 30
+    },
+    {
+      "key": "ingredients",
+      "type": "list",
+      "label": {
+        "fr": "Ingrédients",
+        "en": "Ingredients"
+      },
+      "fields": [
+        {
+          "key": "pris",
+          "type": "boolean",
+          "label": {
+            "fr": "Pris",
+            "en": "Got it"
+          }
+        },
+        {
+          "key": "nom",
+          "type": "text",
+          "label": {
+            "fr": "Ingrédient",
+            "en": "Ingredient"
+          },
+          "placeholder": {
+            "fr": "200 g de farine",
+            "en": "200 g flour"
+          }
+        }
+      ]
+    },
+    {
+      "key": "etapes",
+      "type": "textlist",
+      "label": {
+        "fr": "Étapes",
+        "en": "Steps"
+      },
+      "placeholder": {
+        "fr": "Décrivez l’étape",
+        "en": "Describe the step"
+      }
+    },
+    {
+      "key": "notes",
+      "type": "longtext",
+      "label": {
+        "fr": "Notes",
+        "en": "Notes"
+      },
+      "placeholder": {
+        "fr": "Astuces, variantes, accords…",
+        "en": "Tips, variations, pairings…"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "title",
+      "field": "titre",
+      "placeholder": {
+        "fr": "Nom de la recette",
+        "en": "Recipe name"
+      }
+    },
+    {
+      "type": "badges",
+      "items": [
+        {
+          "field": "categorie"
+        },
+        {
+          "field": "portions",
+          "stepper": true
+        },
+        {
+          "field": "temps",
+          "stepper": true
+        }
+      ]
+    },
+    {
+      "type": "progress",
+      "field": "ingredients",
+      "check": "pris",
+      "label": {
+        "fr": "Courses",
+        "en": "Shopping"
+      }
+    },
+    {
+      "type": "checklist",
+      "field": "ingredients",
+      "check": "pris",
+      "text": "nom",
+      "addLabel": {
+        "fr": "Ajouter un ingrédient",
+        "en": "Add an ingredient"
+      }
+    },
+    {
+      "type": "steps",
+      "field": "etapes",
+      "addLabel": {
+        "fr": "Ajouter une étape",
+        "en": "Add a step"
+      }
+    },
+    {
+      "type": "longtext",
+      "field": "notes",
+      "rows": 4
+    }
+  ],
+  "functions": {
+    "extractText": true,
+    "fields": [
+      {
+        "key": "portions",
+        "field": "portions"
+      },
+      {
+        "key": "temps",
+        "field": "temps"
+      },
+      {
+        "key": "categorie",
+        "field": "categorie"
+      }
+    ]
+  }
+}

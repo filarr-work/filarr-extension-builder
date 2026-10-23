@@ -1,0 +1,54 @@
+{
+  "nocode": 1,
+  "id": "glossaire",
+  "format": {
+    "type": "keyvalue",
+    "separator": ":",
+    "mode": "entries"
+  },
+  "accent": "#4338ca",
+  "fields": [
+    {
+      "key": "key",
+      "type": "text",
+      "label": {
+        "fr": "Terme",
+        "en": "Term"
+      }
+    },
+    {
+      "key": "value",
+      "type": "text",
+      "label": {
+        "fr": "Définition",
+        "en": "Definition"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "total",
+      "label": {
+        "fr": "Termes",
+        "en": "Terms"
+      },
+      "compute": {
+        "op": "count"
+      }
+    },
+    {
+      "type": "table",
+      "columns": [
+        "key",
+        "value"
+      ],
+      "addLabel": {
+        "fr": "Ajouter un terme",
+        "en": "Add a term"
+      }
+    }
+  ],
+  "functions": {
+    "extractText": true
+  }
+}

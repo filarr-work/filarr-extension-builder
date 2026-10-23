@@ -1,0 +1,38 @@
+{
+  "titre": "Lectures 2026",
+  "livres": [
+    {
+      "titre": "Les Furtifs",
+      "auteur": "Alain Damasio",
+      "statut": "lu",
+      "note": 5,
+      "fin": "2026-02-14",
+      "avis": "Une langue inventée qui finit par sonner juste. Long mais habité."
+    },
+    {
+      "titre": "La Horde du Contrevent",
+      "auteur": "Alain Damasio",
+      "statut": "en_cours",
+      "note": 0,
+      "fin": "",
+      "avis": ""
+    },
+    {
+      "titre": "Le Consentement",
+      "auteur": "Vanessa Springora",
+      "statut": "lu",
+      "note": 4,
+      "fin": "2026-05-03",
+      "avis": "Sobre et implacable.",
+      "pretePar": "Claire"
+    },
+    {
+      "titre": "Dune",
+      "auteur": "Frank Herbert",
+      "statut": "a_lire",
+      "note": 0,
+      "fin": "",
+      "avis": ""
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "manifest": {
+    "id": "journal-lecture",
+    "name": "Journal de lecture",
+    "version": "1.0.0",
+    "description": "Les livres de l’année en fiches : auteur, statut (à lire, en cours, lu), note en étoiles, dates et avis.",
+    "extensions": [
+      "lecture"
+    ],
+    "icon": "📚",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "extractText": true,
+        "fields": [
+          {
+            "key": "livres",
+            "label": "Livres",
+            "type": "number"
+          },
+          {
+            "key": "note_moyenne",
+            "label": "Note moyenne",
+            "type": "number"
+          }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

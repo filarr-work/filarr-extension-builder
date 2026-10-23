@@ -1,0 +1,42 @@
+{
+  "titre": "Tarte aux pommes de grand-mère",
+  "categorie": "dessert",
+  "portions": 6,
+  "temps": 70,
+  "ingredients": [
+    {
+      "pris": true,
+      "nom": "1 pâte brisée"
+    },
+    {
+      "pris": true,
+      "nom": "6 pommes (reinettes ou golden)"
+    },
+    {
+      "pris": false,
+      "nom": "60 g de sucre de canne"
+    },
+    {
+      "pris": false,
+      "nom": "40 g de beurre demi-sel"
+    },
+    {
+      "pris": false,
+      "nom": "1 sachet de sucre vanillé"
+    },
+    {
+      "pris": false,
+      "nom": "1 pincée de cannelle"
+    }
+  ],
+  "etapes": [
+    "Préchauffer le four à 200 °C (th. 6-7).",
+    "Étaler la pâte dans un moule beurré et la piquer à la fourchette.",
+    "Éplucher les pommes, en réduire deux en compote avec la moitié du sucre.",
+    "Étaler la compote, puis disposer les autres pommes en fines lamelles.",
+    "Parsemer de beurre en noisettes, du reste de sucre et de cannelle.",
+    "Enfourner 35 minutes, jusqu’à ce que les bords soient dorés."
+  ],
+  "notes": "Encore meilleure tiède, avec une boule de glace vanille.\nLa recette de mamie ajoute une cuillère de calvados dans la compote.",
+  "source": "Cahier de recettes familial, page 12"
+}

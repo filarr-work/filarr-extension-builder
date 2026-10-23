@@ -1,0 +1,211 @@
+{
+  "nocode": 1,
+  "id": "journal-lecture",
+  "format": {
+    "type": "json"
+  },
+  "accent": "#b45309",
+  "fields": [
+    {
+      "key": "titre",
+      "type": "text",
+      "label": {
+        "fr": "Journal",
+        "en": "Journal"
+      },
+      "default": ""
+    },
+    {
+      "key": "livres",
+      "type": "list",
+      "label": {
+        "fr": "Livres",
+        "en": "Books"
+      },
+      "fields": [
+        {
+          "key": "titre",
+          "type": "text",
+          "label": {
+            "fr": "Titre",
+            "en": "Title"
+          },
+          "placeholder": {
+            "fr": "Titre du livre",
+            "en": "Book title"
+          }
+        },
+        {
+          "key": "auteur",
+          "type": "text",
+          "label": {
+            "fr": "Auteur",
+            "en": "Author"
+          }
+        },
+        {
+          "key": "statut",
+          "type": "choice",
+          "label": {
+            "fr": "Statut",
+            "en": "Status"
+          },
+          "default": "a_lire",
+          "options": [
+            {
+              "value": "a_lire",
+              "label": {
+                "fr": "À lire",
+                "en": "To read"
+              },
+              "color": "#64748b"
+            },
+            {
+              "value": "en_cours",
+              "label": {
+                "fr": "En cours",
+                "en": "Reading"
+              },
+              "color": "#2563eb"
+            },
+            {
+              "value": "lu",
+              "label": {
+                "fr": "Lu",
+                "en": "Read"
+              },
+              "color": "#16a34a"
+            },
+            {
+              "value": "abandonne",
+              "label": {
+                "fr": "Abandonné",
+                "en": "Dropped"
+              },
+              "color": "#b91c1c"
+            }
+          ]
+        },
+        {
+          "key": "note",
+          "type": "rating",
+          "label": {
+            "fr": "Note",
+            "en": "Rating"
+          },
+          "max": 5,
+          "default": 0
+        },
+        {
+          "key": "fin",
+          "type": "date",
+          "label": {
+            "fr": "Terminé le",
+            "en": "Finished on"
+          }
+        },
+        {
+          "key": "avis",
+          "type": "longtext",
+          "label": {
+            "fr": "Avis",
+            "en": "Review"
+          }
+        }
+      ]
+    }
+  ],
+  "view": [
+    {
+      "type": "title",
+      "field": "titre",
+      "placeholder": {
+        "fr": "Mes lectures",
+        "en": "My reading"
+      }
+    },
+    {
+      "type": "total",
+      "label": {
+        "fr": "Livres",
+        "en": "Books"
+      },
+      "compute": {
+        "op": "count",
+        "field": "livres"
+      }
+    },
+    {
+      "type": "total",
+      "label": {
+        "fr": "Note moyenne",
+        "en": "Average rating"
+      },
+      "compute": {
+        "op": "avg",
+        "field": "livres",
+        "of": "note"
+      },
+      "decimals": 1,
+      "unit": "★"
+    },
+    {
+      "type": "cards",
+      "field": "livres",
+      "addLabel": {
+        "fr": "Ajouter un livre",
+        "en": "Add a book"
+      },
+      "blocks": [
+        {
+          "type": "title",
+          "field": "titre"
+        },
+        {
+          "type": "badges",
+          "items": [
+            {
+              "field": "statut"
+            },
+            {
+              "field": "auteur"
+            }
+          ]
+        },
+        {
+          "type": "rating",
+          "field": "note"
+        },
+        {
+          "type": "date",
+          "field": "fin"
+        },
+        {
+          "type": "longtext",
+          "field": "avis",
+          "rows": 3
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "extractText": true,
+    "fields": [
+      {
+        "key": "livres",
+        "compute": {
+          "op": "count",
+          "field": "livres"
+        }
+      },
+      {
+        "key": "note_moyenne",
+        "compute": {
+          "op": "avg",
+          "field": "livres",
+          "of": "note"
+        }
+      }
+    ]
+  }
+}

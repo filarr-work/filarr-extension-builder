@@ -1,0 +1,42 @@
+{
+  "nocode": 1,
+  "id": "liste-courses",
+  "format": {
+    "type": "lines"
+  },
+  "accent": "#16a34a",
+  "fields": [
+    {
+      "key": "text",
+      "type": "text",
+      "label": {
+        "fr": "Article",
+        "en": "Item"
+      },
+      "placeholder": {
+        "fr": "Ajouter un article",
+        "en": "Add an item"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "progress",
+      "label": {
+        "fr": "Dans le panier",
+        "en": "In the basket"
+      }
+    },
+    {
+      "type": "checklist",
+      "label": {
+        "fr": "À acheter",
+        "en": "To buy"
+      },
+      "addLabel": {
+        "fr": "Un article",
+        "en": "An item"
+      }
+    }
+  ]
+}

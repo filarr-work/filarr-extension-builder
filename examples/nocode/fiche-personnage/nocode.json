@@ -1,0 +1,406 @@
+{
+  "nocode": 1,
+  "id": "fiche-personnage",
+  "format": {
+    "type": "json"
+  },
+  "accent": "#7e22ce",
+  "fields": [
+    {
+      "key": "nom",
+      "type": "text",
+      "label": {
+        "fr": "Nom",
+        "en": "Name"
+      },
+      "placeholder": {
+        "fr": "Nom du personnage",
+        "en": "Character name"
+      }
+    },
+    {
+      "key": "classe",
+      "type": "choice",
+      "label": {
+        "fr": "Classe",
+        "en": "Class"
+      },
+      "default": "guerrier",
+      "options": [
+        {
+          "value": "guerrier",
+          "label": {
+            "fr": "Guerrier",
+            "en": "Fighter"
+          },
+          "color": "#b91c1c"
+        },
+        {
+          "value": "mage",
+          "label": {
+            "fr": "Mage",
+            "en": "Wizard"
+          },
+          "color": "#4338ca"
+        },
+        {
+          "value": "voleur",
+          "label": {
+            "fr": "Voleur",
+            "en": "Rogue"
+          },
+          "color": "#374151"
+        },
+        {
+          "value": "barde",
+          "label": {
+            "fr": "Barde",
+            "en": "Bard"
+          },
+          "color": "#c026d3"
+        },
+        {
+          "value": "clerc",
+          "label": {
+            "fr": "Clerc",
+            "en": "Cleric"
+          },
+          "color": "#ca8a04"
+        }
+      ]
+    },
+    {
+      "key": "niveau",
+      "type": "number",
+      "label": {
+        "fr": "Niveau",
+        "en": "Level"
+      },
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "key": "pv",
+      "type": "number",
+      "label": {
+        "fr": "Points de vie",
+        "en": "Hit points"
+      },
+      "min": 0,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "key": "pv_max",
+      "type": "number",
+      "label": {
+        "fr": "PV maximum",
+        "en": "Max HP"
+      },
+      "min": 1,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "key": "caracteristiques",
+      "type": "object",
+      "label": {
+        "fr": "Caractéristiques",
+        "en": "Abilities"
+      },
+      "fields": [
+        {
+          "key": "force",
+          "type": "number",
+          "label": {
+            "fr": "Force",
+            "en": "Strength"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        },
+        {
+          "key": "dexterite",
+          "type": "number",
+          "label": {
+            "fr": "Dextérité",
+            "en": "Dexterity"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        },
+        {
+          "key": "constitution",
+          "type": "number",
+          "label": {
+            "fr": "Constitution",
+            "en": "Constitution"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        },
+        {
+          "key": "intelligence",
+          "type": "number",
+          "label": {
+            "fr": "Intelligence",
+            "en": "Intelligence"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        },
+        {
+          "key": "sagesse",
+          "type": "number",
+          "label": {
+            "fr": "Sagesse",
+            "en": "Wisdom"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        },
+        {
+          "key": "charisme",
+          "type": "number",
+          "label": {
+            "fr": "Charisme",
+            "en": "Charisma"
+          },
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "default": 10
+        }
+      ]
+    },
+    {
+      "key": "traits",
+      "type": "tags",
+      "label": {
+        "fr": "Traits",
+        "en": "Traits"
+      }
+    },
+    {
+      "key": "inventaire",
+      "type": "list",
+      "label": {
+        "fr": "Inventaire",
+        "en": "Inventory"
+      },
+      "fields": [
+        {
+          "key": "objet",
+          "type": "text",
+          "label": {
+            "fr": "Objet",
+            "en": "Item"
+          }
+        },
+        {
+          "key": "quantite",
+          "type": "number",
+          "label": {
+            "fr": "Qté",
+            "en": "Qty"
+          },
+          "min": 0,
+          "step": 1,
+          "default": 1
+        }
+      ]
+    },
+    {
+      "key": "histoire",
+      "type": "longtext",
+      "label": {
+        "fr": "Histoire",
+        "en": "Backstory"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "title",
+      "field": "nom"
+    },
+    {
+      "type": "badges",
+      "items": [
+        {
+          "field": "classe"
+        },
+        {
+          "field": "niveau",
+          "stepper": true
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Points de vie",
+        "en": "Hit points"
+      },
+      "blocks": [
+        {
+          "type": "fields",
+          "fields": [
+            "pv",
+            "pv_max"
+          ]
+        },
+        {
+          "type": "progress",
+          "field": "pv",
+          "maxField": "pv_max",
+          "label": {
+            "fr": "Santé",
+            "en": "Health"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Caractéristiques",
+        "en": "Abilities"
+      },
+      "blocks": [
+        {
+          "type": "number",
+          "field": "caracteristiques.force"
+        },
+        {
+          "type": "progress",
+          "field": "caracteristiques.force",
+          "max": 20,
+          "label": {
+            "fr": "Force sur 20",
+            "en": "Strength out of 20"
+          }
+        },
+        {
+          "type": "number",
+          "field": "caracteristiques.dexterite"
+        },
+        {
+          "type": "progress",
+          "field": "caracteristiques.dexterite",
+          "max": 20,
+          "label": {
+            "fr": "Dextérité sur 20",
+            "en": "Dexterity out of 20"
+          }
+        },
+        {
+          "type": "number",
+          "field": "caracteristiques.constitution"
+        },
+        {
+          "type": "progress",
+          "field": "caracteristiques.constitution",
+          "max": 20,
+          "label": {
+            "fr": "Constitution sur 20",
+            "en": "Constitution out of 20"
+          }
+        },
+        {
+          "type": "number",
+          "field": "caracteristiques.intelligence"
+        },
+        {
+          "type": "progress",
+          "field": "caracteristiques.intelligence",
+          "max": 20,
+          "label": {
+            "fr": "Intelligence sur 20",
+            "en": "Intelligence out of 20"
+          }
+        },
+        {
+          "type": "number",
+          "field": "caracteristiques.sagesse"
+        },
+        {
+          "type": "progress",
+          "field": "caracteristiques.sagesse",
+          "max": 20,
+          "label": {
+            "fr": "Sagesse sur 20",
+            "en": "Wisdom out of 20"
+          }
+        },
+        {
+          "type": "number",
+          "field": "caracteristiques.charisme"
+        },
+        {
+          "type": "progress",
+          "field": "caracteristiques.charisme",
+          "max": 20,
+          "label": {
+            "fr": "Charisme sur 20",
+            "en": "Charisma out of 20"
+          }
+        }
+      ]
+    },
+    {
+      "type": "tags",
+      "field": "traits"
+    },
+    {
+      "type": "table",
+      "field": "inventaire",
+      "addLabel": {
+        "fr": "Ajouter un objet",
+        "en": "Add an item"
+      }
+    },
+    {
+      "type": "total",
+      "label": {
+        "fr": "Objets portés",
+        "en": "Items carried"
+      },
+      "compute": {
+        "op": "sum",
+        "field": "inventaire",
+        "of": "quantite"
+      }
+    },
+    {
+      "type": "longtext",
+      "field": "histoire",
+      "rows": 6
+    }
+  ],
+  "functions": {
+    "extractText": true,
+    "fields": [
+      {
+        "key": "niveau",
+        "field": "niveau"
+      },
+      {
+        "key": "classe",
+        "field": "classe"
+      }
+    ]
+  }
+}

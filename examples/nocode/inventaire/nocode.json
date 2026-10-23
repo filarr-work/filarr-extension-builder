@@ -1,0 +1,107 @@
+{
+  "nocode": 1,
+  "id": "inventaire",
+  "format": {
+    "type": "csv",
+    "delimiter": ";"
+  },
+  "accent": "#0369a1",
+  "fields": [
+    {
+      "key": "reference",
+      "type": "text",
+      "label": {
+        "fr": "Réf.",
+        "en": "Ref."
+      }
+    },
+    {
+      "key": "article",
+      "type": "text",
+      "label": {
+        "fr": "Article",
+        "en": "Item"
+      }
+    },
+    {
+      "key": "quantite",
+      "type": "number",
+      "label": {
+        "fr": "Quantité",
+        "en": "Quantity"
+      },
+      "min": 0,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "key": "prix",
+      "type": "number",
+      "label": {
+        "fr": "Prix unitaire",
+        "en": "Unit price"
+      },
+      "min": 0,
+      "decimals": 2,
+      "unit": "€"
+    },
+    {
+      "key": "emplacement",
+      "type": "text",
+      "label": {
+        "fr": "Emplacement",
+        "en": "Location"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "table",
+      "columns": [
+        "reference",
+        "article",
+        "quantite",
+        "prix",
+        "emplacement"
+      ],
+      "addLabel": {
+        "fr": "Ajouter un article",
+        "en": "Add an item"
+      }
+    },
+    {
+      "type": "total",
+      "label": {
+        "fr": "Articles en stock",
+        "en": "Items in stock"
+      },
+      "compute": {
+        "op": "sum",
+        "of": "quantite"
+      }
+    },
+    {
+      "type": "total",
+      "label": {
+        "fr": "Valeur du stock",
+        "en": "Stock value"
+      },
+      "compute": {
+        "op": "sumProduct",
+        "of": [
+          "quantite",
+          "prix"
+        ]
+      },
+      "decimals": 2,
+      "unit": "€"
+    }
+  ],
+  "functions": {
+    "exports": [
+      {
+        "to": "csv"
+      }
+    ]
+  }
+}

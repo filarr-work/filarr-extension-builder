@@ -1,0 +1,33 @@
+{
+  "manifest": {
+    "id": "inventaire",
+    "name": "Inventaire",
+    "version": "1.0.0",
+    "description": "Un inventaire en CSV : articles, quantités, prix unitaires, emplacements ; quantités et valeur du stock calculées. Export CSV.",
+    "extensions": [
+      "inventaire"
+    ],
+    "icon": "📦",
+    "category": "data",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "exports": [
+          {
+            "to": "csv",
+            "label": "CSV"
+          }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

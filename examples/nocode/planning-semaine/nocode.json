@@ -1,0 +1,457 @@
+{
+  "nocode": 1,
+  "id": "planning-semaine",
+  "format": {
+    "type": "json"
+  },
+  "accent": "#0d9488",
+  "fields": [
+    {
+      "key": "semaine",
+      "type": "text",
+      "label": {
+        "fr": "Semaine",
+        "en": "Week"
+      },
+      "placeholder": {
+        "fr": "Semaine du …",
+        "en": "Week of …"
+      }
+    },
+    {
+      "key": "lundi",
+      "type": "list",
+      "label": {
+        "fr": "Lundi",
+        "en": "Monday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "mardi",
+      "type": "list",
+      "label": {
+        "fr": "Mardi",
+        "en": "Tuesday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "mercredi",
+      "type": "list",
+      "label": {
+        "fr": "Mercredi",
+        "en": "Wednesday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "jeudi",
+      "type": "list",
+      "label": {
+        "fr": "Jeudi",
+        "en": "Thursday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "vendredi",
+      "type": "list",
+      "label": {
+        "fr": "Vendredi",
+        "en": "Friday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "samedi",
+      "type": "list",
+      "label": {
+        "fr": "Samedi",
+        "en": "Saturday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "dimanche",
+      "type": "list",
+      "label": {
+        "fr": "Dimanche",
+        "en": "Sunday"
+      },
+      "fields": [
+        {
+          "key": "fait",
+          "type": "boolean",
+          "label": {
+            "fr": "Fait",
+            "en": "Done"
+          }
+        },
+        {
+          "key": "tache",
+          "type": "text",
+          "label": {
+            "fr": "Tâche",
+            "en": "Task"
+          },
+          "placeholder": {
+            "fr": "Nouvelle tâche",
+            "en": "New task"
+          }
+        }
+      ]
+    },
+    {
+      "key": "notes",
+      "type": "longtext",
+      "label": {
+        "fr": "Notes de la semaine",
+        "en": "Notes for the week"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "title",
+      "field": "semaine"
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Lundi",
+        "en": "Monday"
+      },
+      "collapsed": false,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "lundi",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "lundi",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Mardi",
+        "en": "Tuesday"
+      },
+      "collapsed": false,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "mardi",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "mardi",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Mercredi",
+        "en": "Wednesday"
+      },
+      "collapsed": false,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "mercredi",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "mercredi",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Jeudi",
+        "en": "Thursday"
+      },
+      "collapsed": false,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "jeudi",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "jeudi",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Vendredi",
+        "en": "Friday"
+      },
+      "collapsed": false,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "vendredi",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "vendredi",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Samedi",
+        "en": "Saturday"
+      },
+      "collapsed": true,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "samedi",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "samedi",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": {
+        "fr": "Dimanche",
+        "en": "Sunday"
+      },
+      "collapsed": true,
+      "blocks": [
+        {
+          "type": "progress",
+          "field": "dimanche",
+          "check": "fait"
+        },
+        {
+          "type": "checklist",
+          "field": "dimanche",
+          "check": "fait",
+          "text": "tache",
+          "label": {
+            "fr": "Tâches",
+            "en": "Tasks"
+          },
+          "addLabel": {
+            "fr": "Une tâche",
+            "en": "A task"
+          }
+        }
+      ]
+    },
+    {
+      "type": "longtext",
+      "field": "notes",
+      "rows": 3
+    }
+  ],
+  "functions": {
+    "extractText": true
+  }
+}

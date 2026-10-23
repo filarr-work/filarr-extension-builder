@@ -1,0 +1,28 @@
+{
+  "manifest": {
+    "id": "fiche-contact",
+    "name": "Fiche contact",
+    "version": "1.0.0",
+    "description": "Une fiche par personne, en clair « clé: valeur » : nom, e-mail, site, téléphone, adresse, anniversaire et étiquettes.",
+    "extensions": [
+      "contact"
+    ],
+    "icon": "📇",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "extractText": true
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

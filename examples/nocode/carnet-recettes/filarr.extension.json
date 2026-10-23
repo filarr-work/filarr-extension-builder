@@ -1,0 +1,45 @@
+{
+  "manifest": {
+    "id": "carnet-recettes",
+    "name": "Carnet de recettes",
+    "version": "1.0.0",
+    "description": "Vos recettes en fiches : catégorie, portions, temps, ingrédients à cocher pendant les courses, étapes numérotées et notes.",
+    "extensions": [
+      "recette"
+    ],
+    "icon": "🍲",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "extractText": true,
+        "fields": [
+          {
+            "key": "portions",
+            "label": "Portions",
+            "type": "number"
+          },
+          {
+            "key": "temps",
+            "label": "Temps (min)",
+            "type": "number"
+          },
+          {
+            "key": "categorie",
+            "label": "Catégorie",
+            "type": "text"
+          }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

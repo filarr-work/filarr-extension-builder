@@ -1,0 +1,12 @@
+{
+  "name": "@filarr-examples/suivi-habitudes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Exemple sans code : suivi d’habitudes (.habitudes).",
+  "license": "MIT",
+  "scripts": {
+    "build": "filarr-ext build",
+    "check": "filarr-ext check",
+    "pack": "filarr-ext pack"
+  }
+}

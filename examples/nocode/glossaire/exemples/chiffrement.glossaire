@@ -1,0 +1,6 @@
+# Glossaire du chiffrement — une définition par ligne
+Chiffrement de bout en bout: seuls l’expéditeur et le destinataire peuvent lire le message ; le serveur ne voit que des octets illisibles.
+Clé publique: la moitié d’une paire de clés que l’on peut donner à tout le monde.
+Clé privée: la moitié qui ne quitte jamais votre appareil.
+Empreinte: un résumé court d’une clé, qu’on compare de vive voix pour éviter une substitution.
+Signature: la preuve, vérifiable par tous, qu’un contenu vient bien du détenteur d’une clé privée.

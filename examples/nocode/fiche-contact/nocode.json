@@ -1,0 +1,120 @@
+{
+  "nocode": 1,
+  "id": "fiche-contact",
+  "format": {
+    "type": "keyvalue",
+    "separator": ":"
+  },
+  "accent": "#0f766e",
+  "fields": [
+    {
+      "key": "nom",
+      "type": "text",
+      "label": {
+        "fr": "Nom",
+        "en": "Name"
+      },
+      "placeholder": {
+        "fr": "Prénom Nom",
+        "en": "First Last"
+      }
+    },
+    {
+      "key": "societe",
+      "type": "text",
+      "label": {
+        "fr": "Société",
+        "en": "Company"
+      }
+    },
+    {
+      "key": "fonction",
+      "type": "text",
+      "label": {
+        "fr": "Fonction",
+        "en": "Role"
+      }
+    },
+    {
+      "key": "email",
+      "type": "email",
+      "label": {
+        "fr": "E-mail",
+        "en": "E-mail"
+      },
+      "placeholder": "nom@exemple.fr"
+    },
+    {
+      "key": "site",
+      "type": "url",
+      "label": {
+        "fr": "Site",
+        "en": "Website"
+      },
+      "placeholder": "https://"
+    },
+    {
+      "key": "telephone",
+      "type": "text",
+      "label": {
+        "fr": "Téléphone",
+        "en": "Phone"
+      }
+    },
+    {
+      "key": "adresse",
+      "type": "text",
+      "label": {
+        "fr": "Adresse",
+        "en": "Address"
+      }
+    },
+    {
+      "key": "anniversaire",
+      "type": "date",
+      "label": {
+        "fr": "Anniversaire",
+        "en": "Birthday"
+      }
+    },
+    {
+      "key": "etiquettes",
+      "type": "tags",
+      "label": {
+        "fr": "Étiquettes",
+        "en": "Tags"
+      }
+    }
+  ],
+  "view": [
+    {
+      "type": "title",
+      "field": "nom"
+    },
+    {
+      "type": "link",
+      "field": "email"
+    },
+    {
+      "type": "link",
+      "field": "site"
+    },
+    {
+      "type": "fields",
+      "fields": [
+        "societe",
+        "fonction",
+        "telephone",
+        "adresse",
+        "anniversaire"
+      ]
+    },
+    {
+      "type": "tags",
+      "field": "etiquettes"
+    }
+  ],
+  "functions": {
+    "extractText": true
+  }
+}

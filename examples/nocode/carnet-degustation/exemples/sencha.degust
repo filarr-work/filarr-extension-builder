@@ -1,0 +1,14 @@
+{
+  "nom": "Sencha Asamushi",
+  "type": "the",
+  "date": "2026-10-02",
+  "lieu": "À la maison",
+  "prix": 9,
+  "note": 5,
+  "aromes": [
+    "herbe coupée",
+    "iode"
+  ],
+  "commentaire": "70 °C, 1 min 30. Deuxième infusion meilleure encore.",
+  "infusions": 3
+}

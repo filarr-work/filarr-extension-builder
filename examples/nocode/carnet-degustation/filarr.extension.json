@@ -1,0 +1,44 @@
+{
+  "manifest": {
+    "id": "carnet-degustation",
+    "name": "Carnet de dégustation",
+    "version": "1.0.0",
+    "description": "Une fiche par dégustation — vin, thé, café, fromage : note en étoiles, arômes en étiquettes, date, lieu et commentaire.",
+    "extensions": [
+      "degust"
+    ],
+    "icon": "🍷",
+    "category": "productivity",
+    "author": "Filarr Builder (exemple)",
+    "capabilities": {
+      "functions": {
+        "fields": [
+          {
+            "key": "note",
+            "label": "Note",
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "label": "Date",
+            "type": "date"
+          },
+          {
+            "key": "type",
+            "label": "Type",
+            "type": "text"
+          }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Exemple du Filarr Extension Builder.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": {
+    "kind": "nocode",
+    "config": "nocode.json"
+  }
+}

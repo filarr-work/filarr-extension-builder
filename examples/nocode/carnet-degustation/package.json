@@ -1,0 +1,12 @@
+{
+  "name": "@filarr-examples/carnet-degustation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Exemple sans code : carnet de dégustation (.degust).",
+  "license": "MIT",
+  "scripts": {
+    "build": "filarr-ext build",
+    "check": "filarr-ext check",
+    "pack": "filarr-ext pack"
+  }
+}

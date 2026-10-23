@@ -1,0 +1,31 @@
+{
+  "nom": "",
+  "classe": "guerrier",
+  "niveau": 1,
+  "pv": 10,
+  "pv_max": 10,
+  "caracteristiques": {
+    "force": 10,
+    "dexterite": 10,
+    "constitution": 10,
+    "intelligence": 10,
+    "sagesse": 10,
+    "charisme": 10
+  },
+  "traits": [],
+  "inventaire": [
+    {
+      "objet": "Sac à dos",
+      "quantite": 1
+    },
+    {
+      "objet": "Rations (jours)",
+      "quantite": 3
+    },
+    {
+      "objet": "Torches",
+      "quantite": 2
+    }
+  ],
+  "histoire": ""
+}

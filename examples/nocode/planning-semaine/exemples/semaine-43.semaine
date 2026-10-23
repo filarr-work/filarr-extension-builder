@@ -1,0 +1,53 @@
+{
+  "semaine": "Semaine du 19 octobre 2026",
+  "lundi": [
+    {
+      "fait": true,
+      "tache": "Réunion d’équipe 9 h"
+    },
+    {
+      "fait": true,
+      "tache": "Relire le contrat de bail"
+    }
+  ],
+  "mardi": [
+    {
+      "fait": true,
+      "tache": "Dentiste 17 h 30"
+    },
+    {
+      "fait": false,
+      "tache": "Appeler la banque"
+    }
+  ],
+  "mercredi": [
+    {
+      "fait": false,
+      "tache": "Piscine avec Léo"
+    }
+  ],
+  "jeudi": [
+    {
+      "fait": false,
+      "tache": "Déposer le colis"
+    },
+    {
+      "fait": false,
+      "tache": "Préparer la présentation"
+    }
+  ],
+  "vendredi": [
+    {
+      "fait": false,
+      "tache": "Présentation au client, 14 h"
+    }
+  ],
+  "samedi": [
+    {
+      "fait": false,
+      "tache": "Marché"
+    }
+  ],
+  "dimanche": [],
+  "notes": "Penser à réserver le train pour les vacances de la Toussaint."
+}
