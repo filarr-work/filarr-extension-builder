@@ -34,7 +34,6 @@ export const ENTRY_NAME_RE = /^[a-z0-9][a-z0-9._-]{0,63}(\/[a-z0-9][a-z0-9._-]{0
 export const DESCRIPTION_ENTRY = 'filarr-package.json';
 export const BUNDLE_ENTRY = 'bundle.js';
 export const NOCODE_ENTRY = 'nocode.json';
-export const ICON_ENTRIES = ['icon.png', 'icon.webp'] as const;
 export const SCREENSHOT_ENTRIES = [
   'screenshots/1.webp',
   'screenshots/2.webp',
@@ -46,18 +45,17 @@ export const MAX_DESCRIPTION_BYTES = 64 * 1024;
 export const MIN_BUNDLE_BYTES = 1;
 export const MAX_PACKAGE_BUNDLE_BYTES = 4 * 1024 * 1024;
 export const MAX_NOCODE_BYTES = 256 * 1024;
-export const MAX_ICON_BYTES = 8 * 1024;
 export const MAX_SCREENSHOT_BYTES = 96 * 1024;
 export const MAX_SCREENSHOTS = 4;
 
-/** Toutes les entrées qu'un paquet peut porter ; une autre est REFUSÉE. */
-export const KNOWN_ENTRIES: readonly string[] = [
-  DESCRIPTION_ENTRY,
-  BUNDLE_ENTRY,
-  NOCODE_ENTRY,
-  ...ICON_ENTRIES,
-  ...SCREENSHOT_ENTRIES,
-];
+/**
+ * Toutes les entrées qu'un paquet peut porter ; une autre est REFUSÉE.
+ *
+ * Aucune image d'icône : l'icône d'une extension est l'emoji `manifest.icon`
+ * (PUBLISHING.md §2). Une entrée `icon.png` ou `icon.webp` est refusée comme
+ * toute entrée inconnue (PACKAGE.md, correction du 2026-10-23).
+ */
+export const KNOWN_ENTRIES: readonly string[] = [DESCRIPTION_ENTRY, BUNDLE_ENTRY, NOCODE_ENTRY, ...SCREENSHOT_ENTRIES];
 
 // ── §3. La description ──────────────────────────────────────────────────────
 

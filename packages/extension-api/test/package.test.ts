@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ENTRY_NAME_RE, sniffImage, validatePackageDescription } from '../src/index';
+import { ENTRY_NAME_RE, KNOWN_ENTRIES, sniffImage, validatePackageDescription } from '../src/index';
 
 const exemple = {
   format: 1,
@@ -53,6 +53,12 @@ describe('filarr-package.json (PACKAGE.md §3)', () => {
 
   it('refuse une description de plus de 64 Kio', () => {
     expect(validatePackageDescription(exemple, 64 * 1024 + 1).ok).toBe(false);
+  });
+
+  it('aucune image d’icône parmi les entrées connues (l’icône est l’emoji du manifeste)', () => {
+    expect(KNOWN_ENTRIES).not.toContain('icon.png');
+    expect(KNOWN_ENTRIES).not.toContain('icon.webp');
+    expect(KNOWN_ENTRIES.some((e) => e.startsWith('icon'))).toBe(false);
   });
 
   it('noms d’entrées : un niveau de dossier, jamais .. ni chemin absolu', () => {
