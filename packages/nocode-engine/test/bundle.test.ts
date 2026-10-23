@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, inject, it } from 'vitest';
 import {
   BOOT_CALL,
   buildNocodeBundle,
@@ -10,12 +10,13 @@ import {
   serializeNocodeConfig,
 } from '../src/index';
 import type { NocodeConfig } from '../src/types';
-import { buildEngineSourceSync, engineVersion } from '../scripts/engine.mjs';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { recetteConfig } from './fixtures';
 
 let engine = '';
 beforeAll(() => {
-  engine = buildEngineSourceSync() as string;
+  engine = inject('engineSource');
 });
 
 /** Exécute un bundle EXACTEMENT comme la page bac à sable : corps de fonction, globalThis en paramètre. */
@@ -36,7 +37,7 @@ describe('buildNocodeBundle — PACKAGE.md §4', () => {
   });
 
   it('JSON sur une ligne, en ASCII, relu à l’identique par JSON.parse sans évaluation', () => {
-    const avecSeparateurs: NocodeConfig = { ...recetteConfig, fields: [{ ...recetteConfig.fields[0], label: 'Titre 🍲' }, ...recetteConfig.fields.slice(1)] };
+    const avecSeparateurs: NocodeConfig = { ...recetteConfig, fields: [{ ...recetteConfig.fields[0], default: 'Titre   🍲 é' }, ...recetteConfig.fields.slice(1)] };
     const bundle = buildNocodeBundle(avecSeparateurs, { engineSource: engine });
     expect(/^[\x00-\x7f]*$/.test(bundle.split('\n').pop()!)).toBe(true);
     const parsed = parseNocodeConfigFromBundle(bundle);
@@ -54,7 +55,7 @@ describe('buildNocodeBundle — PACKAGE.md §4', () => {
   });
 
   it('la version du moteur est celle du paquet', () => {
-    expect(ENGINE_VERSION).toBe(engineVersion());
+    expect(ENGINE_VERSION).toBe(JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')).version);
   });
 
   it('relecture : refuse ce qui n’a pas les deux lignes finales', () => {
