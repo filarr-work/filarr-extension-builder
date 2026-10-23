@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.filarrext
+.DS_Store
+coverage/

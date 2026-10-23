@@ -1,0 +1,13 @@
+{
+  "name": "filarr-extension-builder",
+  "private": true,
+  "description": "Outils publics pour créer, tester et empaqueter des extensions Filarr — avec ou sans code.",
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "workspaces": ["packages/*", "apps/*", "examples/code/*", "examples/nocode/*"],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check:examples": "npm run check --workspaces --if-present"
+  }
+}
