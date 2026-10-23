@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "meteo",
+    "name": "Météo",
+    "version": "0.1.0",
+    "description": "Suivez la météo de vos villes (fichiers .meteo) et affichez-la sur l'accueil de Filarr. Les prévisions viennent d'Open-Meteo (api.open-meteo.com, sans clé) ; chaque requête vous est montrée avant de partir et ne contient que des coordonnées. Application de bureau uniquement : sur le web, une extension n'a pas accès à Internet.",
+    "extensions": ["meteo"],
+    "icon": "🌦️",
+    "category": "data",
+    "capabilities": {
+      "network": { "domains": ["api.open-meteo.com"] },
+      "homeWidget": { "label": "Météo" }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : villes suivies, météo à la demande, widget d'accueil.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}

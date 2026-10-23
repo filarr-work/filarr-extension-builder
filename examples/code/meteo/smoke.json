@@ -1,0 +1,16 @@
+{
+  "edition": [
+    { "saisir": "input[type=search]", "valeur": "nan" },
+    { "cliquer": "[data-action=choisir]" },
+    { "cliquer": "[data-action=voir]" },
+    { "saisir": "input.mt-nom", "valeur": "Refuge {n}" },
+    { "saisir": "input.mt-coord[aria-label=Latitude]", "valeur": "45.8326" },
+    { "saisir": "input.mt-coord[aria-label=Longitude]", "valeur": "6.8652" },
+    { "cliquer": "[data-action=ajouter-coordonnees]" }
+  ],
+  "widget": { "config": "Lyon" },
+  "reseau": [
+    { "prefixe": "https://api.open-meteo.com/v1/forecast?latitude=45.7640&longitude=4.8357", "statut": 200, "type": "application/json", "fichier": "exemples/reponses/prevision-lyon.json" },
+    { "prefixe": "https://api.open-meteo.com/v1/forecast", "statut": 200, "type": "application/json", "fichier": "exemples/reponses/prevision-generique.json" }
+  ]
+}

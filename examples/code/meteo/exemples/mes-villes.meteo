@@ -1,0 +1,30 @@
+{
+  "format": "filarr-meteo",
+  "version": 1,
+  "villes": [
+    {
+      "id": "v-1f2e3d",
+      "nom": "Lyon",
+      "lat": 45.764,
+      "lon": 4.8357
+    },
+    {
+      "id": "v-4c5b6a",
+      "nom": "Brest",
+      "lat": 48.3904,
+      "lon": -4.4861
+    },
+    {
+      "id": "v-7a8b9c",
+      "nom": "Chamonix-Mont-Blanc",
+      "lat": 45.9237,
+      "lon": 6.8694
+    },
+    {
+      "id": "v-0d1e2f",
+      "nom": "Montréal",
+      "lat": 45.5019,
+      "lon": -73.5674
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "format": "filarr-meteo",
+  "version": 1,
+  "villes": [
+    {
+      "id": "v-aa11bb",
+      "nom": "Chalet du Tour",
+      "lat": 46.0012,
+      "lon": 6.9481
+    }
+  ]
+}
