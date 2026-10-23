@@ -1,0 +1,59 @@
+1
+00:00:01,200 --> 00:00:03,400
+<i>Lyon, un matin de novembre.</i>
+
+2
+00:00:04,100 --> 00:00:06,300
+— Tu as encore oublié tes clés ?
+
+3
+00:00:06,500 --> 00:00:09,200
+— Non… je les ai laissées
+à l’intérieur. C’est différent.
+
+4
+00:00:09,800 --> 00:00:12,100
+— C’est exactement pareil, Hugo.
+
+5
+00:00:12,600 --> 00:00:15,800
+— Le serrurier ne vient pas
+avant midi. On fait quoi ?
+
+6
+00:00:16,400 --> 00:00:18,900
+— On attend. Comme d’habitude.
+
+7
+00:00:21,500 --> 00:00:24,300
+<i>(une porte claque au loin)</i>
+
+8
+00:00:25,000 --> 00:00:27,600
+— Attends. Tu as entendu ?
+
+9
+00:00:27,900 --> 00:00:30,400
+— C’est la voisine du troisième.
+Elle a un double.
+
+10
+00:00:31,000 --> 00:00:33,200
+— Depuis quand ?
+
+11
+00:00:33,500 --> 00:00:36,900
+— Depuis que tu as oublié tes clés
+la dernière fois. En mars.
+
+12
+00:00:37,600 --> 00:00:40,100
+— Tu aurais pu me le dire.
+
+13
+00:00:40,400 --> 00:00:43,000
+— Tu ne m’as pas demandé.
+
+14
+00:00:45,800 --> 00:00:48,600
+<i>Fin.</i>

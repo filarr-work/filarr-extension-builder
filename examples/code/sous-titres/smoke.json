@@ -1,0 +1,8 @@
+{
+  "edition": [
+    { "saisir": ".st-ligne:first-child textarea", "valeur": "Lyon, un matin de novembre ({n})." },
+    { "saisir": ".st-ligne:first-child .st-fin", "valeur": "00:00:03,900" },
+    { "touche": ".st-ligne:first-child textarea", "cle": "Enter", "ctrl": true },
+    { "saisir": ".st-ligne:nth-child(2) textarea", "valeur": "Réplique insérée {n}" }
+  ]
+}

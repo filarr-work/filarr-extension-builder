@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "manifest": {
+    "id": "sous-titres",
+    "name": "Sous-titres",
+    "version": "0.1.0",
+    "description": "Édite les sous-titres SubRip (.srt) : temps de début et de fin, texte, décalage global, chevauchements signalés. Ouvre aussi les WebVTT (.vtt) et les convertit en .srt sans toucher à l'original. La recherche de Filarr trouve une réplique par ce qui est dit ; on exporte une transcription en texte ou les répliques en JSON.",
+    "extensions": ["srt"],
+    "icon": "💬",
+    "category": "media",
+    "capabilities": {
+      "imports": ["vtt"],
+      "functions": {
+        "extractText": true,
+        "exports": [
+          { "to": "txt", "label": "Transcription (texte)" },
+          { "to": "json", "label": "Répliques en JSON" }
+        ]
+      }
+    }
+  },
+  "listing": {
+    "releaseNotes": "Première version : édition des temps et du texte, décalage global, import WebVTT, transcription.",
+    "license": "MIT"
+  },
+  "screenshots": [],
+  "build": { "kind": "code", "entry": "src/index.ts" }
+}

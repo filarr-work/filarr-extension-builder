@@ -1,0 +1,29 @@
+WEBVTT - Conférence « Chiffrer sans se perdre »
+
+NOTE
+Transcription relue le 12 octobre.
+
+STYLE
+::cue(v[voice="Alice"]) { color: #ffd166; }
+
+intro
+00:01.000 --> 00:04.500 align:start position:10%
+<v Alice>Bonjour à toutes et à tous.
+
+00:05.000 --> 00:09.250
+<v Alice>Aujourd’hui : comment chiffrer
+de bout en bout <i>sans</i> se perdre.
+
+question-1
+00:10.000 --> 00:13.000
+<v.public Bruno>Et si je perds ma clé ?
+
+00:13.400 --> 00:18.900 line:85%
+<v Alice>Alors personne ne pourra lire vos fichiers.
+Pas même nous. C’est le principe.
+
+00:19.200 --> 00:22.000
+<c.rire>(rires)</c> &amp; applaudissements
+
+01:02:03.000 --> 01:02:05.500
+<v Alice>Merci de votre attention.

@@ -1,0 +1,30 @@
+﻿1
+00:00:00,000 --> 00:00:04,200
+Bonjour, et merci d’avoir accepté cet entretien.
+
+2
+00:00:04,600 --> 00:00:09,800
+Avec plaisir. On m’a dit que vous travailliez
+sur la mémoire des quartiers ?
+
+3
+00:00:10,200 --> 00:00:15,400
+Oui : nous recueillons des récits d’habitants,
+que nous transcrivons puis archivons.
+
+4
+00:00:18,600 --> 00:00:23,000
+Et pourquoi des sous-titres, plutôt qu’un texte ?
+
+5
+00:00:23,400 --> 00:00:29,900
+Parce que la voix compte. Le texte seul
+perd les silences, les hésitations.
+
+6
+00:00:30,300 --> 00:00:33,100
+Les silences ?
+
+7
+00:00:36,800 --> 00:00:41,200
+Oui. Celui-là, par exemple, il dit quelque chose.
