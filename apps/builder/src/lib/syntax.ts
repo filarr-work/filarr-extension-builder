@@ -10,16 +10,12 @@
  * reste celui du simulateur, qui exécute le bundle dans la page de Filarr.
  */
 
-import { parse } from 'acorn';
+import { parse, type Options } from 'acorn';
 
 export function compileAsFunctionBody(code: string): void {
-  parse(code, {
-    ecmaVersion: 'latest',
-    sourceType: 'script',
-    allowReturnOutsideFunction: true,
-    allowNewDotTarget: true,
-    allowHashBang: false,
-  });
+  // `allowNewDotTarget` existe dans acorn 8 mais manque à ses types : `new.target` est permis dans un corps de fonction.
+  const options = { ecmaVersion: 'latest', sourceType: 'script', allowReturnOutsideFunction: true, allowNewDotTarget: true, allowHashBang: false } as Options;
+  parse(code, options);
 }
 
 /** Le même contrôle, sous forme de verdict. */

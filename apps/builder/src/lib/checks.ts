@@ -139,7 +139,9 @@ function probeLines(p: SandboxProbe, report: Report): void {
   else report.error('sandbox_mount', `la page bac à sable refuse le montage : ${p.error ?? 'erreur inconnue'}`, 'bundle.js');
   for (const f of p.functions ?? []) {
     if (f.ok) report.ok('sandbox_function', `fonction ${f.name} : répond dans la page sans API`);
-    else report.error('function_missing', `la capacité functions déclare « ${f.name} », mais la page répond : ${f.error ?? 'échec'}`, 'bundle.js');
+    // Absente du bundle : Filarr l'appellerait pour rien. Présente mais en échec sur l'exemple : à regarder.
+    else if (/sandbox_(no_functions|not_function|no_plugin)/.test(f.error ?? '')) report.error('function_missing', `la capacité functions déclare « ${f.name} », mais le bundle ne l’offre pas (${f.error})`, 'bundle.js');
+    else report.warn('function_failed', `fonction ${f.name} : échoue sur le fichier d’exemple (${f.error ?? 'échec'})`, 'bundle.js');
   }
 }
 
