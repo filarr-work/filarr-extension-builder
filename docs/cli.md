@@ -58,7 +58,7 @@ contrôle, `2` commande mal formée.
 | ------------- | ----------- | ----------------------------------------------------------------------------------------------- |
 | `manifest`    | oui         | Le manifeste **non signé**, exactement tel qu'il ira dans le paquet (voir `check`)              |
 | `listing`     | non         | La fiche : `releaseNotes` (≤ 2000), `sourceUrl` (`https://`, ≤ 300), `license` (≤ 40)           |
-| `screenshots` | non         | 0 à 4 captures PNG, JPEG ou WebP, 96 Kio chacune — chemins **relatifs au projet**               |
+| `screenshots` | non         | 0 à 4 captures PNG ou WebP, 96 Kio chacune — chemins **relatifs au projet**               |
 | `build`       | oui         | `{ "kind": "code", "entry": "src/index.ts" }` ou `{ "kind": "nocode", "config": "nocode.json" }` |
 | `samples`     | non         | Le dossier des fichiers d'exemple du simulateur (défaut : `exemples`)                           |
 | `format`      | non         | `1`                                                                                             |
@@ -119,7 +119,7 @@ PUBLISHING.md) et **de Filarr** (validateur de capacités, lecture du paquet, pa
 | Champ inconnu du manifeste | toujours | — |
 | `capabilities` | refusées par le validateur de Filarr (copie **vendorisée**, à l'identique) : clé inconnue, borne, exclusion réseau… | — |
 | Fiche (`listing`) | hors bornes, clé inconnue | pas de licence |
-| Captures | plus de 4, absentes, ni PNG ni JPEG ni WebP (lu dans les octets), plus de 96 Kio | aucune capture ; JPEG (le serveur ne garde que PNG et WebP en aperçu) |
+| Captures | plus de 4, absentes, ni PNG ni WebP (lu dans les octets), JPEG (Filarr ne garde que PNG et WebP en aperçu), plus de 96 Kio | aucune capture |
 | Manifeste signé | plus de 640 Kio une fois les captures ajoutées en data URL | — |
 | Build | erreur esbuild, configuration sans code refusée (avec son chemin : `view[2].field`) | avertissement esbuild |
 | Taille du bundle | vide ou plus de 4 Mio | plus de 1 Mio |

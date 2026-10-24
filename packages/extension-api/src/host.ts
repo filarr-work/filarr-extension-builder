@@ -241,7 +241,7 @@ export type FieldValue = string | number | boolean | null;
 export interface ExtensionFunctions {
   /** Pour la recherche locale ; écrêté à 100 000 caractères. */
   extractText?(bytes: Uint8Array, ctx: FunctionContext): string | Promise<string>;
-  /** PNG, JPEG ou WebP reconnu par ses octets, 96 Kio au plus. */
+  /** PNG ou WebP reconnu par ses octets, 96 Kio au plus (JPEG refusé). */
   thumbnail?(bytes: Uint8Array, ctx: FunctionContext): Uint8Array | ArrayBuffer | Promise<Uint8Array | ArrayBuffer>;
   /** Seules les clés DÉCLARÉES passent, chacune au type déclaré ; texte ≤ 500 caractères. */
   fields?(bytes: Uint8Array, ctx: FunctionContext): Record<string, FieldValue> | Promise<Record<string, FieldValue>>;

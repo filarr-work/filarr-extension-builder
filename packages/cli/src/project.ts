@@ -4,7 +4,7 @@
  *   {
  *     "manifest":    { …le manifeste NON SIGNÉ, tel qu'il ira dans le paquet… },
  *     "listing":     { "releaseNotes", "sourceUrl", "license" },
- *     "screenshots": ["captures/1.png", …],          // 4 au plus, PNG/JPEG/WebP
+ *     "screenshots": ["captures/1.png", …],          // 4 au plus, PNG ou WebP
  *     "build":       { "kind": "code", "entry": "src/index.ts" }
  *                  | { "kind": "nocode", "config": "nocode.json" },
  *     "samples":     "exemples"                       // les fichiers du simulateur
