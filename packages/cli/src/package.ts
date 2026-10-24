@@ -38,7 +38,7 @@ import {
   serializeNocodeConfig,
   validateConfig,
 } from '@filarr/nocode-engine';
-import { checkBundleShape, checkEntryPoints, scanApis } from './checks';
+import { checkBundleShape, checkEntryPoints, scanApis, type CompileCheck } from './checks';
 import type { CheckResult } from './check';
 import { checkScreenshot } from './images';
 import { formatBytes, Report } from './report';
@@ -190,7 +190,7 @@ export interface VerifyResult {
  * Relit un paquet comme Filarr le relira. N'EXÉCUTE rien (le bundle est
  * compilé, jamais appelé) : un paquet venu d'ailleurs reste une donnée.
  */
-export function verifyPackage(data: Uint8Array, opts: { engineSource?: string } = {}): VerifyResult {
+export function verifyPackage(data: Uint8Array, opts: { engineSource?: string; compile?: CompileCheck } = {}): VerifyResult {
   const report = new Report();
   const archive = readArchive(data, report);
   if (!archive) return { report };
@@ -245,7 +245,7 @@ export function verifyPackage(data: Uint8Array, opts: { engineSource?: string } 
     report.error('bundle_encoding', `${BUNDLE_ENTRY} n’est pas en UTF-8`);
     return { report, description: desc };
   }
-  checkBundleShape(code, bundleBytes.byteLength, report);
+  checkBundleShape(code, bundleBytes.byteLength, report, opts.compile);
 
   // Sans code : la configuration, deux fois, et identique.
   const nocodeBytes = entries.get(NOCODE_ENTRY);
@@ -293,9 +293,11 @@ export function verifyPackage(data: Uint8Array, opts: { engineSource?: string } 
 
 /**
  * Assemble l'archive d'un projet déjà contrôlé. Les images sont stockées sans
- * recompression (elles le sont déjà), le reste en deflate.
+ * recompression (elles le sont déjà), le reste en deflate. `opts.tool` : ce que
+ * déclare `build.tool` quand un autre outil que `filarr-ext` assemble le paquet
+ * (Filarr Builder) ; par défaut `filarr-ext <version>`.
  */
-export function assemblePackage(check: CheckResult, toolVersion: string): { bytes: Uint8Array; description: PackageDescription } {
+export function assemblePackage(check: CheckResult, toolVersion: string, opts: { tool?: string } = {}): { bytes: Uint8Array; description: PackageDescription } {
   const project = check.project!;
   const build = check.build!;
   const manifest = check.manifest!;
@@ -307,8 +309,8 @@ export function assemblePackage(check: CheckResult, toolVersion: string): { byte
     ...(screenshots.length ? { screenshots: [...screenshots] } : {}),
     build:
       build.kind === 'nocode'
-        ? { kind: 'nocode', tool: `filarr-ext ${toolVersion}`, engine: build.engineVersion ?? ENGINE_VERSION }
-        : { kind: 'code', tool: `filarr-ext ${toolVersion}` },
+        ? { kind: 'nocode', tool: opts.tool ?? `filarr-ext ${toolVersion}`, engine: build.engineVersion ?? ENGINE_VERSION }
+        : { kind: 'code', tool: opts.tool ?? `filarr-ext ${toolVersion}` },
   };
   const files: Zippable = {
     [DESCRIPTION_ENTRY]: [ENC.encode(`${JSON.stringify(description, null, 2)}\n`), { level: 9, mtime: FIXED_MTIME }],

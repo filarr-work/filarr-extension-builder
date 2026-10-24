@@ -35,8 +35,20 @@ export function scanApis(code: string, report: Report): void {
   if (/sourceMappingURL=data:/.test(code)) report.warn('inline_sourcemap', 'carte de sources embarquée : elle alourdit le bundle sans servir à l’utilisateur', 'bundle.js');
 }
 
-/** Taille, syntaxe de corps de fonction, présence du global. Rend `false` si le bundle est inutilisable. */
-export function checkBundleShape(code: string, bytes: number, report: Report): boolean {
+/** Compile le bundle comme corps de fonction, sans l'appeler — ce que fait la page avant de l'exécuter. */
+export type CompileCheck = (code: string) => void;
+
+const compileAsFunctionBody: CompileCheck = (code) => {
+  new Function('globalThis', code);
+};
+
+/**
+ * Taille, syntaxe de corps de fonction, présence du global. Rend `false` si le
+ * bundle est inutilisable. `compile` : la vérification de syntaxe, remplaçable
+ * là où `new Function` est interdit (une page dont la CSP refuse `unsafe-eval`,
+ * comme Filarr Builder, qui passe un analyseur) ; elle jette sur une erreur.
+ */
+export function checkBundleShape(code: string, bytes: number, report: Report, compile: CompileCheck = compileAsFunctionBody): boolean {
   let ok = true;
   if (bytes < 1) {
     report.error('bundle_empty', 'bundle vide', 'bundle.js');
@@ -52,7 +64,7 @@ export function checkBundleShape(code: string, bytes: number, report: Report): b
   }
   try {
     // COMPILÉ, jamais exécuté : c'est exactement ce que fait la page avant de l'appeler.
-    new Function('globalThis', code);
+    compile(code);
     report.ok('bundle_syntax', 'se compile comme corps de fonction : IIFE, sans import ni export au niveau haut');
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

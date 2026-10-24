@@ -5,7 +5,7 @@ import { strToU8, unzipSync, zipSync } from 'fflate';
 import { parseNocodeConfigFromBundle } from '@filarr/nocode-engine';
 import { main } from '../src/main';
 import { runCheck } from '../src/check';
-import { verifyPackage } from '../src/package';
+import { assemblePackage, verifyPackage } from '../src/package';
 import { planPublish, publishUrl } from '../src/publish';
 import { checkBundleShape } from '../src/checks';
 import { Report } from '../src/report';
@@ -91,6 +91,21 @@ globalThis.filarrSandboxedPlugin = { editors: [{ id: 'notes-essai-editor', mount
     checkBundleShape('export const x = 1;', 20, r);
     expect(r.lines.find((l) => l.code === 'bundle_syntax')?.level).toBe('error');
   });
+
+  it('accepte une vérification de syntaxe fournie (là où new Function est interdit par la CSP)', () => {
+    const vus: string[] = [];
+    const ok = new Report();
+    checkBundleShape('globalThis.filarrSandboxedPlugin = {};', 38, ok, (code) => {
+      vus.push(code);
+    });
+    expect(vus).toEqual(['globalThis.filarrSandboxedPlugin = {};']);
+    expect(ok.lines.find((l) => l.code === 'bundle_syntax')?.level).toBe('ok');
+    const ko = new Report();
+    checkBundleShape('globalThis.filarrSandboxedPlugin = {};', 38, ko, () => {
+      throw new Error('Unexpected token');
+    });
+    expect(ko.lines.find((l) => l.code === 'bundle_syntax')?.message).toContain('Unexpected token');
+  });
 });
 
 describe('pack et verify', () => {
@@ -114,6 +129,21 @@ describe('pack et verify', () => {
     // Deux fois le même projet : la même archive.
     expect(await main(['pack', '--dir', dir], capture().out)).toBe(0);
     expect(Array.from(new Uint8Array(readFileSync(path)))).toEqual(Array.from(bytes));
+    expect(verifyPackage(bytes).report.passed).toBe(true);
+    // La même relecture, la syntaxe vérifiée par un analyseur fourni (Filarr Builder).
+    let compiles = 0;
+    expect(verifyPackage(bytes, { compile: () => void compiles++ }).report.passed).toBe(true);
+    expect(compiles).toBe(1);
+  });
+
+  it('déclare l’outil qui assemble le paquet (build.tool), filarr-ext par défaut', async () => {
+    const dir = project('pack-tool', nocodeProject());
+    const check = await runCheck(dir);
+    expect(check.report.passed).toBe(true);
+    const parDefaut = assemblePackage(check, '1.0.0').description.build.tool;
+    expect(parDefaut).toBe('filarr-ext 1.0.0');
+    const { bytes, description } = assemblePackage(check, '1.0.0', { tool: 'Filarr Builder 1.0.0' });
+    expect(description.build).toEqual({ kind: 'nocode', tool: 'Filarr Builder 1.0.0', engine: '1.0.0' });
     expect(verifyPackage(bytes).report.passed).toBe(true);
   });
 
