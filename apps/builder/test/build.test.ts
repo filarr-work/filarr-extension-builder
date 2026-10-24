@@ -4,6 +4,8 @@ import { loadProject } from '../../../packages/cli/src/project';
 import { buildProject } from '../src/lib/build';
 import { utf8 } from '../src/lib/bytes';
 import { parseProject } from '../src/lib/project';
+import { runChecks } from '../src/lib/checks';
+import { toCodeProject } from '../src/lib/tocode';
 import { exampleDir, exampleFiles, nodeDeps } from './helpers';
 
 describe('construction dans le navigateur — la même sortie que filarr-ext', () => {
@@ -47,5 +49,16 @@ describe('construction dans le navigateur — la même sortie que filarr-ext', (
     const r = await buildProject(files, parseProject(files), nodeDeps);
     expect(r.ok).toBe(false);
     expect(r.errors[0]).toMatch(/^src\/index\.ts:1 — /);
+  });
+
+  it('« Passer en code » : le même moteur, appelé depuis src/index.js, se construit et passe les contrôles', async () => {
+    const files = toCodeProject(exampleFiles('nocode', 'carnet-recettes'), 'Carnet de recettes');
+    const project = parseProject(files);
+    expect(project.build).toEqual({ kind: 'code', entry: 'src/index.js' });
+    const r = await buildProject(files, project, nodeDeps);
+    expect(r.errors).toEqual([]);
+    expect(r.code).toContain('carnet-recettes');
+    const errors = runChecks(files, r).report.lines.filter((l) => l.level === 'error');
+    expect(errors).toEqual([]);
   });
 });

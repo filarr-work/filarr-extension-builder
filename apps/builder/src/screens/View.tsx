@@ -12,7 +12,8 @@ import { useMemo, useState, type DragEvent } from 'react';
 import { validateConfig, type BlockDef, type BlockType, type FieldType, type LocalText, type NocodeConfig } from '@filarr/nocode-engine';
 import { Modal } from '../components/chrome';
 import { ProjectHeader, Skip } from '../components/ProjectHeader';
-import { text, utf8 } from '../lib/bytes';
+import { text } from '../lib/bytes';
+import { toCodeProject } from '../lib/tocode';
 import {
   blockAt,
   blockTarget,
@@ -34,7 +35,7 @@ import {
   type Level,
 } from '../lib/compose';
 import { setLabel } from '../lib/fields';
-import { sampleFiles, updateProjectJson } from '../lib/project';
+import { sampleFiles } from '../lib/project';
 import { Simulator } from '../sim/Simulator';
 import { usePrefs } from '../state/prefs';
 import { useProject } from '../state/project';
@@ -151,26 +152,7 @@ export function ViewScreen() {
   const bundleTail = build?.ok && build.code ? build.code.split('\n').slice(-2).join('\n') : '';
 
   const passToCode = () => {
-    // Le même moteur, appelé depuis du code : l'extension se comporte à l'identique, et l'auteur peut l'étendre.
-    const entry = 'src/index.js';
-    const src = `/**
- * ${project.manifest.name} — passée en code depuis le Builder.
- *
- * Le moteur sans code reste le moteur : @filarr/nocode-engine lit nocode.json et
- * pose globalThis.filarrSandboxedPlugin, comme la version sans code. À vous
- * d'enrichir le résultat (envelopper mount, ajouter une fonction…).
- */
-import { createPlugin } from '@filarr/nocode-engine';
-import config from '../nocode.json';
-
-globalThis.filarrSandboxedPlugin = createPlugin(config);
-`;
-    setFiles((f) => {
-      const next = updateProjectJson(f, (raw) => {
-        raw.build = { kind: 'code', entry };
-      });
-      return { ...next, [entry]: utf8(src) };
-    });
+    setFiles((f) => toCodeProject(f, String(project.manifest.name ?? project.manifest.id), project.build.kind === 'nocode' ? project.build.config : 'nocode.json'));
     setToCode(false);
     go(href(key, 'essai'));
   };
