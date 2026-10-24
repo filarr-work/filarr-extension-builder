@@ -32,7 +32,6 @@ export default defineConfig({
     fs: { allow: [here('../..')] },
   },
   preview: { port: 4173, strictPort: true, host: '127.0.0.1' },
-  optimizeDeps: { exclude: ['esbuild-wasm'] },
   build: {
     target: 'es2022',
     outDir: 'dist',

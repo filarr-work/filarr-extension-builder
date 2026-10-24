@@ -61,7 +61,9 @@ let esbuildP: Promise<EsbuildApi> | null = null;
 /** esbuild-wasm, chargé à la première construction avec code seulement (≈ 12 Mio de WebAssembly). */
 function browserEsbuild(): Promise<EsbuildApi> {
   esbuildP ??= (async () => {
-    const [esbuild, wasm] = await Promise.all([import('esbuild-wasm'), import('esbuild-wasm/esbuild.wasm?url')]);
+    const [mod, wasm] = await Promise.all([import('esbuild-wasm'), import('esbuild-wasm/esbuild.wasm?url')]);
+    // Module CommonJS : selon l'outil qui le sert, l'API est à la racine ou sous `default`.
+    const esbuild = ((mod as { initialize?: unknown }).initialize ? mod : (mod as unknown as { default: typeof mod }).default) as typeof mod;
     // Le WebAssembly vient de l'origine du Builder ; le worker d'esbuild aussi (URL blob:).
     await esbuild.initialize({ wasmURL: wasm.default, worker: true });
     return esbuild as unknown as EsbuildApi;
