@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "types": ["node", "vite/client"],
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@filarr/extension-api": ["../../packages/extension-api/src/index.ts"],
+      "@filarr/nocode-engine": ["../../packages/nocode-engine/src/index.ts"],
+      "@filarr-cli/*": ["../../packages/cli/src/*"],
+      "@filarr-devhost/*": ["../../packages/devhost/src/*"],
+      "@filarr-create/*": ["../../packages/create-filarr-extension/src/*"]
+    }
+  },
+  "include": ["src", "test", "vite", "e2e", "vite.config.ts", "playwright.config.ts"]
+}
