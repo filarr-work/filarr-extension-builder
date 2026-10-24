@@ -18,8 +18,9 @@ export default defineConfig({
       // L'hôte navigateur du simulateur (packages/devhost/src/client et son pont vendorisé).
       { find: /^@filarr-devhost\/(.*)$/, replacement: here('../../packages/devhost/src/$1') },
       { find: /^@filarr-create\/(.*)$/, replacement: here('../../packages/create-filarr-extension/src/$1') },
-      // `checks.ts` importe `node:vm` pour l'exécution à blanc, que l'atelier ne fait jamais.
-      { find: 'node:vm', replacement: here('./src/lib/shims/vm.ts') },
+      // `checks.ts` importe `node:vm` pour l'exécution à blanc, que l'atelier ne fait jamais. Sous
+      // vitest, les tests comparent l'atelier au VRAI `filarr-ext check`, qui en a besoin.
+      ...(process.env.VITEST ? [] : [{ find: 'node:vm', replacement: here('./src/lib/shims/vm.ts') }]),
     ],
   },
   server: {

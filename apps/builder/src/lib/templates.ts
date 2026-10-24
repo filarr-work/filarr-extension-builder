@@ -181,11 +181,9 @@ export async function createProjectFiles(o: NewProjectOptions): Promise<FileMap>
 
 /** L'arborescence d'un projet, pour l'aperçu « Le projet créé ». */
 export function treeLines(root: string, paths: string[]): string[] {
-  const visible = paths.filter((p) => !p.startsWith('.')).sort((a, b) => {
-    const da = a.includes('/') ? 0 : 1;
-    const db = b.includes('/') ? 0 : 1;
-    return da - db || a.localeCompare(b);
-  });
+  // L'ordre de la maquette : src/ d'abord, puis les autres dossiers, puis les fichiers.
+  const rank = (p: string) => (p.startsWith('src/') ? 0 : p.includes('/') ? 1 : 2);
+  const visible = paths.filter((p) => !p.startsWith('.')).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
   const lines = [`${root}/`];
   const groups = new Map<string, string[]>();
   for (const p of visible) {
