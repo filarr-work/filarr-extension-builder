@@ -218,6 +218,8 @@ export function Simulator({ code, buildKey, manifest, samples, compact = false, 
           log: (d, t) => write(d, t, i),
         });
       } catch (e) {
+        // Un montage remplacé entre-temps (nouvelle construction) n'a plus rien à dire.
+        if (mine !== gen.current) return;
         write('error', String(e instanceof Error ? e.message : e), i);
         setBanner(tr('La page bac à sable ne s’est pas chargée.', 'The sandbox page did not load.'));
         return;
@@ -240,10 +242,12 @@ export function Simulator({ code, buildKey, manifest, samples, compact = false, 
           locale: lang,
           ...(isCollab ? { collab: { seed: i === 0 && room.current.length === 0, responsible: i === 0, updates: room.current.map((u) => u.slice()) } } : {}),
         });
+        if (mine !== gen.current) return;
         write('info', tr(`monté · ${docName} · ${formatBytes(bytes.byteLength, lang)} reçus`, `mounted · ${docName} · ${formatBytes(bytes.byteLength, lang)} received`), i);
         if (i === 0 && m === 'editor') onProbe?.({ editorId, mounted: true });
         if (isCollab && i === 0) await Promise.race([seededP, new Promise((r) => setTimeout(r, 1500))]);
       } catch (e) {
+        if (mine !== gen.current) return;
         const msg = e instanceof Error ? e.message : String(e);
         write('error', `mount-error : ${msg}`, i);
         setBanner(tr(`Montage refusé : ${msg}`, `Mount refused: ${msg}`));
@@ -466,4 +470,23 @@ export async function probeFunctions(code: string, manifest: ExtensionManifest, 
     }
   }
   return out;
+}
+
+/** Le montage de l'éditeur, à blanc, dans une page cachée : ce que l'outil vérifie par `vm`. */
+export async function probeEditor(code: string, manifest: ExtensionManifest, sample: Sample | null): Promise<SandboxProbe> {
+  const v = readExtensionCapabilities(manifest.capabilities ?? {}, manifest.extensions ?? []);
+  const editorId = `${manifest.id}-editor`;
+  const holder = document.createElement('div');
+  document.body.append(holder);
+  let page: MountedPage | null = null;
+  try {
+    page = await openPage({ container: holder, title: 'sonde', hidden: true, grants: v.ok ? v.capabilities : {}, onDirty: () => undefined, saveBytes: async () => undefined, onFatal: () => undefined, log: () => undefined });
+    await initPage(page, { mode: 'editor', code, editorId, fileName: sample?.name ?? `nouveau.${manifest.extensions[0]}`, readOnly: true, bytes: sample?.bytes.slice() ?? new Uint8Array(), theme: hostTheme('light'), locale: 'fr' });
+    return { editorId, mounted: true };
+  } catch (e) {
+    return { editorId, mounted: false, error: e instanceof Error ? e.message : String(e) };
+  } finally {
+    page?.destroy();
+    holder.remove();
+  }
 }

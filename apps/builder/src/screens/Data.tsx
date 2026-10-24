@@ -275,21 +275,7 @@ export function DataScreen() {
                           <Fragment key={r.path + r.index.join('.')}>
                             <tr className={r.depth ? 'sub' : ''}>
                               <td className="path" style={{ paddingLeft: 12 + r.depth * 16 }}>
-                                {isFixed ? (
-                                  r.path
-                                ) : (
-                                  <input
-                                    className="input mono"
-                                    style={{ width: `${Math.max(8, r.def.key.length + 2)}ch`, minWidth: '8ch' }}
-                                    aria-label={tr(`Clé du champ ${r.path}`, `Key of field ${r.path}`)}
-                                    defaultValue={r.def.key}
-                                    onBlur={(e) => {
-                                      const k = e.target.value.trim();
-                                      if (k && k !== r.def.key && isUsableKey(k)) editField(r, (f) => ({ ...f, key: k }));
-                                      else e.target.value = r.def.key;
-                                    }}
-                                  />
-                                )}
+                                {r.path}
                                 {r.def.type === 'list' ? '[]' : ''}
                               </td>
                               <td>
@@ -354,7 +340,7 @@ export function DataScreen() {
                             {open === r.path ? (
                               <tr className="detail-row" id={`${rowId}-d`}>
                                 <td colSpan={5}>
-                                  <FieldDetails def={r.def} onChange={(fn) => editField(r, fn)} canAddSub={(r.def.type === 'list' || r.def.type === 'object') && r.depth < 2} />
+                                  <FieldDetails def={r.def} onChange={(fn) => editField(r, fn)} canAddSub={(r.def.type === 'list' || r.def.type === 'object') && r.depth < 2} fixedKey={isFixed} />
                                 </td>
                               </tr>
                             ) : null}
@@ -480,7 +466,7 @@ function ExtInput({ value, onChange }: { value: string[]; onChange(v: string[]):
 }
 
 /** Les réglages d'un champ, propres à son type (ceux que le moteur admet, rien d'autre). */
-function FieldDetails({ def, onChange, canAddSub }: { def: FieldDef; onChange(fn: (f: FieldDef) => FieldDef | null): void; canAddSub: boolean }) {
+function FieldDetails({ def, onChange, canAddSub, fixedKey }: { def: FieldDef; onChange(fn: (f: FieldDef) => FieldDef | null): void; canAddSub: boolean; fixedKey: boolean }) {
   const { tr, lang } = usePrefs();
   const num = (k: keyof FieldDef, label: string, opts: { int?: boolean } = {}) => (
     <label className="field" style={{ gap: 4 }}>
@@ -519,6 +505,20 @@ function FieldDetails({ def, onChange, canAddSub }: { def: FieldDef; onChange(fn
   return (
     <div className="stack" style={{ ['--gap' as string]: '10px', padding: '6px 0' }}>
       <div className="grid-auto" style={{ ['--min' as string]: '150px', ['--gap' as string]: '10px' }}>
+        {!fixedKey ? (
+          <label className="field" style={{ gap: 4 }}>
+            <span className="label" style={{ fontSize: 13 }}>{tr('Clé dans le fichier', 'Key in the file')}</span>
+            <input
+              className="input input-sm mono"
+              defaultValue={def.key}
+              onBlur={(e) => {
+                const k = e.target.value.trim();
+                if (k && k !== def.key && isUsableKey(k)) onChange((f) => ({ ...f, key: k }));
+                else e.target.value = def.key;
+              }}
+            />
+          </label>
+        ) : null}
         {['text', 'longtext', 'url', 'email', 'textlist', 'tags', 'number'].includes(def.type) ? str('placeholder', tr('Indication (champ vide)', 'Placeholder'), true) : null}
         {def.type === 'number' ? (
           <>

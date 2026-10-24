@@ -273,7 +273,7 @@ table.data .select, table.data .input { min-height: 34px; font-size: 13px; borde
 .tabs { display: flex; overflow-x: auto; border-bottom: 1px solid var(--border); background: var(--surface-2); }
 .tabs [role='tab'] { font-family: var(--mono); font-size: 13px; padding: 10px 16px; border: 0; border-right: 1px solid var(--border); background: transparent; color: var(--faint); border-top: 2px solid transparent; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
 .tabs [role='tab'][aria-selected='true'] { background: var(--bg); color: var(--text); border-top-color: var(--accent); }
-.editor-host { flex: 1; min-height: 320px; overflow: hidden; display: flex; }
+.editor-host { flex: 1; min-height: 320px; max-height: 64vh; overflow: hidden; display: flex; }
 .editor-host .cm-editor { flex: 1; height: 100%; }
 .binary { padding: 24px; color: var(--muted); display: flex; flex-direction: column; gap: 10px; }
 .checks { border-top: 1px solid var(--border); background: var(--surface-2); padding: 12px 18px 16px; display: flex; flex-direction: column; gap: 10px; max-height: 40vh; overflow: auto; }
