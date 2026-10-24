@@ -14,10 +14,20 @@
   c'est ouvrir l'XSS sur toute l'application E2EE — la page servie est la
   bonne réponse, c'est pour ça qu'elle existe.
 
-  `webrtc 'block'` est posé ICI AUSSI (pas seulement dans les en-têtes
-  serveur) : default-src/connect-src ne régissent PAS RTCPeerConnection — sans
-  ce token, la meta-CSP « filet de fond » laisserait ouvert le seul canal
-  réseau restant.
+  WEBRTC — default-src/connect-src ne régissent PAS RTCPeerConnection, et la
+  directive `webrtc 'block'` (gardée ici et dans les en-têtes) n'est PAS
+  reconnue par Chromium : mesuré le 2026-10-23, la console dit « Unrecognized
+  Content-Security-Policy directive 'webrtc' » et un RTCPeerConnection s'y
+  construit et collecte ses candidats. Un serveur STUN ou TURN choisi par le
+  greffon ferait sortir des données. Trois verrous la remplacent :
+    1. le script ci-dessous retire les constructeurs WebRTC de CE domaine
+       d'exécution AVANT que le moindre code de greffon ne tourne ;
+    2. script-src n'admet QUE l'empreinte de ce script (plus 'unsafe-inline') :
+       une iframe enfant créée par le greffon (srcdoc) hérite de la CSP et ne
+       peut exécuter aucun script — donc aucun domaine d'exécution neuf, aucun
+       constructeur intact. Les deux empreintes (fins de ligne LF et CRLF) sont
+       tenues par `scripts/sandbox-csp-hash.cjs` et un test de conformité ;
+    3. le préchargement DNS est coupé (pas de fuite par résolution de nom).
 
   `worker-src blob:` et `media-src blob: data:` (docs/plugins/CAPACITES.md,
   palier 1) : un worker créé depuis un blob: HÉRITE de la CSP de cette page —
@@ -32,7 +42,8 @@
   octets dans les deux sens — l'extension tient SON Y.Doc, envoie ses updates,
   applique celles des autres ; jamais de document partagé ni de présence.
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src blob: data:; worker-src blob:; form-action 'none'; base-uri 'none'; webrtc 'block'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-jKGdnVh/NdYsETIO6UoNhZXyL23CGHX7PkOGg2YCJZg=' 'sha256-SP8V9npMpwbrwj7cEA2TgYHtll7CxHhZbHdWMvx6tLo=' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src blob: data:; worker-src blob:; form-action 'none'; base-uri 'none'; webrtc 'block'" />
+<meta http-equiv="x-dns-prefetch-control" content="off" />
 <title>Filarr — plugin isolé</title>
 <style>
   html, body { margin: 0; height: 100%; background: transparent; }
@@ -42,6 +53,13 @@
 <div id="plugin-root" style="position:fixed;inset:0"></div>
 <script>
 'use strict';
+// WebRTC retiré de ce domaine d'exécution AVANT tout code de greffon (voir l'en-tête).
+['RTCPeerConnection', 'webkitRTCPeerConnection', 'RTCDataChannel', 'RTCSessionDescription',
+  'RTCIceCandidate', 'RTCRtpSender', 'RTCRtpReceiver', 'RTCRtpTransceiver'].forEach(function (nom) {
+  try {
+    Object.defineProperty(window, nom, { value: undefined, writable: false, configurable: false });
+  } catch (e) { /* déjà absent */ }
+});
 (function () {
   var VERSION = 2;
   var BOOTSTRAP_TYPE = 'filarr-sandbox-bootstrap';

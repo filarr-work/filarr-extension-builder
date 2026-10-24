@@ -5,7 +5,7 @@
       "from": "public/plugin-sandbox.html",
       "to": "vendor/plugin-sandbox.html",
       "header": "none",
-      "sha256": "57058a617064d3ee033a7e1224b8b60117266084517d1ddc9b4a3012fbc88d75"
+      "sha256": "fdbab43d496878d9111521782c7deff3ea72c6069c32fa8b3c77dc36f81eeb2b"
     },
     {
       "from": "src/services/plugins/sandbox/sandboxProtocol.ts",

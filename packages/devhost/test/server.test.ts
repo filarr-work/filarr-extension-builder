@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { request } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { SANDBOX_HEADERS, startDevHost, type DevBuild, type DevHost } from '../src/index';
+import { sandboxHeaders, startDevHost, type DevBuild, type DevHost } from '../src/index';
 
 let host: DevHost;
 let dir: string;
@@ -51,7 +51,11 @@ describe('le serveur du simulateur', () => {
     expect(index.body).toContain(host.token);
     const page = await get('/plugin-sandbox.html');
     expect(page.status).toBe(200);
-    expect(page.headers['content-security-policy']).toBe(SANDBOX_HEADERS['Content-Security-Policy']);
+    const csp = page.headers['content-security-policy'] as string;
+    expect(csp).toBe(sandboxHeaders(page.body as string)['Content-Security-Policy']);
+    // Le seul script de la page, par son empreinte : jamais 'unsafe-inline'.
+    expect(csp).toMatch(/script-src 'sha256-[^']+' 'sha256-[^']+' 'unsafe-eval'/);
+    expect(csp).not.toContain("'unsafe-inline' 'unsafe-eval'");
     expect(page.headers['content-security-policy']).toContain("webrtc 'block'");
     expect(page.body).toBe(readFileSync(new URL('../vendor/plugin-sandbox.html', import.meta.url), 'utf8'));
   });

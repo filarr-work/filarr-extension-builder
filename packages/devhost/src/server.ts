@@ -12,7 +12,7 @@
  * réseau — exigent le jeton de la page et son origine.
  */
 
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync, watch, type FSWatcher } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -55,11 +55,38 @@ export interface DevHost {
   close(): Promise<void>;
 }
 
+/**
+ * Les deux empreintes (fins de ligne LF et CRLF) du SEUL script en ligne de la
+ * page bac à sable — comme `scripts/sandbox-csp-hash.cjs` de filarg. La CSP
+ * n'admet que lui : une iframe enfant fabriquée par l'extension n'exécute
+ * rien, et c'est ce qui ferme WebRTC, que Chromium ne coupe pas par la
+ * directive `webrtc`. Calculées depuis la page servie : elles ne peuvent pas
+ * dériver d'elle.
+ */
+export function sandboxScriptHashes(page: string): string {
+  const lf = page.replace(/\r\n/g, '\n');
+  const blocs = [...lf.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  if (blocs.length !== 1) throw new Error(`plugin-sandbox.html : ${blocs.length} scripts en ligne, 1 attendu`);
+  const h = (s: string) => `'sha256-${createHash('sha256').update(s, 'utf8').digest('base64')}'`;
+  return `${h(blocs[0][1])} ${h(blocs[0][1].replace(/\n/g, '\r\n'))}`;
+}
+
 /** La CSP et les en-têtes de la page bac à sable — ceux de Filarr (`SANDBOX_HEADERS`). */
+export function sandboxHeaders(page: string): Record<string, string> {
+  return {
+    ...SANDBOX_HEADERS,
+    'Content-Security-Policy': SANDBOX_HEADERS['Content-Security-Policy'].replace(
+      'SANDBOX_SCRIPT_HASHES',
+      sandboxScriptHashes(page)
+    ),
+  };
+}
+
+/** Le modèle des en-têtes ; `sandboxHeaders(page)` y pose les empreintes du script. */
 export const SANDBOX_HEADERS: Record<string, string> = {
   'Content-Security-Policy': [
     "default-src 'none'",
-    "script-src 'unsafe-inline' 'unsafe-eval'",
+    "script-src SANDBOX_SCRIPT_HASHES 'unsafe-eval'",
     "style-src 'unsafe-inline'",
     'img-src data: blob:',
     'font-src data:',
@@ -257,7 +284,7 @@ export async function startDevHost(opts: DevHostOptions): Promise<DevHost> {
         return;
       }
       if (req.method === 'GET' && path === '/plugin-sandbox.html') {
-        send(res, 200, assets.sandbox, 'text/html; charset=utf-8', SANDBOX_HEADERS);
+        send(res, 200, assets.sandbox, 'text/html; charset=utf-8', sandboxHeaders(assets.sandbox));
         return;
       }
       if (req.method === 'GET' && path === '/api/state') {

@@ -8,5 +8,5 @@
  * les seuls domaines déclarés, co-édition entre deux pages. Lancé par
  * `filarr-ext dev`.
  */
-export { startDevHost, SANDBOX_HEADERS, type DevBuild, type DevHost, type DevHostOptions } from './server';
+export { startDevHost, SANDBOX_HEADERS, sandboxHeaders, sandboxScriptHashes, type DevBuild, type DevHost, type DevHostOptions } from './server';
 export { judgeRequest, relayRequest, isPublicAddress, type NetGrant, type NetInput, type NetOutcome } from './netRelay';
