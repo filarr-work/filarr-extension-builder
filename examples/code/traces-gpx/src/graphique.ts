@@ -19,6 +19,24 @@ const VL = 1000;
 const VH = 320;
 const M = { g: 56, d: 16, h: 24, b: 40 };
 
+/** Largeur estimée d'un nom de segment à 12 unités de police (on dessine hors page : rien à mesurer). */
+export const largeurNom = (texte: string): number => Math.ceil(texte.length * 6.6);
+
+/**
+ * La RANGÉE de chaque nom de segment : la première où le nom précédent est
+ * fini, au plus `max` rangées ; sinon celle qui se libère le plus tôt. Un
+ * segment court ne fait plus écrire son nom par-dessus celui du suivant.
+ */
+export function rangsNoms(departs: number[], largeurs: number[], max = 3, ecart = 8): number[] {
+  const fins: number[] = [];
+  return departs.map((x, i) => {
+    let rang = fins.findIndex((fin) => x >= fin);
+    if (rang === -1) rang = fins.length < max ? fins.length : fins.indexOf(Math.min(...fins));
+    fins[rang] = x + largeurs[i] + ecart;
+    return rang;
+  });
+}
+
 export interface Graphique {
   element: SVGSVGElement;
   dessiner(p: Profil, noms: string[]): void;
@@ -126,10 +144,12 @@ export function creerGraphique(t: Textes, langue: string): Graphique {
       ligne.setAttribute('d', `M${pts.join('L')}`);
       aire.setAttribute('d', `M${x(e[0][0]).toFixed(1)} ${VH - M.b}L${pts.join('L')}L${x(e[e.length - 1][0]).toFixed(1)} ${VH - M.b}Z`);
 
+      const textes = p.debuts.map((_, i) => (noms[i] || t.segmentSansNom(i + 1)).slice(0, 28));
+      const rangs = rangsNoms(p.debuts.map((d) => x(d) + 4), textes.map(largeurNom));
       p.debuts.forEach((d, i) => {
         if (i > 0) limites.append(svg('line', { x1: x(d), x2: x(d), y1: M.h, y2: VH - M.b }));
-        const nom = svg('text', { x: x(d) + 4, y: M.h + 14 });
-        nom.textContent = (noms[i] || t.segmentSansNom(i + 1)).slice(0, 28);
+        const nom = svg('text', { x: x(d) + 4, y: M.h + 14 + rangs[i] * 14 });
+        nom.textContent = textes[i];
         limites.append(nom);
       });
       placer(position);

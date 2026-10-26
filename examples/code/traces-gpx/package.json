@@ -1,6 +1,6 @@
 {
   "name": "@filarr-examples/traces-gpx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Exemple Filarr : des traces GPX — profil, dénivelé, Web Worker et fonctions pures.",
   "license": "MIT",
