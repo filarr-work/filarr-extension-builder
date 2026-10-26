@@ -224,8 +224,8 @@ export function PublishScreen() {
               </ul>
               <p className="hint" style={{ margin: 0 }}>{tr('Votre e-mail, vos fichiers et vos notes restent privés.', 'Your email, your files and your notes stay private.')}</p>
               <div className="registry">
-                <strong>{tr('Copié dans le registre public', 'Copied to the public registry')}</strong>
-                <span>{tr('Bundle, manifeste et signature rejoignent filarr-extensions, lisibles par tous, sans compte. Retirer l’extension du catalogue ne les efface pas du registre.', 'Bundle, manifest and signature join filarr-extensions, readable by anyone, without an account. Removing the extension from the catalog does not erase them from the registry.')}</span>
+                <strong>{tr('Une version publiée est définitive', 'A published version is final')}</strong>
+                <span>{tr('Bundle, manifeste et signature sont téléchargés par chaque personne qui installe l’extension, et cette version ne se modifie plus : corriger, c’est publier la suivante.', 'Bundle, manifest and signature are downloaded by everyone who installs the extension, and this version can no longer change: fixing it means publishing the next one.')}</span>
               </div>
               <dl className="facts">
                 <dt>sha256</dt>
