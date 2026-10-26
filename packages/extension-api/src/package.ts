@@ -1,5 +1,5 @@
 /**
- * package — le paquet `.filarrext` (docs/plugins/PACKAGE.md, contrat GELÉ le
+ * package — le paquet `.filarrext` (docs/contract/PACKAGE.md, contrat GELÉ le
  * 2026-10-23, format 1).
  *
  * Ce module décrit le format et juge sa DESCRIPTION (`filarr-package.json`) et

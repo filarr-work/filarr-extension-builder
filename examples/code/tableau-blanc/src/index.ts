@@ -1,7 +1,7 @@
 /**
  * Tableau blanc — co-édition en direct (capacité `collab`), Yjs embarqué.
  *
- * Ce que l'exemple montre : le motif de `docs/plugins/API.md` §3, à la lettre
+ * Ce que l'exemple montre : le motif de `docs/contract/API.md` §3, à la lettre
  * (`salle.ts`), et ses trois conséquences pour un éditeur :
  *
  *  - le fichier reste du JSON (`tableau.ts`) : le `Y.Doc` n'est qu'un état de

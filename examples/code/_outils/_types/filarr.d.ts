@@ -2,7 +2,7 @@
  * filarr.d.ts — les types AMBIANTS de l'API `host`, pour les exemples avec code.
  *
  * Écrits champ par champ d'après la page bac à sable de Filarr
- * (`public/plugin-sandbox.html`, protocole version 2) et `docs/plugins/API.md`.
+ * (`public/plugin-sandbox.html`, protocole version 2) et `docs/contract/API.md`.
  * Si un jour la page et ce fichier divergent, c'est la page qui a raison : elle
  * est ce qui exécute votre code.
  *

@@ -1,5 +1,5 @@
 /**
- * salle — la co-édition en direct, selon le motif de `docs/plugins/API.md` §3.
+ * salle — la co-édition en direct, selon le motif de `docs/contract/API.md` §3.
  *
  * L'extension tient SON `Y.Doc` (Yjs est embarqué dans le bundle) et échange
  * des OCTETS avec l'hôte ; elle ne reçoit jamais le document de la salle, ni

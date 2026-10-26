@@ -560,7 +560,7 @@ export function creerHote(page, o = {}) {
         for (const [k, v] of Object.entries(r.headers ?? {})) headers[String(k).toLowerCase()] = String(v);
         const body = r.body === undefined || r.body === null ? null : versOctets(r.body);
         return new w.Promise((res, rej) => {
-          // Le jugement de l'hôte, avant toute requête (CAPACITES.md, palier 4).
+          // Le jugement de l'hôte, avant toute requête (CAPABILITIES.md, palier 4).
           let code = null;
           let hote = '';
           try {
