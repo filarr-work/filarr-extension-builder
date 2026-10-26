@@ -22,7 +22,7 @@ const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const SAMPLE = join(REPO, 'examples', 'nocode', 'carnet-recettes', 'exemples', 'tarte-aux-pommes.recette');
 const SHOT = join(REPO, 'examples', 'code', 'planche-photos', 'exemples', 'photos', 'phare.png');
 const JPEG = join(REPO, 'examples', 'code', 'planche-photos', 'exemples', 'photos', 'galet.jpg');
-const FAKE_FILARR_PORT = 4181;
+const FAKE_FILARR_PORT = Number(process.env.BUILDER_E2E_FAKE_PORT ?? 4181);
 const OUT = mkdtempSync(join(tmpdir(), 'filarr-builder-e2e-'));
 
 /** La relecture de `filarr-ext verify`, l'outil du terminal, sur le paquet téléchargé. */
