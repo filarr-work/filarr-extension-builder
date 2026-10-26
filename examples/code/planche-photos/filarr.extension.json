@@ -8,6 +8,7 @@
     "extensions": ["planche"],
     "icon": "🖼️",
     "category": "media",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "picker": { "access": "read", "extensions": ["png", "jpg", "jpeg", "webp"] }
     }

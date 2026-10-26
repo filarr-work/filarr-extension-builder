@@ -8,6 +8,7 @@
     "extensions": ["srt"],
     "icon": "💬",
     "category": "media",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "imports": ["vtt"],
       "functions": {

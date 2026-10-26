@@ -8,6 +8,7 @@
     "extensions": ["rebours"],
     "icon": "⏳",
     "category": "productivity",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "noteBlock": { "label": "Compte à rebours" }
     }

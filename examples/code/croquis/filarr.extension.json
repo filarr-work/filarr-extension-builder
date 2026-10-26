@@ -8,6 +8,7 @@
     "extensions": ["croquis"],
     "icon": "✏️",
     "category": "media",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "newDocument": [
         {

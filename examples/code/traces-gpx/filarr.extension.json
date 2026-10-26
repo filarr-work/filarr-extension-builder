@@ -8,6 +8,7 @@
     "extensions": ["gpx"],
     "icon": "⛰️",
     "category": "data",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "functions": {
         "extractText": true,

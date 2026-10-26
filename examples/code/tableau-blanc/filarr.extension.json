@@ -8,6 +8,7 @@
     "extensions": ["tableau"],
     "icon": "🧑‍🏫",
     "category": "productivity",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "collab": true
     }

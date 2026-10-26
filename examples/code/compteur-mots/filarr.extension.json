@@ -9,7 +9,8 @@
       "wc"
     ],
     "icon": "🔢",
-    "category": "editors"
+    "category": "editors",
+    "author": "Filarr Builder (exemple)"
   },
   "listing": {
     "releaseNotes": "Première version : compte des mots et des caractères, temps de lecture.",

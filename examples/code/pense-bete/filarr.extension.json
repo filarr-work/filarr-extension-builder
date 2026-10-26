@@ -8,6 +8,7 @@
     "extensions": ["postit"],
     "icon": "🗒️",
     "category": "productivity",
+    "author": "Filarr Builder (exemple)",
     "capabilities": {
       "storage": { "quota": 65536 }
     }
