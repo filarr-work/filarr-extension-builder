@@ -183,6 +183,10 @@ function headersFile(): string {
   block('/', { 'Content-Security-Policy': ATELIER_CSP, 'X-Frame-Options': 'DENY' });
   block('/index.html', { 'Content-Security-Policy': ATELIER_CSP, 'X-Frame-Options': 'DENY' });
   block('/plugin-sandbox.html', sandbox);
+  // Cloudflare Pages redirige `/plugin-sandbox.html` (308) vers `/plugin-sandbox` et sert
+  // la page À CETTE ADRESSE : sans cette règle, elle partait sans sa CSP d'en-tête
+  // (vérifié sur filarr-builder.pages.dev le 2026-10-26).
+  block('/plugin-sandbox', sandbox);
   block('/*', COMMON_HEADERS);
   return lines.join('\n');
 }
