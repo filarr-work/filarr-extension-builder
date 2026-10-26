@@ -17,7 +17,11 @@ appareil.
 ```bash
 npm create filarr-extension@latest mon-extension
 cd mon-extension
+npm install
 npm run dev
 ```
+
+Hors d'un projet (un paquet téléchargé depuis Filarr Builder, par exemple) :
+`npx @filarr/extension-cli verify <paquet>` ou `npx @filarr/extension-cli publish <paquet>`.
 
 Toutes les options : [docs/cli.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/cli.md).

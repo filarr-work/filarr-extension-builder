@@ -94,7 +94,8 @@ remettre le paquet à Filarr :
 - **Ouvrir dans Filarr** : Filarr s'ouvre dans un nouvel onglet, sur Publier, et reçoit le
   paquet de ce seul atelier (`PACKAGE.md` §5 du dépôt de Filarr) ;
 - **Télécharger le paquet**, à déposer dans Place de marché → Publier ;
-- `npx filarr-ext publish <paquet>` depuis le terminal, pour l'application de bureau.
+- `npx @filarr/extension-cli publish <paquet>` depuis le terminal, pour l'application de bureau
+  (dans un projet installé, `npx filarr-ext publish` suffit).
 
 Dans Filarr, vous relisez tout ce qui deviendra public, puis Filarr signe sur votre
 appareil.

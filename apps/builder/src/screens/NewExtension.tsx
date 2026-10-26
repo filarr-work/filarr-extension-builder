@@ -312,7 +312,8 @@ export function NewExtension() {
               <h2 id="cli-t">{tr('Ou dans votre terminal', 'Or in your terminal')}</h2>
               <pre className="term">
                 <code>
-                  <span className="p">$</span> npm create filarr-extension@latest{'\n'}
+                  <span className="p">$</span> npm create filarr-extension@latest {effectiveId}{'\n'}
+                  <span className="p">$</span> cd {effectiveId} && npm install{'\n'}
                   <span className="p">$</span> npm run dev     <span className="c">{tr('# simulateur', '# simulator')}</span>{'\n'}
                   <span className="p">$</span> npm run check   <span className="c">{tr('# contrôles', '# checks')}</span>{'\n'}
                   <span className="p">$</span> npm run pack    <span className="c"># .filarrext</span>

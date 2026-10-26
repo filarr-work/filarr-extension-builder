@@ -15,5 +15,5 @@ npm create filarr-extension@latest <nom> [-- options]
 | `--name "<nom affiché>"` | le nom de l'extension |
 | `--yes` | aucune question |
 
-Puis `npm run dev` (le simulateur), `npm run check`, `npm run pack`. Le guide et vingt
+Puis `npm install`, `npm run dev` (le simulateur), `npm run check`, `npm run pack`. Le guide et vingt
 exemples : [https://github.com/filarr-work/filarr-extension-builder](https://github.com/filarr-work/filarr-extension-builder).

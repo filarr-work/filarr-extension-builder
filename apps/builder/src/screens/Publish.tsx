@@ -2,7 +2,7 @@
  * Publier (maquette « Publier ») : construire, vérifier, empaqueter le
  * `.filarrext` EXACT de PACKAGE.md, puis le remettre à Filarr — « Ouvrir dans
  * Filarr » (PACKAGE.md §5, chemin web), le fichier à déposer, ou la commande
- * `npx filarr-ext publish`.
+ * `npx @filarr/extension-cli publish`.
  *
  * Le Builder ne signe pas et ne voit jamais la clé : la relecture complète et
  * la signature se font dans Filarr, sur l'appareil de l'auteur.
@@ -184,7 +184,7 @@ export function PublishScreen() {
               <span className="t" style={{ fontSize: 15, fontWeight: 650 }}>{tr('Depuis votre terminal', 'From your terminal')}</span>
               <pre className="term">
                 <code>
-                  <span className="p">$</span> npx filarr-ext publish {pack?.fileName ?? `${m.id}-${version}.filarrext`}
+                  <span className="p">$</span> npx @filarr/extension-cli publish {pack?.fileName ?? `${m.id}-${version}.filarrext`}
                   {'\n'}
                   <span className="c">{tr('  ◇ Filarr s’ouvre sur cet ordinateur avec le paquet\n  ◇ Relecture et signature : dans Filarr', '  ◇ Filarr opens on this computer with the package\n  ◇ Review and signature: in Filarr')}</span>
                 </code>
