@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "Le moteur sans code des extensions Filarr : une configuration déclarative devient un éditeur complet, et le bundle au format .filarrext.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filarr-work/filarr-extension-builder.git",
+    "directory": "packages/nocode-engine"
+  },
+  "homepage": "https://github.com/filarr-work/filarr-extension-builder#readme",
+  "bugs": {
+    "url": "https://github.com/filarr-work/filarr-extension-builder/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -35,5 +44,8 @@
     "filarr",
     "extension",
     "nocode"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

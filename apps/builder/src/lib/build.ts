@@ -7,7 +7,7 @@
  * Avec code : esbuild-wasm, avec les options de la CIBLE recopiées de
  * `packages/cli/src/build.ts` (IIFE, ES2020, minifié, ASCII, sans commentaire
  * légal) et la même convention `?worker`. esbuild-wasm est le même esbuild
- * (0.24.2) compilé en WebAssembly : mêmes sources, mêmes options, même sortie
+ * (0.25.12) compilé en WebAssembly : mêmes sources, mêmes options, même sortie
  * — un test le vérifie sur un exemple du dépôt.
  *
  * Il n'y a pas de système de fichiers : un greffon résout chaque import dans la

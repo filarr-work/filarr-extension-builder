@@ -11,4 +11,4 @@ export const BUILDER_TOOL = `Filarr Builder ${BUILDER_VERSION}`;
 /** La version d'`@filarr/extension-cli` qu'un projet exporté installe. */
 export const CLI_RANGE = '^1.0.0';
 /** esbuild-wasm, aligné sur l'esbuild de `filarr-ext` : même sortie pour les mêmes sources. */
-export const ESBUILD_VERSION = '0.24.2';
+export const ESBUILD_VERSION = '0.25.12';

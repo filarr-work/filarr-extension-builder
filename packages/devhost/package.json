@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "Le simulateur local des extensions Filarr : la page bac à sable de Filarr, un hôte qui rejoue le protocole v2, et des services simulés.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filarr-work/filarr-extension-builder.git",
+    "directory": "packages/devhost"
+  },
+  "homepage": "https://github.com/filarr-work/filarr-extension-builder#readme",
+  "bugs": {
+    "url": "https://github.com/filarr-work/filarr-extension-builder/issues"
+  },
   "type": "module",
   "exports": {
     ".": {
@@ -27,11 +36,14 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "esbuild": "^0.24.2"
+    "esbuild": "^0.25.12"
   },
   "keywords": [
     "filarr",
     "extension",
     "simulator"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

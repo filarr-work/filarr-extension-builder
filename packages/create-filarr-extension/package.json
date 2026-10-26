@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "npm create filarr-extension@latest <nom> — un projet d'extension Filarr prêt, avec ou sans code.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filarr-work/filarr-extension-builder.git",
+    "directory": "packages/create-filarr-extension"
+  },
+  "homepage": "https://github.com/filarr-work/filarr-extension-builder#readme",
+  "bugs": {
+    "url": "https://github.com/filarr-work/filarr-extension-builder/issues"
+  },
   "type": "module",
   "bin": {
     "create-filarr-extension": "bin/index.mjs"

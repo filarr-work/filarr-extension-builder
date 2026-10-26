@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "Le contrat des extensions Filarr : types de l'hôte, defineExtension, manifeste, capacités et paquet .filarrext.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filarr-work/filarr-extension-builder.git",
+    "directory": "packages/extension-api"
+  },
+  "homepage": "https://github.com/filarr-work/filarr-extension-builder#readme",
+  "bugs": {
+    "url": "https://github.com/filarr-work/filarr-extension-builder/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "exports": {
@@ -31,5 +40,8 @@
     "filarr",
     "extension",
     "plugin"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

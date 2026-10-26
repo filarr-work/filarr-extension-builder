@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "filarr-ext : construire, simuler, contrôler, empaqueter et remettre à Filarr une extension, avec ou sans code.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filarr-work/filarr-extension-builder.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/filarr-work/filarr-extension-builder#readme",
+  "bugs": {
+    "url": "https://github.com/filarr-work/filarr-extension-builder/issues"
+  },
   "type": "module",
   "bin": {
     "filarr-ext": "bin/filarr-ext.mjs"
@@ -29,7 +38,7 @@
   },
   "dependencies": {
     "@filarr/extension-devhost": "1.0.0",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.25.12",
     "fflate": "^0.8.2"
   },
   "devDependencies": {
@@ -40,5 +49,8 @@
     "filarr",
     "extension",
     "cli"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
