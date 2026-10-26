@@ -1,14 +1,14 @@
 # @filarr/extension-devhost
 
-Le simulateur local des extensions [Filarr](https://filarr.com), lancé par `filarr-ext dev` :
-votre extension tourne dans la même page bac à sable que dans Filarr, avec les mêmes en-têtes,
-rechargée à chaque sauvegarde. Thème, lecture seule, conflit simulé, journal des échanges avec
-l'hôte.
+The local simulator for [Filarr](https://filarr.com) extensions, launched by `filarr-ext dev`:
+your extension runs in the same sandbox page as in Filarr, with the same headers,
+reloaded on every save. Theme, read-only mode, simulated conflict, log of exchanges with
+the host.
 
-Il s'utilise par la ligne de commande :
+It is used through the command line, in a project created with `npm create filarr-extension`, after `npm install`:
 
 ```bash
 npx filarr-ext dev
 ```
 
-Voir [docs/cli.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/cli.md).
+See [docs/cli.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/cli.md).

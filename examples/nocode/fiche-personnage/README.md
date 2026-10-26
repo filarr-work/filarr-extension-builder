@@ -1,31 +1,31 @@
-# 🧙 Fiche de personnage — exemple sans code
+# 🧙 Fiche de personnage (character sheet) — no-code example
 
-Fichiers `.perso`. Une fiche de personnage de jeu de rôle : classe, niveau, points de vie, caractéristiques en barres, traits, inventaire et histoire.
+`.perso` files. A role-playing game character sheet: class, level, hit points, ability scores as bars, traits, inventory and backstory.
 
-## Ce qu’il montre
+## What it shows
 
-Montre des **champs imbriqués** (`caracteristiques.force`…), chacun en **nombre** avec − / + et en
-**barre** sur 20, une barre de santé dont le maximum est un autre champ (`maxField`), des étiquettes, un
-tableau d’inventaire avec son total, et la capacité **`newDocument`** : Filarr propose « Nouveau
-personnage » et crée le fichier depuis un **modèle de départ** (`modeles/nouveau.perso`, en base64 dans
-`manifest.capabilities.newDocument[0].seed` — `npx filarr-ext seed modeles/nouveau.perso` le recalcule ;
-`check` vérifie qu’il s’ouvre avec la configuration).
+Shows **nested fields** (`caracteristiques.force`…), each as a **number** with − / + and as a
+**bar** out of 20, a health bar whose maximum is another field (`maxField`), tags, an inventory
+table with its total, and the **`newDocument`** capability: Filarr offers “Nouveau personnage”
+(New character) and creates the file from a **starter template** (`modeles/nouveau.perso`, base64-encoded
+in `manifest.capabilities.newDocument[0].seed` — `npx filarr-ext seed modeles/nouveau.perso`
+recomputes it; `check` verifies that it opens with the configuration).
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/fiche-personnage   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/fiche-personnage   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/fiche-personnage    # dist/fiche-personnage-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/fiche-personnage  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/fiche-personnage  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/fiche-personnage/dist/fiche-personnage-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/fiche-personnage/dist/fiche-personnage-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

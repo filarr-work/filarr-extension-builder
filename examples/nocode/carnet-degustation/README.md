@@ -1,33 +1,33 @@
-# 🍷 Carnet de dégustation — exemple sans code
+# 🍷 Carnet de dégustation (tasting notebook) — no-code example
 
-Fichiers `.degust`. Une fiche par dégustation — vin, thé, café, fromage : note en étoiles, arômes en étiquettes, date, lieu et commentaire.
+`.degust` files. One entry per tasting — wine, tea, coffee, cheese: star rating, aromas as tags, date, place and comment.
 
-## Ce qu’il montre
+## What it shows
 
-Fichiers `.degust` et non `.degustation` : une extension de fichier tient en 10 caractères au plus
-(`^[a-z0-9]{1,10}$`, borne du serveur), et `filarr-ext check` refuse la version longue.
+`.degust` files, not `.degustation`: a file extension is at most 10 characters
+(`^[a-z0-9]{1,10}$`, a server limit), and `filarr-ext check` rejects the long version.
 
-Montre une fiche courte et dense : pastilles (type coloré et **date**), **note en étoiles**,
-**étiquettes** d’arômes (Entrée ou virgule pour ajouter, × pour retirer), un petit formulaire et un
-commentaire. Le champ `infusions` du second exemple, que la vue ignore, est gardé.
+Shows a short, dense record: badges (colored type and **date**), a **star rating**, aroma **tags**
+(Enter or comma to add, × to remove), a small form and a comment. The `infusions` field in the second
+sample, which the view ignores, is kept.
 
-Déclare `fields` (note, date, type) : un dossier de dégustations devient un tableau triable dans Filarr.
+Declares `fields` (rating, date, type): a folder of tastings becomes a sortable table in Filarr.
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/carnet-degustation   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/carnet-degustation   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/carnet-degustation    # dist/carnet-degustation-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/carnet-degustation  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/carnet-degustation  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/carnet-degustation/dist/carnet-degustation-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/carnet-degustation/dist/carnet-degustation-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

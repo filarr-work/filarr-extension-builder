@@ -1,31 +1,31 @@
-# 📇 Fiche contact — exemple sans code
+# 📇 Fiche contact (contact card) — no-code example
 
-Fichiers `.contact`. Une fiche par personne, en clair « clé: valeur » : nom, e-mail, site, téléphone, adresse, anniversaire et étiquettes.
+`.contact` files. One card per person, in plain “key: value” text: name, email, website, phone, address, birthday and tags.
 
-## Ce qu’il montre
+## What it shows
 
-Montre le format **clé: valeur** (une valeur par ligne, lisible et modifiable partout) : un titre, des
-**liens sûrs** (`mailto:` et `https:` seulement — jamais `javascript:`), un formulaire de champs, une date
-et des étiquettes. Les lignes que la configuration ne connaît pas (ici `rencontre`) et les commentaires
-`#` restent à leur place, mot pour mot ; une ligne modifiée garde son préfixe d’origine.
+Shows the **key: value** format (one value per line, readable and editable anywhere): a title,
+**safe links** (`mailto:` and `https:` only — never `javascript:`), a form of fields, a date and
+tags. Lines the configuration does not know (here `rencontre`) and `#` comments stay in place, word
+for word; a modified line keeps its original prefix.
 
-Déclare `extractText` : la recherche de Filarr retrouve un contact par sa société ou ses étiquettes.
+Declares `extractText`: Filarr’s search finds a contact by their company or tags.
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/fiche-contact   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/fiche-contact   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/fiche-contact    # dist/fiche-contact-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/fiche-contact  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/fiche-contact  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/fiche-contact/dist/fiche-contact-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/fiche-contact/dist/fiche-contact-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

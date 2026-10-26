@@ -1,14 +1,14 @@
 # @filarr/extension-api
 
-Les types et les fonctions pour écrire une extension [Filarr](https://filarr.com) avec du code :
-`defineExtension`, le contrat de l'hôte (`EditorHost` : octets du document, enregistrement,
-lecture seule, thème), le manifeste, les capacités et le paquet `.filarrext`.
+Types and functions for writing a [Filarr](https://filarr.com) extension with code:
+`defineExtension`, the host contract (`EditorHost`: document bytes, saving,
+read-only mode, theme), the manifest, capabilities and the `.filarrext` package.
 
 ```bash
-npm create filarr-extension@latest mon-extension
+npm create filarr-extension@latest my-extension
 ```
 
-Le projet créé dépend déjà de ce paquet. Pour l'ajouter à la main :
+The created project already depends on this package. To add it by hand:
 
 ```bash
 npm install --save-dev @filarr/extension-api
@@ -18,4 +18,4 @@ npm install --save-dev @filarr/extension-api
 import { defineExtension, type EditorHost } from '@filarr/extension-api';
 ```
 
-Le guide, la ligne de commande et vingt exemples : [https://github.com/filarr-work/filarr-extension-builder](https://github.com/filarr-work/filarr-extension-builder).
+The guide, the command line and twenty examples: [https://github.com/filarr-work/filarr-extension-builder](https://github.com/filarr-work/filarr-extension-builder).

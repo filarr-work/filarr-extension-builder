@@ -1,27 +1,29 @@
 # @filarr/extension-cli
 
-`filarr-ext`, la ligne de commande des extensions [Filarr](https://filarr.com) :
+`filarr-ext`, the command line for [Filarr](https://filarr.com) extensions:
 
-| Commande | Ce qu'elle fait |
+| Command | What it does |
 | --- | --- |
-| `filarr-ext dev` | le simulateur local, rechargé à chaque sauvegarde |
-| `filarr-ext build` | construit `dist/bundle.js` |
-| `filarr-ext check` | les contrôles que feront le serveur et Filarr |
-| `filarr-ext pack` | le paquet `.filarrext`, relu avant d'être écrit |
-| `filarr-ext verify <paquet>` | relit et contrôle un paquet |
-| `filarr-ext publish <paquet>` | ouvre Filarr pour bureau sur l'écran Publier |
+| `filarr-ext dev` | the local simulator, reloaded on every save |
+| `filarr-ext build` | builds `dist/bundle.js` |
+| `filarr-ext check` | the checks the server and Filarr will run |
+| `filarr-ext pack` | the `.filarrext` package, read back before it is written |
+| `filarr-ext verify <package>` | reads back and checks a package |
+| `filarr-ext publish <package>` | opens Filarr for desktop on the Publish screen |
 
-Elle ne demande jamais ni mot de passe ni clé : la signature se fait dans Filarr, sur votre
-appareil.
+It never asks for a password or a key: signing happens in Filarr, on your
+device.
 
 ```bash
-npm create filarr-extension@latest mon-extension
-cd mon-extension
+npm create filarr-extension@latest my-extension
+cd my-extension
 npm install
 npm run dev
 ```
 
-Hors d'un projet (un paquet téléchargé depuis Filarr Builder, par exemple) :
-`npx @filarr/extension-cli verify <paquet>` ou `npx @filarr/extension-cli publish <paquet>`.
+Outside a project (a package downloaded from Filarr Builder, for example):
+`npx @filarr/extension-cli verify <package>` or `npx @filarr/extension-cli publish <package>`.
 
-Toutes les options : [docs/cli.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/cli.md).
+Note: the tool's messages are currently in French.
+
+All options: [docs/cli.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/cli.md).

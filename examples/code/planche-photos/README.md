@@ -1,59 +1,60 @@
-# Planche photos (`.planche`)
+# Planche photos (photo sheet, `.planche`)
 
-Composez une planche de photos à partir d'images que vous choisissez dans
-Filarr : titre, légendes, ordre, nombre de colonnes.
+Lay out a sheet of photos from images you pick in Filarr: title, captions,
+order, number of columns.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**La capacité `picker` : l'extension ne choisit jamais ce qu'elle voit.**
-« Ajouter des photos… » appelle `host.pick({ multiple: true })`. Filarr ouvre
-**son** sélecteur — limité aux extensions déclarées (`png`, `jpg`, `jpeg`,
-`webp`) —, l'utilisateur choisit, et l'extension reçoit des **poignées** :
+**The `picker` capability: the extension never chooses what it sees.**
+"Add photos…" calls `host.pick({ multiple: true })`. Filarr opens **its own**
+picker — limited to the declared file extensions (`png`, `jpg`, `jpeg`,
+`webp`) —, the user picks, and the extension receives **handles**:
 
 ```js
-[{ handle: 'Zk3…', name: 'phare.jpg' }]   // jamais un identifiant, un dossier ou un chemin
+[{ handle: 'Zk3…', name: 'phare.jpg' }]   // never an identifier, a folder or a path
 ```
 
-`host.readPicked(handle)` en lit les octets. Il n'existe aucune capacité « lire
-toutes les images » : seuls les fichiers choisis deviennent accessibles.
-Annuler le sélecteur rend une liste vide.
+`host.readPicked(handle)` reads their bytes. There is no "read all images"
+capability: only the picked files become accessible. Cancelling the picker
+returns an empty list.
 
-**Les poignées ne valent que pour la session.** Elles sont tirées au hasard, liées
-à cette extension (une poignée volée par une autre ne vaut rien chez elle) et
-oubliées quand Filarr se recharge. D'où le choix du format : la planche
-**embarque une copie réduite** de chaque image (480 px au plus, en data URL),
-et ne garde **aucune** poignée. Elle se rouvre, se partage et se lit ailleurs
-sans les originaux — et ne dit jamais où ils étaient. Pendant la session, le
-bouton « Relire l'original » refait une vignette plus fine (1 200 px) depuis la
-poignée ; après réouverture, il n'apparaît plus. Si une poignée a expiré, Filarr
-répond `unknown_handle` et l'extension demande de rechoisir l'image.
+**Handles are only valid for the session.** They are drawn at random, bound to
+this extension (a handle stolen by another extension is worthless there) and
+forgotten when Filarr reloads. Hence the choice of format: the sheet **embeds a
+reduced copy** of each image (480 px at most, as a data URL), and keeps **no**
+handle. It reopens, is shared and is read elsewhere without the originals — and
+never tells where they were. During the session, the "Re-read original" button
+rebuilds a finer thumbnail (1,200 px) from the handle; after reopening, it no
+longer appears. If a handle has expired, Filarr answers `unknown_handle` and the
+extension asks for the image to be picked again.
 
-**Le type se lit dans les octets, pas dans le nom** (`src/images.ts`). Un
-« .png » qui n'en est pas un est écarté avec son nom. Et une data URL lue dans un
-fichier `.planche` n'est acceptée que si son type annoncé est celui de ses octets
-(PNG, JPEG ou WebP) : c'est ce qui la rend sûre dans un `src`
-(`img-src data:` est permis par la CSP de la page). Un `data:image/svg+xml` ou un
-`javascript:` n'y entre jamais.
+**The type is read from the bytes, not the name** (`src/images.ts`). A ".png"
+that is not one is set aside and reported by name. And a data URL read from a
+`.planche` file is only accepted if its declared type is the type of its bytes
+(PNG, JPEG or WebP): that is what makes it safe in a `src` (`img-src data:` is
+allowed by the page's CSP). A `data:image/svg+xml` or a `javascript:` never gets
+in.
 
-**La réduction** (`src/reduction.ts`) se fait dans la page : `createImageBitmap`
-puis `<canvas>`, sortie JPEG sur fond blanc. Sans canvas utilisable, une image
-déjà petite (≤ 256 Kio) est embarquée telle quelle ; une grande est refusée
-plutôt que d'alourdir le document.
+**The reduction** (`src/reduction.ts`) happens in the page: `createImageBitmap`
+then `<canvas>`, JPEG output on a white background. Without a usable canvas, an
+image that is already small (≤ 256 KiB) is embedded as is; a large one is
+refused rather than weighing the document down.
 
-**Le clavier** : Alt+← / Alt+→ depuis une légende déplace la photo ; chaque photo
-a ses boutons nommés (avancer, reculer, retirer).
+**The keyboard**: Alt+← / Alt+→ from a caption moves the photo; each photo has
+its own labelled buttons (move forward, move back, remove).
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": { "picker": { "access": "read", "extensions": ["png", "jpg", "jpeg", "webp"] } }
 ```
 
-`read` suffit : l'extension n'écrit jamais dans les fichiers choisis
-(`readwrite` ouvrirait `host.writePicked`, qui n'existe pas ici). `picker` est
-exclusif de `network` : une extension qui lit vos images ne parle pas à Internet.
+`read` is enough: the extension never writes to the picked files (`readwrite`
+would open up `host.writePicked`, which does not exist here). `picker` is
+mutually exclusive with `network`: an extension that reads your images does not
+talk to the Internet.
 
-## Le format
+## The format
 
 ```json
 { "format": "filarr-planche", "version": 1, "titre": "…", "colonnes": 3,
@@ -61,24 +62,24 @@ exclusif de `network` : une extension qui lit vos images ne parle pas à Interne
                "image": "data:image/png;base64,…" }] }
 ```
 
-60 photos au plus, 600 Kio de data URL par photo. Écriture canonique : une
-planche écrite par l'extension se relit et se réécrit à l'octet près.
+60 photos at most, 600 KiB of data URL per photo. Canonical output: a sheet
+written by the extension reads back and rewrites byte for byte.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Le banc d'essai simule le sélecteur avec `exemples/photos/` (`smoke.json`, clé
-`selection`) : trois vraies images, et un faux `.png` qui doit être écarté.
+The test harness simulates the picker with `exemples/photos/` (`smoke.json`, key
+`selection`): three real images, and a fake `.png` that must be set aside.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts      mount(), le sélecteur, les poignées de la session
-src/planche.ts    le format (pur)
-src/images.ts     type par les octets, dimensions d'en-tête, data URL vérifiées (pur)
-src/reduction.ts  la vignette, par canvas, et son repli
-exemples/         une planche de Bretagne, une planche WebP, et les photos du sélecteur simulé
+src/index.ts      mount(), the picker, the session's handles
+src/planche.ts    the format (pure)
+src/images.ts     type from the bytes, header dimensions, verified data URLs (pure)
+src/reduction.ts  the thumbnail, via canvas, and its fallback
+exemples/         a sheet of Brittany, a WebP sheet, and the photos for the simulated picker
 ```

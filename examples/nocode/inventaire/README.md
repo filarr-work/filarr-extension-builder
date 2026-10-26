@@ -1,31 +1,31 @@
-# 📦 Inventaire — exemple sans code
+# 📦 Inventaire (inventory) — no-code example
 
-Fichiers `.inventaire`. Un inventaire en CSV : articles, quantités, prix unitaires, emplacements ; quantités et valeur du stock calculées. Export CSV.
+`.inventaire` files. An inventory in CSV: items, quantities, unit prices, locations; computed quantities and stock value. CSV export.
 
-## Ce qu’il montre
+## What it shows
 
-Montre un **CSV à point-virgule** (décimales à la virgule, comme l’enregistre un tableur réglé en
-français) : un tableau éditable, des quantités avec − / +, et deux **totaux calculés** — la somme des
-quantités et la valeur du stock (`sumProduct` : quantité × prix). La colonne `fournisseur`, que la vue
-n’affiche pas, est gardée.
+Shows a **semicolon-separated CSV** (comma as the decimal separator, the way a spreadsheet set to
+French saves it): an editable table, quantities with − / +, and two **computed totals** — the sum of
+the quantities and the stock value (`sumProduct`: quantity × price). The `fournisseur` column, which
+the view does not display, is kept.
 
-Déclare l’export **CSV** : « Exporter en CSV » dans le menu du fichier, dans Filarr.
+Declares the **CSV** export: “Export as CSV” in the file’s menu, in Filarr.
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/inventaire   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/inventaire   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/inventaire    # dist/inventaire-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/inventaire  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/inventaire  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/inventaire/dist/inventaire-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/inventaire/dist/inventaire-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

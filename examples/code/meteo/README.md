@@ -1,61 +1,62 @@
-# Météo (`.meteo` et widget d'accueil)
+# Météo (weather, `.meteo` and home widget)
 
-Suivez la météo de vos villes, et affichez celle de l'une d'elles sur l'accueil
-de Filarr. Les prévisions viennent d'[Open-Meteo](https://open-meteo.com), sans clé.
+Follow the weather in your cities, and show one of them on Filarr's Home page.
+Forecasts come from [Open-Meteo](https://open-meteo.com), with no API key.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**La capacité `network`, vers un seul domaine.** L'extension ne parle qu'à
-`api.open-meteo.com`, par `host.network.request(…)`. Elle n'a aucun réseau
-direct (la CSP de la page coupe `fetch`) : chaque requête passe par le relais de
-Filarr, qui la **montre à l'utilisateur** avant de l'envoyer — méthode, adresse
-complète, en-têtes, corps. Une requête identique déjà acceptée pendant la session
-passe sans redemander ; c'est pourquoi l'adresse est **stable** (`src/openmeteo.ts` :
-coordonnées arrondies à 4 décimales, paramètres dans un ordre fixe) — le widget
-qui s'actualise toutes les trente minutes ne redemande rien.
+**The `network` capability, to a single domain.** The extension only talks to
+`api.open-meteo.com`, through `host.network.request(…)`. It has no direct network
+access (the page's CSP blocks `fetch`): every request goes through Filarr's
+relay, which **shows it to the user** before sending it — method, full address,
+headers, body. An identical request already accepted during the session goes
+through without asking again; that is why the address is **stable**
+(`src/openmeteo.ts`: coordinates rounded to 4 decimal places, parameters in a
+fixed order) — the widget, which refreshes every thirty minutes, asks for
+nothing again.
 
-**Demander le moins possible.** Le répertoire de villes est embarqué
-(`src/villes.ts`) : pas de second domaine, et ce que l'utilisateur tape dans la
-recherche ne sort jamais. Une ville absente se saisit par ses coordonnées.
-L'éditeur ne lance **aucune** requête à l'ouverture : seulement quand on clique
-« Voir la météo » (ou « Tout actualiser », qui enchaîne les demandes une à une
-plutôt que d'en empiler plus de quatre, au-delà desquelles Filarr répond `busy`).
+**Ask for as little as possible.** The city directory is bundled
+(`src/villes.ts`): no second domain, and what the user types into the search
+never leaves. A city that is missing can be entered by its coordinates. The
+editor sends **no** request on open: only when you click "Show weather" (or
+"Refresh all", which sends the requests one at a time rather than piling up more
+than four, beyond which Filarr answers `busy`).
 
-**Tous les refus ont leur message** (`src/i18n.ts`, `messageEchec`) — ce n'est pas
-une panne de l'extension, c'est le contrat :
+**Every refusal has its message** (`src/i18n.ts`, `messageEchec`) — this is not
+the extension failing, it is the contract:
 
-| Cas | Code | Ce que l'extension dit |
+| Case | Code | What the extension says |
 | --- | --- | --- |
-| Capacité non accordée | `host.network` absent | l'accès à Internet n'a pas été accordé |
-| L'utilisateur refuse (ou bloque l'extension pour la session) | `net_refused` | requête refusée, rien n'a été envoyé ; le widget cesse de s'actualiser seul et propose « Réessayer » |
-| **Web** : pas de relais réseau | `unavailable` | disponible seulement dans l'application de bureau |
-| Hors ligne, hôte injoignable | `net_unreachable` | service injoignable |
-| Trop de demandes en attente | `busy`, `rate_limited`, `too_many_requests` | réessayer dans un instant |
-| Un statut HTTP ≠ 200 | (réponse, pas rejet) | le service a répondu par une erreur (n) |
+| Capability not granted | `host.network` absent | Internet access was not granted |
+| The user refuses (or blocks the extension for the session) | `net_refused` | request declined, nothing was sent; the widget stops refreshing on its own and offers "Retry" |
+| **Web**: no network relay | `unavailable` | only available in the desktop app |
+| Offline, host unreachable | `net_unreachable` | service unreachable |
+| Too many pending requests | `busy`, `rate_limited`, `too_many_requests` | retry in a moment |
+| An HTTP status ≠ 200 | (a response, not a rejection) | the service answered with an error (n) |
 
-**La réponse est lue comme hostile** : seuls des nombres vérifiés en sont gardés.
-Et la météo n'est **jamais écrite** dans le fichier : le document ne garde que des
-villes et des coordonnées.
+**The response is read as hostile**: only verified numbers are kept from it. And
+the weather is **never written** to the file: the document only keeps cities and
+coordinates.
 
-**La capacité `homeWidget`** (`src/widget.ts`). Le widget est monté en mode
-`widget`, **toujours en lecture seule**, et sa seule donnée est le réglage saisi
-dans les options du bloc d'accueil (240 caractères au plus, en UTF-8 dans
-`host.initialBytes`) : `Lyon`, `45.764, 4.8357` ou `Chez moi | 45.76 | 4.83`. Il ne
-lit pas le fichier `.meteo` — l'éditeur affiche, pour chaque ville, le réglage à
-recopier. Le widget a lui aussi `host.network` (même capacité, même consentement).
+**The `homeWidget` capability** (`src/widget.ts`). The widget is mounted in
+`widget` mode, **always read-only**, and its only data is the setting entered in
+the home block's options (240 characters at most, as UTF-8 in
+`host.initialBytes`): `Lyon`, `45.764, 4.8357` or `Chez moi | 45.76 | 4.83`. It
+does not read the `.meteo` file — the editor shows, for each city, the setting to
+copy over. The widget has `host.network` too (same capability, same consent).
 
-**Ce que `network` exclut.** Une extension réseau ne peut déclarer ni `storage`,
-ni `picker`, ni `functions`, ni `noteBlock` (`network_exclusive`) : elle ne lit
-jamais vos fichiers ET ne parle jamais à Internet sans vous. D'où l'absence de
-vignette ou de recherche pour ces fichiers : c'est voulu.
+**What `network` rules out.** A network extension can declare neither `storage`,
+nor `picker`, nor `functions`, nor `noteBlock` (`network_exclusive`): it never
+reads your files AND never talks to the Internet without you. Hence no thumbnail
+or search for these files: that is intentional.
 
-> ⚠ État de Filarr au 23 octobre 2026 : le relais réseau n'existe que sur le
-> **bureau** (sur le web, `unavailable`). Le composant du widget d'accueil est
-> prêt, mais le type `extension` n'entre au registre des blocs d'accueil qu'une
-> fois l'application mobile prête à le garder : le widget se monte et se teste
-> ici (`npm run smoke`), il ne s'ajoute pas encore depuis l'accueil.
+> ⚠ State of Filarr as of October 23, 2026: the network relay only exists on
+> **desktop** (on the web, `unavailable`). The home widget component is ready,
+> but the `extension` type only enters the home block registry once the mobile
+> app is ready to preserve it: the widget mounts and is tested here
+> (`npm run smoke`); it cannot yet be added from the Home page.
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": {
@@ -64,29 +65,30 @@ vignette ou de recherche pour ces fichiers : c'est voulu.
 }
 ```
 
-Domaines : hôtes exacts, en minuscules, HTTPS implicite, sous-domaines refusés —
-`geocoding-api.open-meteo.com` serait un autre domaine, à déclarer à part.
+Domains: exact hosts, lowercase, HTTPS implied, subdomains refused —
+`geocoding-api.open-meteo.com` would be another domain, to be declared
+separately.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Rien ne part sur le réseau pendant les vérifications : le banc d'essai répond
-avec `exemples/reponses/*.json` (`smoke.json`, clé `reseau`), et joue aussi le web
-(`unavailable`), le refus (`net_refused`) et un réglage vide.
+Nothing goes out on the network during verification: the test harness answers
+with `exemples/reponses/*.json` (`smoke.json`, key `reseau`), and also plays the
+web (`unavailable`), a refusal (`net_refused`) and an empty setting.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts      les deux points d'entrée : éditeur et widget
-src/editeur.ts    les villes suivies, la météo à la demande
-src/widget.ts     le bloc d'accueil
-src/client.ts     une requête par host.network, et ses refus
-src/openmeteo.ts  l'adresse, la réponse, les codes météo (pur)
-src/meteo.ts      le format .meteo et le réglage du widget (pur)
-src/villes.ts     le répertoire embarqué (pur)
-exemples/         des villes suivies, un chalet par ses coordonnées,
-                  et deux réponses d'Open-Meteo pour les tests
+src/index.ts      the two entry points: editor and widget
+src/editeur.ts    the followed cities, weather on demand
+src/widget.ts     the home block
+src/client.ts     a request through host.network, and its refusals
+src/openmeteo.ts  the address, the response, the weather codes (pure)
+src/meteo.ts      the .meteo format and the widget setting (pure)
+src/villes.ts     the bundled directory (pure)
+exemples/         followed cities, a chalet given by its coordinates,
+                  and two Open-Meteo responses for the tests
 ```

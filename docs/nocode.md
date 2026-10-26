@@ -1,79 +1,79 @@
-# Les extensions sans code
+# No-code extensions
 
-Une extension sans code est **une configuration**, `nocode.json`, lue par **le moteur sans code**
-de Filarr (`@filarr/nocode-engine`). Le moteur est le même pour toutes les extensions sans code ;
-la configuration dit quel format de fichier lire, quels champs il contient et comment les montrer.
-Elle ne contient ni code, ni HTML, ni CSS : des clés, des types et des libellés.
+A no-code extension is **a configuration**, `nocode.json`, read by Filarr's **no-code engine**
+(`@filarr/nocode-engine`). The engine is the same for every no-code extension; the configuration
+says which file format to read, which fields it contains and how to show them. It contains no code,
+no HTML, no CSS: keys, types and labels.
 
 ```text
-mon-extension/
-├── filarr.extension.json   le manifeste, la fiche, et  "build": { "kind": "nocode", "config": "nocode.json" }
-├── nocode.json             la configuration (ce document)
-└── exemples/               les fichiers que le simulateur ouvre
+my-extension/
+├── filarr.extension.json   the manifest, the listing, and  "build": { "kind": "nocode", "config": "nocode.json" }
+├── nocode.json             the configuration (this document)
+└── exemples/               the files the simulator opens
 ```
 
-`filarr-ext build` produit le bundle : le moteur, puis ses deux dernières lignes (contrat
-`PACKAGE.md` §4 de Filarr) :
+`filarr-ext build` produces the bundle: the engine, then its last two lines (the
+[`PACKAGE.md`](contract/PACKAGE.md) §4 contract):
 
 ```js
 /* filarr-nocode engine=1.0.0 */
 globalThis.__filarrNocodeBoot({"nocode":1,"id":"…", …});
 ```
 
-Filarr relit la configuration entre `__filarrNocodeBoot(` et `);` par `JSON.parse`, sans l'évaluer,
-pour vous la montrer à la relecture avant la signature. Le paquet `.filarrext` porte aussi
-`nocode.json`, **identique** octet pour octet à cette ligne.
+Filarr reads the configuration back between `__filarrNocodeBoot(` and `);` with `JSON.parse`,
+without evaluating it, to show it to you for review before signing. The `.filarrext` package also
+carries `nocode.json`, **identical** byte for byte to this line.
 
-## Sommaire
+## Contents
 
-1. [Ce que le moteur garantit](#1-ce-que-le-moteur-garantit)
-2. [La racine](#2-la-racine)
-3. [Les formats](#3-les-formats)
-4. [Les champs](#4-les-champs)
-5. [Les blocs de vue](#5-les-blocs-de-vue)
-6. [Les calculs](#6-les-calculs)
-7. [Les fonctions pures](#7-les-fonctions-pures)
-8. [Le manifeste qui va avec](#8-le-manifeste-qui-va-avec)
-9. [Exemples complets](#9-exemples-complets)
-10. [Les bornes, en tableau](#10-les-bornes-en-tableau)
+1. [What the engine guarantees](#1-what-the-engine-guarantees)
+2. [The root](#2-the-root)
+3. [Formats](#3-formats)
+4. [Fields](#4-fields)
+5. [View blocks](#5-view-blocks)
+6. [Computations](#6-computations)
+7. [Pure functions](#7-pure-functions)
+8. [The matching manifest](#8-the-matching-manifest)
+9. [Complete examples](#9-complete-examples)
+10. [All limits in one table](#10-all-limits-in-one-table)
 
 ---
 
-## 1. Ce que le moteur garantit
+## 1. What the engine guarantees
 
-Ces garanties sont tenues par le moteur, pour toutes les extensions sans code, et vérifiées par ses
-tests (`packages/nocode-engine/test/`) :
+These guarantees are held by the engine, for every no-code extension, and verified by its tests
+(`packages/nocode-engine/test/`):
 
-- **Aucun HTML interprété.** Tout l'affichage passe par `createElement` et `textContent`. Le moteur
-  n'utilise jamais `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval` ni `new Function` — le
-  test `security.test.ts` relit le bundle pour s'en assurer. Une valeur `<img src=x onerror=…>`
-  s'affiche comme ces caractères, rien de plus.
-- **Lecture bornée.** Un fichier de plus de 8 Mio, imbriqué sur plus de 12 niveaux, qui n'est pas de
-  l'UTF-8, ou qui contient une clé `__proto__`, `constructor` ou `prototype` (JSON à toute
-  profondeur, en-tête CSV, clé de « clé: valeur ») n'est pas ouvert : un écran d'erreur le dit, et le
-  fichier **n'est jamais réécrit**.
-- **Ce qui n'est pas affiché est réécrit tel quel.** Clés JSON inconnues, colonnes CSV en plus,
-  lignes de commentaire, éléments de liste mal formés : rien de tout cela n'est touché. Une ligne CSV
-  ou « clé: valeur » non modifiée repart octet pour octet ; une ligne modifiée ne change que la
-  valeur éditée. Tant que rien n'a été touché, `getBytes()` rend les octets reçus.
-- **Lecture seule, garantie par le moteur.** Quand Filarr ouvre le document en lecture seule, tous
-  les contrôles sont inertes **et** le moteur refuse toute écriture à la source : aucun `saveBytes`,
-  aucun `onDirty`. Un document JSON dont une clé apparaît deux fois, ou dont un nombre perdrait des
-  chiffres à la relecture, est ouvert en lecture seule pour la même raison.
-- **Fichier vide = document neuf**, construit avec les valeurs par défaut (`default`).
-- **Aucun réseau, aucun stockage.** Le moteur n'en a pas besoin : `filarr-ext check` refuse une
-  configuration sans code dont le manifeste demanderait `network`, `storage`, `picker`, `collab`,
-  `noteBlock` ou `homeWidget`.
-- **Enregistrement** automatique à 2 s (jamais moins), `Ctrl`/`Cmd`+`S` pour forcer, un conflit de
-  version (`item_version_conflict`) affiché et qui suspend l'enregistrement automatique.
-- **Thème et langue de Filarr.** Le moteur lit les variables `--color-*` que Filarr pose sur la page
-  et suit les changements de thème ; il parle français ou anglais selon Filarr.
-- **Validation stricte, deux fois.** La configuration est validée à la construction **et** au
-  montage, par **liste fermée** : une propriété inconnue (une faute de frappe comme `placholder`) est
-  une erreur, pas un réglage ignoré. Une configuration refusée au montage donne un message lisible
-  dans le bandeau de Filarr, jamais un éditeur à moitié fonctionnel.
+- **No interpreted HTML.** All display goes through `createElement` and `textContent`. The engine
+  never uses `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval` or `new Function` — the
+  `security.test.ts` test reads the bundle back to make sure. A value `<img src=x onerror=…>`
+  displays as those characters, nothing more.
+- **Bounded reading.** A file larger than 8 MiB, nested more than 12 levels deep, that is not UTF-8,
+  or that contains a `__proto__`, `constructor` or `prototype` key (JSON at any depth, CSV header,
+  key in a “key: value” line) is not opened: an error screen says so, and the file **is never
+  rewritten**.
+- **What is not displayed is written back as is.** Unknown JSON keys, extra CSV columns, comment
+  lines, malformed list items: none of it is touched. An unmodified CSV or “key: value” line goes
+  back byte for byte; a modified line changes only the edited value. As long as nothing has been
+  touched, `getBytes()` returns the bytes it received.
+- **Read-only, enforced by the engine.** When Filarr opens the document read-only, all controls are
+  inert **and** the engine refuses any write at the source: no `saveBytes`, no `onDirty`. A JSON
+  document in which a key appears twice, or in which a number would lose digits when read back, is
+  opened read-only for the same reason.
+- **Empty file = new (empty) document**, built with the default values (`default`).
+- **No network, no storage.** The engine does not need them: `filarr-ext check` rejects a no-code
+  configuration whose manifest would request `network`, `storage`, `picker`, `collab`,
+  `noteBlock` or `homeWidget`.
+- **Saving**: automatic after 2 s (never sooner), `Ctrl`/`Cmd`+`S` to force it; a version conflict
+  (`item_version_conflict`) is shown and suspends automatic saving.
+- **Filarr's theme and language.** The engine reads the `--color-*` variables that Filarr sets on
+  the page and follows theme changes; it speaks French or English, following Filarr.
+- **Strict validation, twice.** The configuration is validated at build time **and** at mount time,
+  against a **closed list**: an unknown property (a typo such as `placholder`) is an error, not an
+  ignored setting. A configuration rejected at mount time produces a readable message in Filarr's
+  banner, never a half-working editor.
 
-## 2. La racine
+## 2. The root
 
 ```json
 {
@@ -87,200 +87,200 @@ tests (`packages/nocode-engine/test/`) :
 }
 ```
 
-| Propriété   | Obligatoire | Valeur                                                                                                |
+| Property    | Required    | Value                                                                                                 |
 | ----------- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| `nocode`    | oui         | `1` — le format de cette configuration                                                                |
-| `id`        | oui         | L'identifiant du **manifeste** (`^[a-z][a-z0-9-]{1,63}$`) : l'éditeur est monté sous `<id>-editor`   |
-| `format`    | oui         | Le format du fichier (§3)                                                                             |
-| `fields`    | oui         | Les champs du document (§4)                                                                           |
-| `view`      | oui         | Les blocs affichés, dans l'ordre (§5), 1 au moins                                                     |
-| `accent`    | non         | Une couleur `#rrggbb` : boutons, cases, étoiles, barres. Absente : la couleur principale de Filarr    |
-| `functions` | non         | Les fonctions pures que le moteur expose (§7)                                                         |
-| `$schema`   | non         | Une adresse, ignorée par le moteur (pour votre éditeur)                                               |
+| `nocode`    | yes         | `1` — the format of this configuration                                                                |
+| `id`        | yes         | The identifier of the **manifest** (`^[a-z][a-z0-9-]{1,63}$`): the editor is mounted as `<id>-editor` |
+| `format`    | yes         | The file format (§3)                                                                                  |
+| `fields`    | yes         | The document's fields (§4)                                                                            |
+| `view`      | yes         | The blocks shown, in order (§5), at least 1                                                           |
+| `accent`    | no          | A `#rrggbb` color: buttons, checkboxes, stars, bars. Absent: Filarr's primary color                   |
+| `functions` | no          | The pure functions the engine exposes (§7)                                                            |
+| `$schema`   | no          | A URL, ignored by the engine (for your editor)                                                        |
 
-**Les libellés** (`label`, `placeholder`, `title`, `addLabel`, `unit`…) sont une chaîne, ou une chaîne
-par langue : `{ "fr": "Portions", "en": "Servings" }`. Le français sert de repli. 1 à 200 caractères
-(20 pour `unit`), sans caractère invisible.
+**Labels** (`label`, `placeholder`, `title`, `addLabel`, `unit`…) are a string, or one string per
+language: `{ "fr": "Portions", "en": "Servings" }`. French is the fallback. 1 to 200 characters
+(20 for `unit`), with no invisible character.
 
-## 3. Les formats
+## 3. Formats
 
-### `json` — un objet JSON
+### `json` — a JSON object
 
 ```json
 { "type": "json", "indent": 2 }
 ```
 
-La racine du fichier est un objet ; les champs sont ses propriétés. `indent` (`0`, `2`, `4` ou
-`"tab"`) ne sert qu'aux documents **neufs** : un fichier existant garde son indentation, ses fins de
-ligne et ses blancs de début et de fin.
+The root of the file is an object; the fields are its properties. `indent` (`0`, `2`, `4` or
+`"tab"`) only applies to **new** documents: an existing file keeps its indentation, its line endings
+and its leading and trailing whitespace.
 
-> `JSON.stringify` réécrit un nombre sous sa forme courte (`1.0` devient `1`) et place en tête les
-> clés qui ressemblent à des entiers : la **valeur** est la même, l'écriture peut différer. Un
-> nombre qui perdrait des chiffres (`12345678901234567890`) ouvre le document en lecture seule.
+> `JSON.stringify` rewrites a number in its short form (`1.0` becomes `1`) and moves keys that look
+> like integers to the front: the **value** is the same, the text may differ. A number that would
+> lose digits (`12345678901234567890`) opens the document read-only.
 
-### `csv` — un tableau
+### `csv` — a table
 
 ```json
 { "type": "csv", "delimiter": ";" }
 ```
 
-La première ligne non vide est l'en-tête ; les **champs sont les colonnes** (`key` = nom de colonne).
-Le document est une liste de lignes, appelée **`rows`** : les blocs `table`, `total`, `progress`,
-`checklist` la visent quand on ne précise pas `field`.
+The first non-empty line is the header; the **fields are the columns** (`key` = column name). The
+document is a list of rows, called **`rows`**: the `table`, `total`, `progress` and `checklist`
+blocks target it when no `field` is given.
 
-- `delimiter` : `","` (défaut), `";"` ou `"\t"`. Avec `";"`, les nombres s'écrivent avec une virgule
-  décimale (`6,90`), comme un tableur réglé en français ; `decimal` (sur un champ `number`) change ce
-  choix.
-- Guillemets doublés, retours à la ligne dans une cellule, marque d'ordre UTF-8 et fins de ligne
-  `\r\n` : lus et réécrits.
-- Une colonne déclarée mais absente du fichier est ajoutée à la première écriture qui la remplit.
-- Types permis : les types d'**une valeur** (`text`, `longtext`, `number`, `boolean`, `date`, `url`,
-  `email`, `choice`, `tags`, `rating`) — pas de `list`, `object` ni `textlist`.
+- `delimiter`: `","` (default), `";"` or `"\t"`. With `";"`, numbers are written with a decimal
+  comma (`6,90`), like a spreadsheet set to French; `decimal` (on a `number` field) overrides this
+  choice.
+- Doubled quotes, line breaks inside a cell, UTF-8 byte order mark and `\r\n` line endings: read and
+  written back.
+- A column that is declared but missing from the file is added on the first write that fills it.
+- Allowed types: the **single-value** types (`text`, `longtext`, `number`, `boolean`, `date`, `url`,
+  `email`, `choice`, `tags`, `rating`) — no `list`, `object` or `textlist`.
 
-### `lines` — une liste à cocher en texte brut
+### `lines` — a checklist in plain text
 
 ```json
 { "type": "lines" }
 ```
 
-Une ligne `[ ] lait` ou `[x] pain` est un élément (une puce `-`, `*` ou `+` et une indentation
-devant sont permises, et reprises). Toute autre ligne — titre, note, ligne vide — reste à sa place.
-Le document est une liste appelée **`items`**, dont les éléments ont deux champs fixes : `done`
-(`boolean`) et `text` (`text`). `fields` peut en préciser le libellé et l'indication :
+A line `[ ] lait` or `[x] pain` is an item (a `-`, `*` or `+` bullet and leading indentation are
+allowed, and kept). Any other line — heading, note, blank line — stays where it is. The document is
+a list called **`items`**, whose items have two fixed fields: `done` (`boolean`) and `text`
+(`text`). `fields` can set their label and placeholder:
 
 ```json
 "fields": [{ "key": "text", "type": "text", "label": "Article", "placeholder": "Ajouter un article" }]
 ```
 
-### `keyvalue` — une valeur par ligne
+### `keyvalue` — one value per line
 
 ```json
 { "type": "keyvalue", "separator": ":", "mode": "fields" }
 ```
 
-Des lignes `clé: valeur` (ou `clé = valeur` avec `"separator": "="`). Les lignes vides et les
-commentaires (`#`, `;`, `//`) sont gardés ; une valeur tient sur **une** ligne (un retour à la ligne
-saisi devient une espace, donc pas de `longtext`).
+Lines `key: value` (or `key = value` with `"separator": "="`). Blank lines and comments (`#`, `;`,
+`//`) are kept; a value fits on **one** line (a typed line break becomes a space, hence no
+`longtext`).
 
-- `mode: "fields"` (défaut) : les champs sont des **clés** du fichier. La première occurrence d'une
-  clé est la sienne ; les clés inconnues et les doublons restent tels quels. Une ligne modifiée garde
-  son préfixe d'origine (`nom:   `) ; une clé absente est ajoutée en fin de fichier.
-- `mode: "entries"` : **toutes** les paires forment une liste appelée **`entries`**, dont les
-  éléments ont deux champs fixes : `key` (`text`) et `value` (`text`, `url` ou `email`). On les
-  édite dans un `table` : renommer, ajouter, retirer. C'est le format d'un glossaire.
+- `mode: "fields"` (default): the fields are **keys** of the file. A key's first occurrence is the
+  one that counts; unknown keys and duplicates stay as they are. A modified line keeps its original
+  prefix (`nom:   `); a missing key is appended at the end of the file.
+- `mode: "entries"`: **all** the pairs form a list called **`entries`**, whose items have two fixed
+  fields: `key` (`text`) and `value` (`text`, `url` or `email`). They are edited in a `table`:
+  rename, add, remove. This is the format for a glossary.
 
-## 4. Les champs
+## 4. Fields
 
 ```json
 { "key": "portions", "type": "number", "label": "Portions", "min": 1, "max": 50, "default": 4 }
 ```
 
-| Propriété     | Pour            | Valeur                                                                                               |
+| Property      | For             | Value                                                                                                |
 | ------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
-| `key`         | tous            | La clé dans le fichier : 1 à 64 caractères, sans point (il sépare les chemins), ni caractère invisible ; jamais `__proto__`, `constructor`, `prototype`. Unique à son niveau |
-| `type`        | tous            | Voir ci-dessous                                                                                      |
-| `label`       | tous            | Le libellé affiché (défaut : la clé)                                                                 |
-| `default`     | tous            | La valeur d'un document neuf ou d'un élément ajouté, **au type du champ**                            |
-| `placeholder` | textes, nombres | L'indication d'un champ vide                                                                         |
-| `min`, `max`, `step` | `number` | Les bornes et le pas (les boutons − / + les respectent)                                             |
-| `unit`        | `number`        | Une unité affichée après la valeur (`min`, `€`)                                                      |
-| `decimals`    | `number`        | Les décimales affichées (0 à 6)                                                                      |
-| `decimal`     | `number`        | En CSV et clé: valeur, le séparateur décimal écrit : `","` ou `"."`                                  |
-| `max`         | `rating`        | Le nombre d'étoiles, 1 à 10 (défaut 5)                                                               |
-| `options`     | `choice`        | 1 à 50 options `{ "value", "label"?, "color"? }` (`color` en `#rrggbb` teinte la pastille)          |
-| `trueValue`, `falseValue` | `boolean` | En CSV et clé: valeur, le texte écrit pour vrai et pour faux (défaut `true` / `false`)     |
-| `separator`   | `tags`          | En CSV et clé: valeur, le séparateur des étiquettes (défaut `,`)                                     |
-| `fields`      | `list`, `object`| Les champs d'un élément, ou les sous-champs                                                          |
+| `key`         | all             | The key in the file: 1 to 64 characters, no dot (it separates paths), no invisible character; never `__proto__`, `constructor`, `prototype`. Unique at its level |
+| `type`        | all             | See below                                                                                            |
+| `label`       | all             | The label shown (default: the key)                                                                   |
+| `default`     | all             | The value in a new document or an added item, **of the field's type**                                |
+| `placeholder` | texts, numbers  | The hint shown in an empty field                                                                     |
+| `min`, `max`, `step` | `number` | The bounds and the step (the − / + buttons respect them)                                             |
+| `unit`        | `number`        | A unit shown after the value (`min`, `€`)                                                            |
+| `decimals`    | `number`        | The number of decimals shown (0 to 6)                                                                |
+| `decimal`     | `number`        | In `csv` and `keyvalue`, the decimal separator written: `","` or `"."`                               |
+| `max`         | `rating`        | The number of stars, 1 to 10 (default 5)                                                             |
+| `options`     | `choice`        | 1 to 50 options `{ "value", "label"?, "color"? }` (`color` as `#rrggbb` tints the badge)             |
+| `trueValue`, `falseValue` | `boolean` | In `csv` and `keyvalue`, the text written for true and for false (default `true` / `false`) |
+| `separator`   | `tags`          | In `csv` and `keyvalue`, the tag separator (default `,`)                                             |
+| `fields`      | `list`, `object`| The fields of an item, or the sub-fields                                                             |
 
-Une propriété qui n'a pas de sens pour le type (des `options` sur un `text`) est refusée.
+A property that makes no sense for the type (`options` on a `text`) is rejected.
 
-| Type       | Valeur en JSON              | Contrôle affiché                                              |
+| Type       | Value in JSON               | Control shown                                                 |
 | ---------- | --------------------------- | ------------------------------------------------------------- |
-| `text`     | chaîne                      | Champ d'une ligne                                             |
-| `longtext` | chaîne                      | Zone de texte                                                 |
-| `number`   | nombre                      | Champ numérique, − / + sur demande                            |
-| `boolean`  | `true` / `false`            | Case à cocher                                                 |
-| `date`     | `"AAAA-MM-JJ"`              | Sélecteur de date (une date illisible reste affichée en texte) |
-| `url`      | chaîne                      | Champ, et un lien **Ouvrir** s'il commence par `http(s)://`    |
-| `email`    | chaîne                      | Champ, et un lien **Écrire** (`mailto:`) si l'adresse est bien formée |
-| `choice`   | chaîne (une des `value`)    | Liste déroulante ; une valeur inconnue du fichier reste choisie et intacte |
-| `tags`     | liste de chaînes            | Étiquettes : Entrée ou virgule pour ajouter, × pour retirer   |
-| `rating`   | entier de 0 à `max`         | Étoiles ; cliquer l'étoile posée retire la note               |
-| `textlist` | liste de chaînes            | Pour le bloc `steps`                                          |
-| `list`     | liste d'objets              | Pour `checklist`, `table`, `cards`, `steps`                   |
-| `object`   | objet                       | Des sous-champs, visés par un chemin `parent.enfant`          |
+| `text`     | string                      | Single-line field                                             |
+| `longtext` | string                      | Text area                                                     |
+| `number`   | number                      | Number field, − / + on request                                |
+| `boolean`  | `true` / `false`            | Checkbox                                                      |
+| `date`     | `"YYYY-MM-DD"`              | Date picker (an unreadable date stays displayed as text)      |
+| `url`      | string                      | Field, plus an **Open** link if it starts with `http(s)://`   |
+| `email`    | string                      | Field, plus a **Write** link (`mailto:`) if the address is well formed |
+| `choice`   | string (one of the `value`s) | Drop-down list; a value in the file that is not an option stays selected and intact |
+| `tags`     | list of strings             | Tags: Enter or comma to add, × to remove                      |
+| `rating`   | integer from 0 to `max`     | Stars; clicking the selected star clears the rating           |
+| `textlist` | list of strings             | For the `steps` block                                         |
+| `list`     | list of objects             | For `checklist`, `table`, `cards`, `steps`                    |
+| `object`   | object                      | Sub-fields, targeted by a `parent.child` path                 |
 
-Trois niveaux de `list` / `object` au plus. Une valeur d'un autre type que prévu s'affiche vide et
-reste **intacte** tant que l'utilisateur ne modifie pas ce champ-là.
+At most three levels of `list` / `object`. A value of a type other than the expected one shows as
+empty and stays **intact** as long as the user does not edit that particular field.
 
-**Les liens** ne sont jamais `javascript:`, `data:` ni `file:` : seuls `http:`, `https:` et
-`mailto:` deviennent cliquables.
+**Links** are never `javascript:`, `data:` or `file:`: only `http:`, `https:` and `mailto:` become
+clickable.
 
-## 5. Les blocs de vue
+## 5. View blocks
 
-`view` est la liste des blocs affichés de haut en bas. Un bloc vise des champs **de son niveau** : la
-racine du document, ou l'élément d'une liste pour les blocs posés dans une carte (`cards`). Un
-chemin `a.b` traverse un champ `object`. Chaque référence est vérifiée à la validation : un bloc qui
-vise un champ absent, ou d'un type qu'il ne sait pas montrer, est refusé.
+`view` is the list of blocks shown from top to bottom. A block targets fields **at its own level**:
+the document root, or a list item for blocks placed in a card (`cards`). A path `a.b` goes through
+an `object` field. Every reference is checked during validation: a block that targets a missing
+field, or a field of a type it cannot display, is rejected.
 
-| Bloc        | Propriétés                                                         | Vise                                   |
+| Block       | Properties                                                         | Targets                                |
 | ----------- | ------------------------------------------------------------------ | -------------------------------------- |
 | `title`     | `field`, `placeholder`?                                            | `text`, `longtext`                     |
-| `badges`    | `items`: 1 à 12 `{ field, label?, stepper? }`                      | une valeur (sauf `longtext`, `tags`)   |
-| `checklist` | `field`?, `check`?, `text`?, `label`?, `addLabel`?                 | `list` (case + texte)                  |
-| `steps`     | `field`, `text`?, `label`?, `addLabel`?                            | `textlist`, ou `list` (texte)          |
-| `longtext`  | `field`, `label`?, `rows`? (2 à 30)                                | `text`, `longtext`                     |
-| `number`    | `field`, `label`?                                                  | `number` (avec − / +)                  |
-| `table`     | `field`?, `columns`? (1 à 16), `label`?, `addLabel`?               | `list` (colonnes : une valeur)         |
+| `badges`    | `items`: 1 to 12 `{ field, label?, stepper? }`                     | a single value (except `longtext`, `tags`) |
+| `checklist` | `field`?, `check`?, `text`?, `label`?, `addLabel`?                 | `list` (checkbox + text)               |
+| `steps`     | `field`, `text`?, `label`?, `addLabel`?                            | `textlist`, or `list` (text)           |
+| `longtext`  | `field`, `label`?, `rows`? (2 to 30)                               | `text`, `longtext`                     |
+| `number`    | `field`, `label`?                                                  | `number` (with − / +)                  |
+| `table`     | `field`?, `columns`? (1 to 16), `label`?, `addLabel`?              | `list` (columns: a single value)       |
 | `tags`      | `field`, `label`?                                                  | `tags`                                 |
 | `date`      | `field`, `label`?                                                  | `date`                                 |
 | `link`      | `field`, `label`?                                                  | `url`, `email`                         |
 | `rating`    | `field`, `label`?                                                  | `rating`, `number`                     |
-| `fields`    | `fields`: 1 à 32 chemins, `label`?                                 | une valeur chacun : un formulaire      |
-| `section`   | `title`, `blocks`, `collapsed`?                                    | — (un groupe repliable)                |
-| `cards`     | `field`, `blocks`, `label`?, `addLabel`?                           | `list` : une carte par élément         |
-| `progress`  | `field`?, `check`? — ou `field` + `max` / `maxField`, `label`?     | `list` + case, ou un nombre            |
-| `total`     | `label`, `compute`, `unit`?, `decimals`?                           | un calcul (§6)                         |
+| `fields`    | `fields`: 1 to 32 paths, `label`?                                  | a single value each: a form            |
+| `section`   | `title`, `blocks`, `collapsed`?                                    | — (a collapsible group)                |
+| `cards`     | `field`, `blocks`, `label`?, `addLabel`?                           | `list`: one card per item              |
+| `progress`  | `field`?, `check`? — or `field` + `max` / `maxField`, `label`?     | `list` + checkbox, or a number         |
+| `total`     | `label`, `compute`, `unit`?, `decimals`?                           | a computation (§6)                     |
 
-Précisions :
+Details:
 
-- **`field` omis** (`checklist`, `table`, `progress`) : la liste implicite du format (`rows`,
-  `items`, `entries`). Pour un document JSON, `field` est obligatoire.
-- **`check` / `text` omis** (`checklist`, `steps`, `progress`) : le premier champ `boolean`, et le
-  premier champ `text` / `longtext`, des éléments.
-- **`stepper`** (dans `badges`) : boutons − / + pour un champ `number`.
-- **`progress`** : sur une liste, cochés / total ; sur un nombre, la valeur sur `max` (un nombre) ou
-  sur `maxField` (un autre champ nombre : les points de vie sur leur maximum).
-- **`checklist`, `steps`, `table`, `cards`** ajoutent, retirent et réordonnent (↑ ↓ ×) ; un élément
-  ajouté prend les `default` de ses champs. En lecture seule, ces boutons n'existent pas.
-- **`section`** et **`cards`** s'imbriquent, quatre niveaux au plus ; 100 blocs par niveau, 300 en tout.
+- **`field` omitted** (`checklist`, `table`, `progress`): the format's implicit list (`rows`,
+  `items`, `entries`). For a JSON document, `field` is required.
+- **`check` / `text` omitted** (`checklist`, `steps`, `progress`): the items' first `boolean` field,
+  and their first `text` / `longtext` field.
+- **`stepper`** (in `badges`): − / + buttons for a `number` field.
+- **`progress`**: on a list, checked / total; on a number, the value out of `max` (a number) or out
+  of `maxField` (another number field: hit points out of their maximum).
+- **`checklist`, `steps`, `table`, `cards`** add, remove and reorder (↑ ↓ ×); an added item takes
+  the `default`s of its fields. In read-only mode, these buttons do not exist.
+- **`section`** and **`cards`** nest, four levels at most; 100 blocks per level, 300 in total.
 
-## 6. Les calculs
+## 6. Computations
 
-`total` (et les colonnes calculées de `functions.fields`) appliquent **une opération d'une liste
-fermée** à des champs déclarés — jamais une formule écrite : ce serait du code.
+`total` (and the computed columns of `functions.fields`) apply **one operation from a closed list**
+to declared fields — never a written formula: that would be code.
 
 ```json
 { "op": "sumProduct", "field": "articles", "of": ["quantite", "prix"] }
 ```
 
-| `op`           | Sur une liste (`field`, ou la liste implicite)          | Au niveau courant (`of` = champs du niveau) |
+| `op`           | On a list (`field`, or the implicit list)               | At the current level (`of` = fields of that level) |
 | -------------- | ------------------------------------------------------- | ------------------------------------------- |
-| `count`        | Le nombre d'éléments                                    | Le nombre de champs non vides de `of`       |
-| `countChecked` | Les éléments dont la case `of` est cochée               | Les cases de `of` cochées                   |
-| `sum`          | La somme du nombre `of` des éléments                    | La somme des nombres de `of`                |
-| `avg`, `min`, `max` | La moyenne, le minimum, le maximum de `of`         | Idem sur les champs de `of`                 |
-| `sumProduct`   | La somme, élément par élément, du produit de 2 à 4 nombres | Le produit des champs de `of`            |
+| `count`        | The number of items                                     | The number of non-empty fields in `of`      |
+| `countChecked` | The items whose `of` checkbox is checked                | The checked checkboxes in `of`              |
+| `sum`          | The sum of the items' `of` number                       | The sum of the numbers in `of`              |
+| `avg`, `min`, `max` | The average, the minimum, the maximum of `of`      | The same over the fields in `of`            |
+| `sumProduct`   | The sum, item by item, of the product of 2 to 4 numbers | The product of the fields in `of`           |
 
-Le mode se décide comme suit : `field` présent → sur la liste ; sinon, pour un format à liste
-implicite, si `of` ne désigne aucun champ de la racine → sur la liste implicite ; sinon → au niveau
-courant. Une valeur vide est ignorée (une moyenne sans valeur affiche « — »).
+The mode is decided as follows: `field` present → on the list; otherwise, for a format with an
+implicit list, if `of` names no root field → on the implicit list; otherwise → at the current
+level. An empty value is ignored (an average with no value shows “—”).
 
-## 7. Les fonctions pures
+## 7. Pure functions
 
-Filarr appelle ces fonctions sur les fichiers **qu'il** choisit, dans une page sans aucune API
-(capacité `functions` du manifeste, CAPACITES.md palier 2). Le moteur ne les expose que si la
-configuration les déclare :
+Filarr calls these functions on files **it** chooses, in a page with no API at all (the manifest's
+`functions` capability, [CAPABILITIES.md](contract/CAPABILITIES.md) tier 2). The engine exposes them
+only if the configuration declares them:
 
 ```json
 "functions": {
@@ -293,46 +293,47 @@ configuration les déclare :
 }
 ```
 
-- **`extractText`** — pour la recherche locale de Filarr. `true` : le texte de tous les champs
-  (libellés de choix, étiquettes, listes comprises ; pas les nombres) ; `{ "fields": [...] }` :
-  seulement ceux-là. 100 000 caractères au plus.
-- **`fields`** — les colonnes du tableau de dossier de Filarr. `key` est la clé **du manifeste**
-  (`^[a-z][a-z0-9_]{0,31}$`) ; la valeur est un champ lu tel quel (`field`) ou un calcul (`compute`).
-  Le type rendu : `number`/`rating` → `number`, `boolean` → `checkbox`, `date` → `date`, `url` →
-  `url`, le reste → `text` (le libellé d'un choix, les étiquettes jointes) ; un calcul → `number`.
-- **`exports`** — « Exporter en … » dans le menu du fichier, 1 à 4 cibles :
-  - `json` : le document lui-même pour un format JSON (rien n'est perdu), sinon ses champs déclarés ;
-  - `csv` : le fichier lui-même pour un CSV ; la liste `field` (ou la liste implicite) en colonnes ;
-    sinon deux colonnes, champ et valeur ;
-  - `md`, `txt`, `html` : la vue mise à plat — titres, pastilles, cases, étapes, tableaux. Le HTML
-    est un document autonome, chaque texte échappé, sans script ni ressource externe.
+- **`extractText`** — for Filarr's local search. `true`: the text of every field (choice labels,
+  tags and lists included; not numbers); `{ "fields": [...] }`: only those. 100,000 characters at
+  most.
+- **`fields`** — the columns of Filarr's folder table. `key` is the key **in the manifest**
+  (`^[a-z][a-z0-9_]{0,31}$`); the value is a field read as is (`field`) or a computation
+  (`compute`). The rendered type: `number`/`rating` → `number`, `boolean` → `checkbox`, `date` →
+  `date`, `url` → `url`, everything else → `text` (a choice's label, the tags joined); a
+  computation → `number`.
+- **`exports`** — “Export as …” in the file menu, 1 to 4 targets:
+  - `json`: the document itself for a JSON format (nothing is lost), otherwise its declared fields;
+  - `csv`: the file itself for a CSV; the `field` list (or the implicit list) as columns;
+    otherwise two columns, field and value;
+  - `md`, `txt`, `html`: the flattened view — headings, badges, checkboxes, steps, tables. The HTML
+    is a standalone document, every text escaped, with no script and no external resource.
 
-Un document illisible fait échouer l'appel avec un code (`document_forbidden_key`…) : Filarr retombe
-sur ce qu'il fait sans l'extension.
+An unreadable document makes the call fail with a code (`document_forbidden_key`…): Filarr falls
+back on what it does without the extension.
 
-## 8. Le manifeste qui va avec
+## 8. The matching manifest
 
-Le manifeste (`filarr.extension.json` › `manifest`) est ce que l'utilisateur **accepte** ; la
-configuration est ce que le moteur **fait**. `filarr-ext check` vérifie qu'ils disent la même chose :
+The manifest (`filarr.extension.json` › `manifest`) is what the user **accepts**; the configuration
+is what the engine **does**. `filarr-ext check` verifies that they say the same thing:
 
-| Dans `nocode.json`                       | Dans `manifest.capabilities`                                      |
+| In `nocode.json`                         | In `manifest.capabilities`                                        |
 | ---------------------------------------- | ----------------------------------------------------------------- |
-| `id`                                     | `manifest.id` (erreur s'ils diffèrent)                            |
+| `id`                                     | `manifest.id` (error if they differ)                              |
 | `functions.extractText`                  | `functions.extractText: true`                                     |
-| `functions.fields[i].key`                | `functions.fields[i]` `{ key, label, type }` — même clé, même type |
+| `functions.fields[i].key`                | `functions.fields[i]` `{ key, label, type }` — same key, same type |
 | `functions.exports[i].to`                | `functions.exports[i]` `{ to, label }`                            |
 
-Une fonction déclarée au manifeste et absente de la configuration est une **erreur** (Filarr
-l'appellerait) ; l'inverse est un avertissement (Filarr ne l'appellera pas). Un **modèle de départ**
-(`newDocument[].seed`, en base64 — `npx filarr-ext seed modele.ext` le calcule) doit s'ouvrir avec
-la configuration. `maxBytes` au-delà de 8 Mio est inutile : le moteur n'ouvre pas plus gros.
+A function declared in the manifest but missing from the configuration is an **error** (Filarr
+would call it); the reverse is a warning (Filarr will not call it). A **starter template**
+(`newDocument[].seed`, in base64 — `npx filarr-ext seed modele.ext` computes it) must open with the
+configuration. A `maxBytes` above 8 MiB is pointless: the engine does not open anything larger.
 
-## 9. Exemples complets
+## 9. Complete examples
 
-Les dix exemples de [`examples/nocode/`](../examples/nocode/) passent `filarr-ext check` et `pack` ;
-chacun a son `README.md`. Trois configurations complètes, pour commencer :
+The ten examples in [`examples/nocode/`](../examples/nocode/) pass `filarr-ext check` and `pack`;
+each has its own `README.md`. Three complete configurations, to get started:
 
-### Une liste de courses (`lines`)
+### A shopping list (`lines`)
 
 ```json
 {
@@ -348,7 +349,7 @@ chacun a son `README.md`. Trois configurations complètes, pour commencer :
 }
 ```
 
-### Un inventaire (`csv`), avec totaux et export
+### An inventory (`csv`), with totals and an export
 
 ```json
 {
@@ -369,9 +370,9 @@ chacun a son `README.md`. Trois configurations complètes, pour commencer :
 }
 ```
 
-et dans le manifeste : `"capabilities": { "functions": { "exports": [{ "to": "csv", "label": "CSV" }] } }`.
+and in the manifest: `"capabilities": { "functions": { "exports": [{ "to": "csv", "label": "CSV" }] } }`.
 
-### Un journal de lecture (`json`), en cartes
+### A reading log (`json`), as cards
 
 ```json
 {
@@ -407,19 +408,19 @@ et dans le manifeste : `"capabilities": { "functions": { "exports": [{ "to": "cs
 }
 ```
 
-## 10. Les bornes, en tableau
+## 10. All limits in one table
 
-| Borne                                   | Valeur                                      |
+| Limit                                   | Value                                       |
 | --------------------------------------- | ------------------------------------------- |
-| `nocode.json`                           | 256 Kio (PACKAGE.md), 12 niveaux d'imbrication |
-| Champs                                  | 64 par niveau, 256 en tout, 3 niveaux de `list` / `object` |
-| Blocs                                   | 100 par niveau, 300 en tout, 4 niveaux de `section` / `cards` |
-| Pastilles (`badges`)                    | 12                                          |
-| Colonnes (`table`)                      | 16                                          |
+| `nocode.json`                           | 256 KiB ([PACKAGE.md](contract/PACKAGE.md)), 12 levels of nesting |
+| Fields                                  | 64 per level, 256 in total, 3 levels of `list` / `object` |
+| Blocks                                  | 100 per level, 300 in total, 4 levels of `section` / `cards` |
+| Badges (`badges`)                       | 12                                          |
+| Columns (`table`)                       | 16                                          |
 | Options (`choice`)                      | 50                                          |
-| Libellés                                | 1 à 200 caractères (`unit` : 20)            |
-| Valeurs par défaut                      | textes de 10 000 caractères, listes de 1 000 éléments |
-| Document ouvert                         | 8 Mio, 12 niveaux, UTF-8                    |
-| `extractText`                           | 100 000 caractères                          |
-| `functions.fields`                      | 32 colonnes, texte de 500 caractères        |
-| `functions.exports`                     | 4 cibles parmi `md`, `txt`, `html`, `csv`, `json` |
+| Labels                                  | 1 to 200 characters (`unit`: 20)            |
+| Default values                          | texts of 10,000 characters, lists of 1,000 items |
+| Open document                           | 8 MiB, 12 levels, UTF-8                     |
+| `extractText`                           | 100,000 characters                          |
+| `functions.fields`                      | 32 columns, text of 500 characters          |
+| `functions.exports`                     | 4 targets among `md`, `txt`, `html`, `csv`, `json` |

@@ -1,33 +1,31 @@
-# 🍲 Carnet de recettes — exemple sans code
+# 🍲 Carnet de recettes (recipe book) — no-code example
 
-Fichiers `.recette`. Vos recettes en fiches : catégorie, portions, temps, ingrédients à cocher pendant les courses, étapes numérotées et notes.
+`.recette` files. Your recipes as cards: category, servings, time, ingredients to tick off while shopping, numbered steps and notes.
 
-## Ce qu’il montre
+## What it shows
 
-Montre une fiche **JSON** complète : titre, pastilles (catégorie colorée, portions et temps avec − / +),
-une barre de progression des courses, une liste d’ingrédients **à cocher** (ajout, retrait, ordre), des
-**étapes numérotées** et des notes libres. Les clés que la vue n’affiche pas (ici `source`) sont gardées
-telles quelles à l’enregistrement.
+Shows a complete **JSON** record: a title, badges (colored category, servings and time with − / +),
+a shopping progress bar, an ingredient **checklist** (add, remove, reorder), **numbered steps** and
+free-form notes. Keys the view does not display (here `source`) are kept as they are on save.
 
-Elle déclare aussi trois **fonctions pures** : `extractText` (la recherche locale de Filarr trouve une
-recette par ses ingrédients) et `fields` (portions, temps, catégorie — les colonnes du tableau de
-dossier de Filarr).
+It also declares two **pure functions**: `extractText` (Filarr’s local search finds a recipe by its
+ingredients) and `fields` (servings, time, category — the columns of Filarr’s folder table).
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/carnet-recettes   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/carnet-recettes   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/carnet-recettes    # dist/carnet-recettes-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/carnet-recettes  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/carnet-recettes  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/carnet-recettes/dist/carnet-recettes-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/carnet-recettes/dist/carnet-recettes-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

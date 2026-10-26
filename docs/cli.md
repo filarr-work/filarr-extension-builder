@@ -1,38 +1,43 @@
-# `filarr-ext` — l'outil en ligne de commande
+# `filarr-ext` — the command-line tool
 
-`filarr-ext` (paquet `@filarr/extension-cli`) construit, simule, contrôle, empaquette et remet à
-Filarr une extension, **avec ou sans code**. Il ne parle à aucun service : il ne demande ni mot de
-passe, ni clé, ni jeton. La signature se fait dans Filarr, sur votre appareil, après une relecture
-complète du paquet.
+`filarr-ext` (package `@filarr/extension-cli`) builds, simulates, checks, packages and hands over an
+extension to Filarr, **with or without code**. It talks to no service: it asks for no password, no
+key, no token. Signing happens in Filarr, on your device, after a full review of the package.
+
+The tool's messages are currently in French.
 
 ```bash
-npm create filarr-extension@latest mon-extension   # un projet prêt (voir plus bas)
-cd mon-extension && npm install
-npx filarr-ext dev        # le simulateur local
-npx filarr-ext check      # les contrôles du serveur et de Filarr
+npm create filarr-extension@latest my-extension   # a ready-made project (see below)
+cd my-extension && npm install
+npx filarr-ext dev        # the local simulator
+npx filarr-ext check      # the server's and Filarr's checks
 npx filarr-ext pack       # dist/<id>-<version>.filarrext
 npx filarr-ext publish dist/<id>-<version>.filarrext
 ```
 
-| Commande               | Ce qu'elle fait                                                                     |
+`npx filarr-ext` runs the `filarr-ext` binary that `npm install` puts in the project, so run
+`npm install` first. No npm package is named `filarr-ext`: outside a project, use
+`npx @filarr/extension-cli <command>`.
+
+| Command                | What it does                                                                        |
 | ---------------------- | ----------------------------------------------------------------------------------- |
-| `dev`                  | Le simulateur local, reconstruit et rechargé à chaque modification du projet        |
+| `dev`                  | The local simulator, rebuilt and reloaded on every change to the project            |
 | `build`                | `dist/bundle.js`                                                                    |
-| `check`                | Tous les contrôles, sortie ✓ / ! / ✗                                                |
-| `pack`                 | Le paquet `.filarrext` (format 1 de `PACKAGE.md`), relu avant d'être écrit          |
-| `verify <paquet>`      | Relit et contrôle un paquet, sans rien exécuter                                     |
-| `publish <paquet>`     | Ouvre Filarr pour bureau sur l'écran Publier (`filarr://publish?file=…`)           |
-| `seed <fichier>`       | Le base64 d'un modèle de départ (`capabilities.newDocument[].seed`)                 |
+| `check`                | All checks, output ✓ / ! / ✗                                                        |
+| `pack`                 | The `.filarrext` package (format 1 of [`PACKAGE.md`](contract/PACKAGE.md)), read back before it is written |
+| `verify <package>`     | Reads back and checks a package, without executing anything                         |
+| `publish <package>`    | Opens Filarr Desktop on the Publish screen (`filarr://publish?file=…`)              |
+| `seed <file>`          | The base64 of a starter template (`capabilities.newDocument[].seed`)                |
 
-Options communes : `-C, --dir <dossier>` (le projet ; défaut : le dossier courant), `--json`
-(`check`, `verify`, `pack` : la même sortie en JSON), `-h, --help`, `-v, --version`.
+Common options: `-C, --dir <dir>` (the project; default: the current directory), `--json`
+(`check`, `verify`, `pack`: the same output as JSON), `-h, --help`, `-v, --version`.
 
-**Codes de sortie** : `0` réussi (des avertissements sont permis), `1` au moins une erreur de
-contrôle, `2` commande mal formée.
+**Exit codes**: `0` success (warnings are allowed), `1` at least one check error, `2` malformed
+command.
 
 ---
 
-## Le fichier de projet : `filarr.extension.json`
+## The project file: `filarr.extension.json`
 
 ```json
 {
@@ -54,45 +59,45 @@ contrôle, `2` commande mal formée.
 }
 ```
 
-| Champ         | Obligatoire | Contenu                                                                                         |
+| Field         | Required    | Content                                                                                         |
 | ------------- | ----------- | ----------------------------------------------------------------------------------------------- |
-| `manifest`    | oui         | Le manifeste **non signé**, exactement tel qu'il ira dans le paquet (voir `check`)              |
-| `listing`     | non         | La fiche : `releaseNotes` (≤ 2000), `sourceUrl` (`https://`, ≤ 300), `license` (≤ 40)           |
-| `screenshots` | non         | 0 à 4 captures PNG ou WebP, 96 Kio chacune — chemins **relatifs au projet**               |
-| `build`       | oui         | `{ "kind": "code", "entry": "src/index.ts" }` ou `{ "kind": "nocode", "config": "nocode.json" }` |
-| `samples`     | non         | Le dossier des fichiers d'exemple du simulateur (défaut : `exemples`)                           |
-| `format`      | non         | `1`                                                                                             |
+| `manifest`    | yes         | The **unsigned** manifest, exactly as it will go into the package (see `check`)                 |
+| `listing`     | no          | The listing: `releaseNotes` (≤ 2000), `sourceUrl` (`https://`, ≤ 300), `license` (≤ 40)         |
+| `screenshots` | no          | 0 to 4 PNG or WebP screenshots, 96 KiB each — paths **relative to the project**                 |
+| `build`       | yes         | `{ "kind": "code", "entry": "src/index.ts" }` or `{ "kind": "nocode", "config": "nocode.json" }` |
+| `samples`     | no          | The folder of the simulator's sample files (default: `exemples`)                                |
+| `format`      | no          | `1`                                                                                             |
 
-Tout chemin reste **dans** le projet : un chemin absolu ou qui remonte (`../`) est refusé. Une clé
-inconnue est refusée.
+Every path stays **inside** the project: an absolute path, or one that climbs up (`../`), is
+rejected. An unknown key is rejected.
 
-**L'icône** d'une extension est l'emoji `manifest.icon` (1 à 8 points de code). Le paquet ne
-transporte **aucune** image d'icône : une entrée `icon.png` serait refusée par Filarr.
+**The icon** of an extension is the emoji `manifest.icon` (1 to 8 code points). The package carries
+**no** icon image: an `icon.png` entry would be rejected by Filarr.
 
 ---
 
 ## `filarr-ext build`
 
-Écrit `dist/bundle.js`.
+Writes `dist/bundle.js`.
 
-- **Avec code** : esbuild, `--format=iife`, cible `es2020`, navigateur, minifié (`--no-minify` pour
-  lire la sortie), sortie ASCII, sans commentaire ni carte de sources. Le bundle est exécuté par la
-  page bac à sable comme un **corps de fonction** (`new Function('globalThis', code)`) : un
-  `import`/`export` au niveau haut y serait une erreur de syntaxe ; l'IIFE l'exclut par construction.
-  Toutes les dépendances sont embarquées (la page n'a aucun réseau).
-- **Workers** : `import source from './calcul.worker.ts?worker'` construit ce fichier **à part**, en
-  IIFE, et l'importe comme **texte**. Faites-en un `Blob`, puis un `Worker` depuis son URL `blob:` —
-  la seule source que la CSP de la page permet (`worker-src blob:`) ; le worker hérite de cette CSP,
-  donc d'aucun réseau. (Même convention que les exemples avec code du dépôt.)
-- **Sans code** : le moteur sans code, puis les deux lignes finales du contrat :
+- **With code**: esbuild, `--format=iife`, target `es2020`, browser, minified (`--no-minify` to
+  read the output), ASCII output, no comments and no source map. The sandbox page executes the
+  bundle as a **function body** (`new Function('globalThis', code)`): a top-level
+  `import`/`export` would be a syntax error there; the IIFE rules it out by construction. All
+  dependencies are bundled (the page has no network).
+- **Workers**: `import source from './calcul.worker.ts?worker'` builds that file **separately**, as
+  an IIFE, and imports it as **text**. Make a `Blob` from it, then a `Worker` from its `blob:` URL —
+  the only source the page's CSP allows (`worker-src blob:`); the worker inherits that CSP, and so
+  has no network. (Same convention as the code examples in this repository.)
+- **No-code**: the no-code engine, then the two final lines of the contract:
 
   ```js
   /* filarr-nocode engine=1.0.0 */
   globalThis.__filarrNocodeBoot({…});
   ```
 
-  La configuration est validée d'abord (voir [nocode.md](nocode.md)) ; son JSON tient sur une ligne,
-  en ASCII, et rien ne suit `);`.
+  The configuration is validated first (see [nocode.md](nocode.md)); its JSON fits on one line, in
+  ASCII, and nothing follows `);`.
 
 ```text
 $ npx filarr-ext build
@@ -101,37 +106,38 @@ $ npx filarr-ext build
 
 ## `filarr-ext check`
 
-Construit le projet, puis rejoue les contrôles **du serveur** (`validateManifest` du worker,
-PUBLISHING.md) et **de Filarr** (validateur de capacités, lecture du paquet, page bac à sable).
+Builds the project, then replays the checks **of the server** (the worker's `validateManifest`,
+[PUBLISHING.md](contract/PUBLISHING.md)) and **of Filarr** (capability validator, package reading,
+sandbox page).
 
-| Contrôle | Erreur (✗) si… | Avertissement (!) si… |
+| Check | Error (✗) if… | Warning (!) if… |
 | --- | --- | --- |
-| Fichier de projet | illisible, clé inconnue, chemin qui sort du projet | — |
-| `id` | hors de `^[a-z][a-z0-9-]{1,63}$` | — |
-| `version` | hors de `^\d+\.\d+\.\d+$` (ni `v`, ni suffixe) | — |
-| `name` | vide ou plus de 100 caractères (unités UTF-16, comme le serveur) | — |
-| `description` | absente ou plus de 2000 caractères | vide |
-| `extensions` | 0 ou plus de 10, ou hors de `^[a-z0-9]{1,10}$` | une extension en double |
-| `icon` | pas un emoji de 1 à 8 points de code | absente |
-| `category` | hors de `editors`, `productivity`, `data`, `media`, `fun`, `other` | — |
-| `author` | plus de 80 points de code, caractère invisible ou directionnel | — |
-| Champs calculés | `bundleHash`, `publisherFingerprint`, `trust`, `previews` présents (Filarr les calcule) | — |
-| Champ inconnu du manifeste | toujours | — |
-| `capabilities` | refusées par le validateur de Filarr (copie **vendorisée**, à l'identique) : clé inconnue, borne, exclusion réseau… | — |
-| Fiche (`listing`) | hors bornes, clé inconnue | pas de licence |
-| Captures | plus de 4, absentes, ni PNG ni WebP (lu dans les octets), JPEG (Filarr ne garde que PNG et WebP en aperçu), plus de 96 Kio | aucune capture |
-| Manifeste signé | plus de 640 Kio une fois les captures ajoutées en data URL | — |
-| Build | erreur esbuild, configuration sans code refusée (avec son chemin : `view[2].field`) | avertissement esbuild |
-| Taille du bundle | vide ou plus de 4 Mio | plus de 1 Mio |
-| Forme du bundle | ne se compile pas comme corps de fonction (ESM, `import`/`export`) ; ne pose pas `filarrSandboxedPlugin` | — |
-| Points d'entrée | pas d'éditeur `<id>-editor` ; une fonction déclarée absente de `plugin.functions` ; `noteBlock` / `homeWidget` sans `plugin.block` / `plugin.widget` | un éditeur que l'hôte ne demandera jamais ; une fonction ou un bloc non déclaré |
-| Sans code | `nocode.json` ≠ manifeste (identifiant, colonnes, types, exports) ; capacité inutile au moteur ; modèle de départ illisible ; bundle relu ≠ `nocode.json` | une fonction offerte mais non déclarée |
-| API fermées par la page | — | `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `sendBeacon`, `localStorage`, `indexedDB`, `eval`, `new Function`, `innerHTML`, `import()`, carte de sources embarquée |
+| Project file | unreadable, unknown key, path that leaves the project | — |
+| `id` | outside `^[a-z][a-z0-9-]{1,63}$` | — |
+| `version` | outside `^\d+\.\d+\.\d+$` (no `v`, no suffix) | — |
+| `name` | empty or more than 100 characters (UTF-16 units, like the server) | — |
+| `description` | missing or more than 2000 characters | empty |
+| `extensions` | 0 or more than 10, or outside `^[a-z0-9]{1,10}$` | a duplicate file extension |
+| `icon` | not an emoji of 1 to 8 code points | missing |
+| `category` | not one of `editors`, `productivity`, `data`, `media`, `fun`, `other` | — |
+| `author` | more than 80 code points, invisible or directional character | — |
+| Computed fields | `bundleHash`, `publisherFingerprint`, `trust`, `previews` present (Filarr computes them) | — |
+| Unknown manifest field | always | — |
+| `capabilities` | rejected by Filarr's validator (**vendored** copy, identical): unknown key, limit, network exclusion… | — |
+| Listing (`listing`) | out of bounds, unknown key | no license |
+| Screenshots | more than 4, missing, neither PNG nor WebP (read from the bytes), JPEG (Filarr keeps only PNG and WebP as previews), more than 96 KiB | no screenshot |
+| Signed manifest | more than 640 KiB once the screenshots are added as data URLs | — |
+| Build | esbuild error, no-code configuration rejected (with its path: `view[2].field`) | esbuild warning |
+| Bundle size | empty or more than 4 MiB | more than 1 MiB |
+| Bundle shape | does not compile as a function body (ESM, `import`/`export`); does not set `filarrSandboxedPlugin` | — |
+| Entry points | no `<id>-editor` editor; a declared function missing from `plugin.functions`; `noteBlock` / `homeWidget` without `plugin.block` / `plugin.widget` | an editor the host will never ask for; an undeclared function or block |
+| No-code | `nocode.json` ≠ manifest (identifier, columns, types, exports); capability the engine does not need; unreadable starter template; bundle read back ≠ `nocode.json` | a function offered but not declared |
+| APIs closed by the page | — | `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `sendBeacon`, `localStorage`, `indexedDB`, `eval`, `new Function`, `innerHTML`, `import()`, embedded source map |
 
-Les points d'entrée se lisent en **exécutant le bundle à blanc** dans un contexte `vm` sans DOM ni
-réseau : c'est votre propre code, construit à l'instant. Si votre bundle touche le DOM dès son
-chargement, l'exécution échoue et `check` se rabat sur la lecture du texte (avertissement).
-`verify`, lui, n'exécute jamais rien.
+Entry points are read by **dry-running the bundle** in a `vm` context with no DOM and no network:
+it is your own code, built a moment ago. If your bundle touches the DOM as soon as it loads, the run
+fails and `check` falls back on reading the text (warning). `verify`, for its part, never executes
+anything.
 
 ```text
 $ npx filarr-ext check
@@ -152,23 +158,23 @@ filarr-ext check — carnet-recettes 1.0.0
 
 ## `filarr-ext pack`
 
-Lance `check`, puis assemble le paquet de `PACKAGE.md` (format 1) :
+Runs `check`, then assembles the package defined by [`PACKAGE.md`](contract/PACKAGE.md) (format 1):
 
-| Entrée                                      | Contenu                                                                 |
+| Entry                                       | Content                                                                 |
 | ------------------------------------------- | ----------------------------------------------------------------------- |
 | `filarr-package.json`                       | `{ format: 1, manifest, listing?, screenshots?, build: { kind, tool, engine? } }` |
-| `bundle.js`                                 | Le bundle                                                               |
-| `nocode.json`                               | Sans code : **exactement** le JSON de la dernière ligne du bundle       |
-| `screenshots/1.webp` … `screenshots/4.webp` | Les captures, dans l'ordre (le type est lu dans les octets, pas dans le nom) |
+| `bundle.js`                                 | The bundle                                                              |
+| `nocode.json`                               | No-code: **exactly** the JSON of the bundle's last line                 |
+| `screenshots/1.webp` … `screenshots/4.webp` | The screenshots, in order (the type is read from the bytes, not from the name) |
 
-`build.tool` vaut `filarr-ext <version>` ; `build.engine`, la version du moteur sans code. Le
-`build` du paquet ne porte que `kind`, `tool` et `engine` : ni le `entry` ni le `config` du fichier
-de projet, ni son `format`. Rien d'autre n'entre dans l'archive : ni clé, ni signature, ni jeton, ni
-image d'icône, ni dossier. `pack` n'écrit que le paquet (pas `dist/bundle.js`).
-L'archive est reproductible (dates fixes) : deux `pack` du même projet donnent les mêmes octets.
+`build.tool` is `filarr-ext <version>`; `build.engine`, the no-code engine version. The package's
+`build` carries only `kind`, `tool` and `engine`: neither the project file's `entry` nor its
+`config`, nor its `format`. Nothing else goes into the archive: no key, no signature, no token, no
+icon image, no folder. `pack` writes only the package (not `dist/bundle.js`).
+The archive is reproducible (fixed dates): two `pack` runs on the same project give the same bytes.
 
-**`pack` refuse ce que Filarr refuserait.** Le paquet assemblé est relu par le même chemin que
-`verify` avant d'être écrit ; à la moindre erreur, rien n'arrive sur le disque.
+**`pack` rejects what Filarr would reject.** The assembled package is read back through the same
+path as `verify` before it is written; at the slightest error, nothing reaches the disk.
 
 ```text
 $ npx filarr-ext pack
@@ -176,46 +182,47 @@ $ npx filarr-ext pack
   ✓ paquet écrit : dist/carnet-recettes-1.0.0.filarrext (27,4 Kio)
 ```
 
-Option : `--out <chemin.filarrext>`.
+Option: `--out <path.filarrext>`.
 
-## `filarr-ext verify <paquet>`
+## `filarr-ext verify <package>`
 
-Relit un paquet comme Filarr le relira, **sans rien exécuter** (le bundle est compilé, jamais
-appelé) :
+Reads a package back as Filarr will, **without executing anything** (the bundle is compiled, never
+called):
 
-1. l'archive : 8 Mio au plus ; le répertoire central lu **avant** toute décompression — 16 entrées au
-   plus, noms `^[a-z0-9][a-z0-9._-]{0,63}(/[a-z0-9][a-z0-9._-]{0,63})?$` (un niveau de dossier, jamais
-   `..`), aucun dossier, aucune entrée inconnue, aucun doublon, méthodes *store* ou *deflate*, 12 Mio
-   décompressés annoncés au plus ;
-2. la décompression **en flux**, coupée dès qu'une entrée dépasse sa borne (64 Kio, 4 Mio, 256 Kio,
-   96 Kio) ou que le total dépasse 12 Mio — une taille annoncée peut mentir, une bombe ne passe pas ;
-   les en-têtes locaux doivent dire la même chose que le répertoire central ;
-3. `filarr-package.json` : UTF-8, JSON sans clé interdite, format 1, manifeste, fiche, captures,
-   `build` ;
-4. les captures annoncées (présentes, type et taille) et aucune capture non annoncée ;
-5. le bundle (taille, corps de fonction, global, API fermées) ; sans code : `nocode.json` identique à
-   la configuration du bundle, configuration acceptée par le moteur, accord avec le manifeste, moteur
-   déclaré = moteur du bundle (et un avertissement s'il diffère de celui que `filarr-ext` fabrique
-   pour cette version).
+1. the archive: 8 MiB at most; the central directory is read **before** any decompression — 16
+   entries at most, names `^[a-z0-9][a-z0-9._-]{0,63}(/[a-z0-9][a-z0-9._-]{0,63})?$` (one folder
+   level, never `..`), no folder entry, no unknown entry, no duplicate, *store* or *deflate*
+   methods, 12 MiB of declared uncompressed size at most;
+2. decompression **as a stream**, cut off as soon as an entry exceeds its limit (64 KiB, 4 MiB,
+   256 KiB, 96 KiB) or the total exceeds 12 MiB — a declared size can lie, a zip bomb does not get
+   through; the local headers must say the same thing as the central directory;
+3. `filarr-package.json`: UTF-8, JSON with no forbidden key, format 1, manifest, listing,
+   screenshots, `build`;
+4. the declared screenshots (present, type and size) and no undeclared screenshot;
+5. the bundle (size, function body, global, closed APIs); no-code: `nocode.json` identical to the
+   bundle's configuration, configuration accepted by the engine, agreement with the manifest,
+   declared engine = the bundle's engine (and a warning if it differs from the one `filarr-ext`
+   produces for this version).
 
 ```bash
 npx filarr-ext verify dist/carnet-recettes-1.0.0.filarrext
 npx filarr-ext verify paquet.filarrext --json
+npx @filarr/extension-cli verify paquet.filarrext   # outside a project
 ```
 
-## `filarr-ext publish <paquet>`
+## `filarr-ext publish <package>`
 
-Pour **Filarr pour bureau** : vérifie le paquet (les mêmes refus que Filarr — chemin en
-`.filarrext`, fichier régulier de 8 Mio au plus, puis `verify`), puis ouvre :
+For **Filarr Desktop**: checks the package (the same refusals as Filarr — a path ending in
+`.filarrext`, a regular file of 8 MiB at most, then `verify`), then opens:
 
 ```text
-filarr://publish?file=<chemin absolu, encodé par encodeURIComponent>
+filarr://publish?file=<absolute path, encoded with encodeURIComponent>
 ```
 
-Filarr lit le fichier une fois, ouvre **Place de marché › Publier**, montre tout le paquet (« ouvert
-depuis un fichier »), propose **Abandonner** en premier, et ne signe qu'après « J'ai tout relu ».
-`--print` affiche l'adresse sans l'ouvrir. Sans Filarr pour bureau : déposez le fichier dans
-Publier (bureau ou web).
+Filarr reads the file once, opens **Marketplace › Publish**, shows the whole package (“Package
+handed over by the filarr-ext command”), offers **Abandon** first, and signs only after “I have
+reviewed everything.” `--print` prints the URL without opening it. Without Filarr Desktop: drop the
+file into Publish (desktop or web).
 
 ```text
 $ npx filarr-ext publish dist/carnet-recettes-1.0.0.filarrext --print
@@ -225,41 +232,39 @@ Remise à Filarr pour bureau : filarr://publish?file=C%3A%5CUsers%5C…%5Ccarnet
 
 ## `filarr-ext dev`
 
-Le simulateur local (`@filarr/extension-devhost`), sur `http://127.0.0.1:5199` (`--port`,
-`--no-open`). Il sert la **page bac à sable de Filarr**, recopiée à l'identique et servie avec la
-même CSP, et un **hôte** qui rejoue le protocole v2 avec le **pont de Filarr**, lui aussi recopié à
-l'identique.
+The local simulator (`@filarr/extension-devhost`), on `http://127.0.0.1:5199` (`--port`,
+`--no-open`). It serves **Filarr's sandbox page**, copied verbatim and served with the same CSP,
+and a **host** that replays protocol v2 with **Filarr's bridge**, also copied verbatim.
 
-- **Fichier** : un des fichiers de `exemples/`, ou un document neuf de 0 octet.
-- **Modes** : éditeur ; bloc de note et widget d'accueil si le manifeste les déclare ; un onglet
-  **Fonctions** appelle `extractText`, `thumbnail`, `fields` et chaque export sur le document courant,
-  dans une page sans API, et passe la valeur par `readCallValue` comme Filarr.
-- **Contrôles** : clair / sombre (le thème est poussé à la page, comme quand Filarr change de
-  thème), anglais, lecture seule, **simuler un conflit** (`saveBytes` rejette
-  `item_version_conflict`), **co-édition** (deux pages reliées comme une salle : updates en octets,
-  semis par la première, « Changer d'élu »), **Enregistrer (getBytes)** (le bouton de la fenêtre de
-  Filarr, qui écrase délibérément un conflit).
-- **Services** : stockage en mémoire (quota et 256 clés, comme Filarr), sélecteur sur les fichiers
-  d'exemple (poignées opaques), réseau : chaque envoi est montré (Envoyer / Refuser / Bloquer) puis
-  émis **par le serveur de développement** vers les seuls domaines de `network.domains`, avec les
-  gardes du relais du bureau (HTTPS, hôte exact, ni IP ni port, adresses publiques, redirections sur
-  la même origine, 8 s, 1 Mio) ; les secrets se saisissent dans l'onglet Construction.
-- **Journal** : chaque message hôte ↔ page, résumé (type, champs, taille des octets).
-- Chaque modification du projet (source, `nocode.json`, `filarr.extension.json`, exemples)
-  reconstruit l'extension et recharge les pages, document conservé.
+- **File**: one of the files in `exemples/`, or a new (empty) document of 0 bytes.
+- **Modes**: editor; note block and home widget if the manifest declares them; a “Fonctions”
+  (Functions) tab calls `extractText`, `thumbnail`, `fields` and each export on the current
+  document, in a page with no API, and passes the value through `readCallValue` like Filarr.
+- **Controls**: light / dark (the theme is pushed to the page, as when Filarr changes theme),
+  English, read-only, **“Simuler un conflit”** (simulate a conflict: `saveBytes` rejects
+  `item_version_conflict`), **“Co-édition”** (co-editing: two pages linked like a room — updates as
+  bytes, seeding by the first page, “Changer d’élu” (switch the elected peer)), **“Enregistrer
+  (getBytes)”** (Save: the button of Filarr's window, which deliberately overwrites a conflict).
+- **Services**: in-memory storage (quota and 256 keys, like Filarr), a picker over the sample files
+  (opaque handles), network: each request is shown (“Envoyer” / “Refuser” / “Bloquer”: send /
+  refuse / block) then sent **by the development server** to the `network.domains` domains only,
+  with the desktop relay's guards (HTTPS, exact host, no IP and no port, public addresses,
+  same-origin redirects, 8 s, 1 MiB); secrets are entered in the “Construction” (Build) tab.
+- **Log** (the “Journal” tab): each host ↔ page message, summarized (type, fields, byte size).
+- Every change to the project (source, `nocode.json`, `filarr.extension.json`, samples) rebuilds the
+  extension and reloads the pages, keeping the document.
 
-Le serveur n'écoute que sur `127.0.0.1`, refuse un `Host` étranger, et son relais réseau exige le
-jeton de la page et son origine.
+The server listens only on `127.0.0.1`, rejects a foreign `Host`, and its network relay requires the
+page's token and its origin.
 
-> Le simulateur n'est pas Filarr : pas de chiffrement, pas de coffre, pas de versions. Ce qu'il
-> garantit, c'est la page, le protocole et les refus. Testez aussi dans Filarr (« Tester
-> localement »), puis publiez.
+> The simulator is not Filarr: no encryption, no vault, no versions. What it guarantees is the page,
+> the protocol and the refusals. Also test in Filarr (“Test without publishing”), then publish.
 
-## `filarr-ext seed <fichier>`
+## `filarr-ext seed <file>`
 
-Affiche le base64 d'un fichier de 64 Kio au plus, à coller dans
-`manifest.capabilities.newDocument[].seed`. `check` vérifie ensuite que ce modèle s'ouvre (sans code)
-et que l'offre est valide (extension parmi `extensions`, 1 à 4 offres).
+Prints the base64 of a file of 64 KiB at most, to paste into
+`manifest.capabilities.newDocument[].seed`. `check` then verifies that this template opens
+(no-code) and that the offer is valid (file extension among `extensions`, 1 to 4 offers).
 
 ```bash
 npx filarr-ext seed modeles/nouveau.perso
@@ -270,27 +275,30 @@ npx filarr-ext seed modeles/nouveau.perso
 ## `npm create filarr-extension`
 
 ```bash
-npm create filarr-extension@latest mon-extension
-npm create filarr-extension@latest mon-extension -- --yes --template nocode
+npm create filarr-extension@latest my-extension
+npm create filarr-extension@latest my-extension -- --yes --template nocode
 npm create filarr-extension@latest notes -- --yes --template texte --lang js --ext note
 ```
 
-Questions (ou options, avec `--yes`) : le nom affiché (`--name`), le type de fichier (`--ext`, sans
-point), le modèle (`--template texte | json | binaire | nocode`), le langage (`--lang ts | js`).
-Le projet créé contient `filarr.extension.json`, `src/index.ts` (ou `.js`, avec `defineExtension`)
-ou `nocode.json`, `exemples/`, un `package.json` avec `dev`, `build`, `check`, `pack`, et un
-`README.md`. Il passe `filarr-ext check` tel quel. Un dossier existant et non vide est refusé.
+Questions (or options, with `--yes`): the display name (`--name`), the file type (`--ext`, without
+the dot), the template (`--template texte | json | binaire | nocode`), the language
+(`--lang ts | js`). The created project contains `filarr.extension.json`, `src/index.ts` (or `.js`,
+with `defineExtension`) or `nocode.json`, `exemples/`, a `package.json` with `dev`, `build`,
+`check`, `pack`, and a `README.md`. It passes `filarr-ext check` as is. An existing, non-empty
+folder is rejected.
 
-## Dans le dépôt du Builder
+Then `cd` into the project and run `npm install` before any `npx filarr-ext …` command.
+
+## In the Builder repository
 
 ```bash
 npm install
-npm test                                       # tous les paquets
-npm run check -w @filarr-examples/inventaire   # un exemple
-npm run sync -w @filarr/extension-api          # recopier les fichiers de Filarr (../filarg)
+npm test                                       # all packages
+npm run check -w @filarr-examples/inventaire   # one example
+npm run sync -w @filarr/extension-api          # copy Filarr's files (../filarg)
 npm run sync -w @filarr/extension-devhost
 ```
 
-Les copies vendorisées (le validateur de capacités, la page bac à sable, le protocole et le pont)
-portent la source qu'elles recopient ; leur test échoue si elles s'écartent de leur empreinte
-(`vendor.json`), et, quand `../filarg` est présent (ou `FILARG_DIR`), si elles s'écartent de Filarr.
+The vendored copies (the capability validator, the sandbox page, the protocol and the bridge) record
+the source they copy; their test fails if they drift from their fingerprint (`vendor.json`), and,
+when `../filarg` is present (or `FILARG_DIR`), if they drift from Filarr.

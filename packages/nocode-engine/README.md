@@ -1,13 +1,13 @@
 # @filarr/nocode-engine
 
-Le moteur sans code des extensions [Filarr](https://filarr.com) : il lit un fichier (JSON, CSV,
-lignes, `clé: valeur`), l'affiche avec des blocs et le réécrit, d'après une configuration
-(`nocode.json`). Il n'exécute jamais rien de ce qu'il lit et n'insère aucun HTML.
+The no-code engine for [Filarr](https://filarr.com) extensions: it reads a file (JSON, CSV,
+lines, `key: value`), displays it with blocks and writes it back, according to a configuration
+(`nocode.json`). It never executes anything it reads and inserts no HTML.
 
-Ce paquet sert à `filarr-ext` et à Filarr Builder ; pour créer une extension sans code :
+This package is used by `filarr-ext` and Filarr Builder; to create a no-code extension:
 
 ```bash
-npm create filarr-extension@latest mes-recettes -- --template nocode
+npm create filarr-extension@latest my-recipes -- --template nocode
 ```
 
-Le schéma de la configuration et la liste des blocs : [docs/nocode.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/nocode.md).
+The configuration schema and the list of blocks: [docs/nocode.md](https://github.com/filarr-work/filarr-extension-builder/blob/main/docs/nocode.md).

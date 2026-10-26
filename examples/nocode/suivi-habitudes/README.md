@@ -1,32 +1,32 @@
-# ✅ Suivi d’habitudes — exemple sans code
+# ✅ Suivi d’habitudes (habit tracker) — no-code example
 
-Fichiers `.habitudes`. Une semaine par fichier, en CSV : une habitude par ligne, une case par jour. Le bilan se calcule tout seul.
+`.habitudes` files. One week per file, in CSV: one habit per row, one box per day. The summary computes itself.
 
-## Ce qu’il montre
+## What it shows
 
-Montre le format **CSV** : un **tableau éditable** (une case par jour, écrite `x` ou vide), des
-lignes qu’on ajoute et retire, et une section de **totaux calculés** (`count`, `countChecked`). Une
-colonne que la configuration ne déclare pas (ici `note`) est gardée ; une ligne non touchée repart
-octet pour octet.
+Shows the **CSV** format: an **editable table** (one cell per day, written `x` or left empty), rows
+you add and remove, and a section of **computed totals** (`count`, `countChecked`). A column the
+configuration does not declare (here `note`) is kept; an untouched row is written back byte for
+byte.
 
-Déclare `fields` : dans un dossier de semaines, le tableau de Filarr montre combien d’habitudes ont été
-tenues chaque jour, semaine par semaine.
+Declares `fields`: in a folder of weeks, Filarr’s table shows how many habits were kept each day,
+week by week.
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/suivi-habitudes   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/suivi-habitudes   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/suivi-habitudes    # dist/suivi-habitudes-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/suivi-habitudes  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/suivi-habitudes  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/suivi-habitudes/dist/suivi-habitudes-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/suivi-habitudes/dist/suivi-habitudes-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

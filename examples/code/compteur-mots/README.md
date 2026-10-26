@@ -1,69 +1,69 @@
-# Compteur de mots (`.wc`)
+# Compteur de mots (word counter, `.wc`)
 
-Le démarrage rapide de Filarr, en TypeScript et testé : une zone de texte, et en
-direct le nombre de mots, de caractères et le temps de lecture.
+Filarr's [quickstart](../../../docs/contract/QUICKSTART.md), in TypeScript and
+tested: a text area, with a live count of words, characters and reading time.
 
-C'est l'exemple à lire en premier. Il ne fait presque rien, mais il fait tout ce
-qu'un éditeur doit faire pour être accepté par l'hôte :
+This is the example to read first. It does almost nothing, but it does
+everything an editor must do to be accepted by the host:
 
-| Le contrat (`docs/plugins/API.md`)               | Où le voir                                     |
-| ------------------------------------------------ | ---------------------------------------------- |
-| L'éditeur s'appelle exactement `<id>-editor`     | `src/index.ts`, `EDITOR_ID`                    |
-| 0 octet = document neuf                          | `lireTexte` rend un texte vide                 |
-| Format inconnu : erreur affichée, octets rendus intacts | branche `!lu.ok` de `mount`             |
-| `readOnly` fige l'interface                      | `zone.readOnly = host.readOnly`                |
-| `onDirty(true)` à chaque frappe, `false` au succès seulement | `src/sauvegarde.ts`                |
-| Autosave débouncée à 2 s, Ctrl+S pour forcer     | `src/sauvegarde.ts`, `estRaccourciEnregistrer` |
-| Codes de rejet : `item_version_conflict`, `read_only`, `save_in_flight`, autres | `src/sauvegarde.ts`, `src/etat.ts` |
-| `getBytes()` total et synchrone                  | `ecrireTexte(zone.value, …)`                   |
-| `destroy()` rend tout, ne sauve rien             | fin de `mount`                                 |
-| Thème de l'hôte (`--color-*`) et `onThemeChange` | `src/style.ts`, `data-schema`                  |
-| Français ou anglais selon `host.locale`          | `src/i18n.ts`                                  |
-| Jamais `innerHTML`                               | `src/dom.ts`                                   |
+| The contract ([`API.md`](../../../docs/contract/API.md))                        | Where to see it                                |
+| ------------------------------------------------------------------------------- | ---------------------------------------------- |
+| The editor is named exactly `<id>-editor`                                       | `src/index.ts`, `EDITOR_ID`                    |
+| 0 bytes = new (empty) document                                                  | `lireTexte` returns an empty text              |
+| Unknown format: error displayed, bytes returned untouched                       | `!lu.ok` branch of `mount`                     |
+| `readOnly` freezes the interface                                                | `zone.readOnly = host.readOnly`                |
+| `onDirty(true)` on every keystroke, `false` only on success                     | `src/sauvegarde.ts`                            |
+| Autosave debounced at 2 s, Ctrl+S to force it                                   | `src/sauvegarde.ts`, `estRaccourciEnregistrer` |
+| Rejection codes: `item_version_conflict`, `read_only`, `save_in_flight`, others | `src/sauvegarde.ts`, `src/etat.ts`             |
+| `getBytes()` total and synchronous                                              | `ecrireTexte(zone.value, …)`                   |
+| `destroy()` releases everything, saves nothing                                  | end of `mount`                                 |
+| Host theme (`--color-*`) and `onThemeChange`                                    | `src/style.ts`, `data-schema`                  |
+| French or English depending on `host.locale`                                    | `src/i18n.ts`                                  |
+| Never `innerHTML`                                                               | `src/dom.ts`                                   |
 
-Deux soins qu'un éditeur de texte doit à ses fichiers : la marque d'ordre des
-octets (BOM) et les fins de ligne `\r\n` sont gardées telles quelles. Sans eux, la
-première ouverture réécrirait un fichier auquel personne n'a touché.
+Two courtesies a text editor owes its files: the byte order mark (BOM) and
+`\r\n` line endings are kept as they are. Without them, merely opening a file
+for the first time would rewrite a file nobody has touched.
 
-## Capacités
+## Capabilities
 
-**Aucune.** L'extension ne reçoit que le document ouvert, et c'est tout ce dont
-elle a besoin. C'est le cas par défaut, et le meilleur : rien à accepter à
-l'installation, rien à expliquer.
+**None.** The extension only receives the open document, and that is all it
+needs. This is the default, and the best case: nothing to accept at install
+time, nothing to explain.
 
-## Le format
+## The format
 
-Du texte brut UTF-8. Un fichier qui n'est pas de l'UTF-8 valide est refusé avec
-un message, jamais « réparé » : le décoder en remplaçant les octets invalides puis
-l'enregistrer détruirait son contenu.
+Plain UTF-8 text. A file that is not valid UTF-8 is rejected with a message,
+never "repaired": decoding it with the invalid bytes replaced and then saving it
+would destroy its content.
 
-## Construire et vérifier
+## Build and check
 
-Depuis ce dossier (les outils sont installés à la racine du dépôt) :
+From this folder (the tools are installed at the repository root):
 
 ```bash
-npm run build   # dist/bundle.js — IIFE, es2020, minifié
-npm run check   # manifeste, bornes de publication, typage, forme du bundle
-npm run smoke   # monte l'éditeur dans une page simulée et joue le contrat
-npm test        # tests des modules purs (compte, texte, sauvegarde)
+npm run build   # dist/bundle.js — IIFE, es2020, minified
+npm run check   # manifest, publishing limits, type checking, bundle shape
+npm run smoke   # mounts the editor in a simulated page and plays through the contract
+npm test        # tests of the pure modules (count, text, save)
 ```
 
-## L'essayer dans Filarr
+## Try it in Filarr
 
-Place de marché › Publier › **Tester localement** : choisissez `dist/bundle.js`,
-extension `wc`. Le test local demande un éditeur `dev-local-<n>-editor` : le
-bundle expose ces alias en plus de `compteur-mots-editor` (voir la fin de
-`src/index.ts`).
+Marketplace › Publish › **Test without publishing**: choose `dist/bundle.js`,
+file extension `wc`. The local test asks for a `dev-local-<n>-editor` editor:
+the bundle exposes these aliases in addition to `compteur-mots-editor` (see the
+end of `src/index.ts`).
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts       mount(), le câblage à l'hôte
-src/compte.ts      mots, caractères, temps de lecture (pur)
-src/texte.ts       le format : UTF-8, BOM, fins de ligne (pur)
-src/sauvegarde.ts  l'autosave et les codes de rejet (pur)
-src/etat.ts        la barre d'état : role="status" et role="alert"
-src/dom.ts         createElement, jamais de HTML
-exemples/          une lettre, des notes en CRLF, un fichier avec BOM
-smoke.json         ce que le banc d'essai tape pour tester l'enregistrement
+src/index.ts       mount(), the wiring to the host
+src/compte.ts      words, characters, reading time (pure)
+src/texte.ts       the format: UTF-8, BOM, line endings (pure)
+src/sauvegarde.ts  autosave and rejection codes (pure)
+src/etat.ts        the status bar: role="status" and role="alert"
+src/dom.ts         createElement, never HTML
+exemples/          a letter, notes with CRLF line endings, a file with a BOM
+smoke.json         what the test harness types to test saving
 ```

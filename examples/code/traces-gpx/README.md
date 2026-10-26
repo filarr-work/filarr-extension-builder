@@ -1,49 +1,49 @@
-# Traces GPX (`.gpx`)
+# Traces GPX (GPX tracks, `.gpx`)
 
-Ouvre une trace de randonnée, de course ou de vélo : profil d'altitude,
-distance, dénivelé positif et négatif, et des segments que l'on renomme.
+Opens a hiking, running or cycling track: elevation profile, distance, elevation
+gain and loss, and segments you can rename.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**Un Web Worker créé depuis un `blob:`** (`src/calculateur.ts`). La CSP de la
-page bac à sable ne permet qu'une source de worker : `worker-src blob:`. Le
-build construit `src/calcul.worker.ts` à part et l'importe comme texte
-(`import source from './calcul.worker.ts?worker'`, voir `_outils/build.mjs`) ;
-l'éditeur en fait un `Blob`, puis un `Worker`. Le worker hérite de la CSP — pas
-de réseau, pas d'`importScripts` distant : il déplace le calcul hors du fil
-principal, rien de plus. C'est une optimisation, pas une condition : sans
-`Worker`, ou s'il tombe, le même calcul se fait sur le fil principal. À
-`destroy()`, le worker est terminé **et** l'URL `blob:` révoquée.
+**A Web Worker created from a `blob:`** (`src/calculateur.ts`). The sandbox
+page's CSP allows only one worker source: `worker-src blob:`. The build compiles
+`src/calcul.worker.ts` separately and imports it as text
+(`import source from './calcul.worker.ts?worker'`, see `_outils/build.mjs`); the
+editor turns it into a `Blob`, then a `Worker`. The worker inherits the CSP — no
+network, no remote `importScripts`: it moves the computation off the main
+thread, nothing more. It is an optimization, not a requirement: without
+`Worker`, or if the worker fails, the same computation runs on the main thread.
+On `destroy()`, the worker is terminated **and** the `blob:` URL revoked.
 
-**Trois fonctions pures** (`src/fonctions.ts`), que Filarr appelle sans ouvrir
-l'éditeur, dans une page sans aucune API :
+**Three pure functions** (`src/fonctions.ts`), which Filarr calls without opening
+the editor, in a page with no API at all:
 
-| Fonction | Ce que Filarr en fait |
+| Function | What Filarr does with it |
 | --- | --- |
-| `thumbnail` | la carte du fichier montre le profil (PNG de 192 × 96, ~18 Kio) |
-| `fields` | la vue tableau d'un dossier de traces affiche `distance_km` et `denivele_m` — Filarr construit le tableau, l'extension ne voit jamais le dossier |
-| `extractText` | la recherche trouve la trace par son nom et celui de ses segments |
+| `thumbnail` | the file's card shows the profile (192 × 96 PNG, ~18 KiB) |
+| `fields` | the table view of a folder of tracks shows `distance_km` and `denivele_m` — Filarr builds the table, the extension never sees the folder |
+| `extractText` | search finds the track by its name and the names of its segments |
 
-Les valeurs de `fields` passent au type déclaré dans le manifeste (`number`) ;
-une trace sans altitude rend `denivele_m: null`, jamais un zéro inventé.
+`fields` values are converted to the type declared in the manifest (`number`); a
+track without elevation returns `denivele_m: null`, never a made-up zero.
 
-**Une réécriture chirurgicale d'un format tiers** (`src/gpx.ts`). Un GPX porte
-souvent des données de montre (fréquence cardiaque, cadence…) dans ses
-`<extensions>`. Tant qu'aucun nom n'a changé, l'éditeur rend les octets
-d'origine **à l'identique**. Quand on renomme un segment, seul son `<name>` est
-modifié (créé en tête du `<trk>`, dans l'espace de noms du fichier, s'il
-manquait) ; points, temps et extensions passent tels quels.
+**Surgical rewriting of a third-party format** (`src/gpx.ts`). A GPX file often
+carries watch data (heart rate, cadence…) in its `<extensions>`. As long as no
+name has changed, the editor returns the original bytes **unchanged**. When you
+rename a segment, only its `<name>` is modified (created at the top of the
+`<trk>`, in the file's namespace, if it was missing); points, times and
+extensions pass through as they are.
 
-**Un graphique accessible** (`src/graphique.ts`) : le profil est un curseur
-(`role="slider"`) — flèches, Page préc./suiv., Début/Fin parcourent la trace, et
-le lecteur d'écran lit « 4,57 km, altitude 2 050 m ». Ses couleurs sont des
-variables du thème de Filarr : il suit un changement de thème sans rien redessiner.
+**An accessible chart** (`src/graphique.ts`): the profile is a slider
+(`role="slider"`) — arrow keys, Page Up/Page Down, Home/End move along the track,
+and the screen reader reads "4.57 km, elevation 2,050 m". Its colors are Filarr
+theme variables: it follows a theme change without redrawing anything.
 
-Les chiffres : distance par haversine ; dénivelé filtré par un seuil
-d'hystérésis de 3 m (le tremblement de l'altitude GPS ne gonfle pas le total) ;
-rien n'est compté **entre** deux segments disjoints.
+The numbers: distance by haversine; elevation gain and loss filtered by a 3 m
+hysteresis threshold (GPS altitude jitter does not inflate the total); nothing is
+counted **between** two disjoint segments.
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": {
@@ -58,35 +58,35 @@ rien n'est compté **entre** deux segments disjoints.
 }
 ```
 
-Le Web Worker ne demande **aucune** capacité : il fait partie du palier 1 de la
-page, ouvert à toutes les extensions.
+The Web Worker requires **no** capability: it is part of the page's tier 1, open
+to all extensions.
 
-## Un segment, c'est un `<trk>`
+## A segment is a `<trk>`
 
-GPX 1.1 sait nommer un `<trk>`, pas un `<trkseg>` (une coupure du signal). Un
-segment de l'éditeur est donc un `<trk>` ; ses `<trkseg>` forment un seul
+GPX 1.1 can name a `<trk>`, not a `<trkseg>` (a break in the signal). So a
+segment in the editor is a `<trk>`; its `<trkseg>` elements form a single
 segment.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Les tests du format tournent sous jsdom (`// @vitest-environment jsdom`) : la
-page bac à sable a `DOMParser`, Node non.
+The format tests run under jsdom (`// @vitest-environment jsdom`): the sandbox
+page has `DOMParser`, Node does not.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts          mount(), le câblage
-src/gpx.ts            lire le GPX, réécrire les noms (DOMParser)
-src/profil.ts         distance, dénivelé, profil (pur, sans DOM : tourne dans le worker)
-src/calcul.worker.ts  le worker
-src/calculateur.ts    le worker depuis un blob:, et son repli
-src/fonctions.ts      vignette, champs, texte — les fonctions pures
-src/graphique.ts      le profil en SVG, parcourable au clavier
-src/png.ts            l'encodeur PNG (pur)
-exemples/             une randonnée en trois segments, un footing avec fréquence
-                      cardiaque et coupure GPS, un trajet à vélo en GPX 1.0 sans altitude
+src/index.ts          mount(), the wiring
+src/gpx.ts            read the GPX, rewrite the names (DOMParser)
+src/profil.ts         distance, elevation, profile (pure, no DOM: runs in the worker)
+src/calcul.worker.ts  the worker
+src/calculateur.ts    the worker from a blob:, and its fallback
+src/fonctions.ts      thumbnail, fields, text — the pure functions
+src/graphique.ts      the profile as SVG, navigable by keyboard
+src/png.ts            the PNG encoder (pure)
+exemples/             a hike in three segments, a run with heart rate
+                      and a GPS dropout, a bike ride in GPX 1.0 without elevation
 ```

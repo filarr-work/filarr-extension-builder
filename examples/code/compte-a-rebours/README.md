@@ -1,85 +1,85 @@
-# Compte à rebours (`.rebours` et bloc de note)
+# Compte à rebours (countdown, `.rebours` and note block)
 
-Une liste d'évènements datés, chacun avec son compte à rebours qui avance à la
-seconde — et un **bloc à glisser dans une note**, qui affiche le temps qui reste
-avant un moment choisi.
+A list of dated events, each with its own countdown ticking every second — and a
+**block to drop into a note**, which shows the time left before a chosen
+moment.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**Un bundle, deux points d'entrée.** `editors` monte l'éditeur du fichier
-`.rebours` (`src/editeur.ts`) ; `block` monte le bloc de note (`src/bloc.ts`).
-L'hôte choisit lequel (`host.mode` vaut `'editor'` ou `'block'`), et chacun
-reçoit **ses** octets : le fichier ouvert, ou les données du bloc.
+**One bundle, two entry points.** `editors` mounts the editor for `.rebours`
+files (`src/editeur.ts`); `block` mounts the note block (`src/bloc.ts`). The
+host picks which one (`host.mode` is `'editor'` or `'block'`), and each one
+receives **its own** bytes: the open file, or the block's data.
 
-**La capacité `noteBlock` : des données en octets, par `saveBytes`.** Le bloc
-ne voit rien de la note qui l'accueille — seulement ses propres données
-(`host.initialBytes`, ici `{ "v": 1, "titre": "…", "date": "…" }`). Les régler
-appelle `host.saveBytes(…)`, qui les réécrit dans le nœud du bloc ; c'est la
-note qui les range (en base64 dans son HTML), les chiffre et les synchronise,
-comme le reste de son contenu. Elles doivent tenir dans **256 Kio** une fois
-décodées. Les mêmes règles que pour un éditeur s'appliquent :
+**The `noteBlock` capability: data as bytes, through `saveBytes`.** The block
+sees nothing of the note that hosts it — only its own data
+(`host.initialBytes`, here `{ "v": 1, "titre": "…", "date": "…" }`). Changing
+them calls `host.saveBytes(…)`, which writes them back into the block's node; the
+note is what stores them (as base64 in its HTML), encrypts them and syncs them,
+like the rest of its content. They must fit in **256 KiB** once decoded. The
+same rules as for an editor apply:
 
-- 0 octet = bloc neuf : le formulaire s'ouvre pour le régler ;
-- lecture seule (note non modifiable, lecteur du coffre) : affichage seul ;
-- enregistrement débouncé à 2 s, codes de rejet affichés (`read_only`, `too_large`…) ;
-- des données illisibles ne sont **pas** réécrites d'office : le bloc le dit,
-  et ne les remplace que si l'utilisateur le règle ;
-- `destroy()` arrête l'horloge et rend tout.
+- 0 bytes = new (empty) block: the form opens so it can be set up;
+- read-only (note not editable, vault viewer): display only;
+- saving debounced at 2 s, rejection codes displayed (`read_only`, `too_large`…);
+- unreadable data is **not** overwritten automatically: the block says so, and
+  only replaces it if the user sets the block up;
+- `destroy()` stops the clock and releases everything.
 
-Sans l'extension, la note garde le bloc intact et affiche un cadre « extension
-non installée » : un bloc n'est jamais vidé parce qu'on ne sait pas l'afficher.
+Without the extension, the note keeps the block intact and shows an "extension
+not installed" frame: a block is never emptied just because it cannot be
+displayed.
 
-> ⚠ État de Filarr au 23 octobre 2026 : le nœud `filarrExtensionBlock` existe,
-> mais l'insertion d'un bloc d'extension est encore **fermée** sur le bureau
-> (`EXTENSION_BLOCK_INSERTION_OPEN = false`), en attendant que l'application
-> mobile sache garder ce nœud. Le bloc se monte et se teste ici (`npm run smoke`),
-> il ne s'insère pas encore depuis un menu de Filarr.
+> ⚠ State of Filarr as of October 23, 2026: the `filarrExtensionBlock` node exists,
+> but inserting an extension block is still **closed** on desktop
+> (`EXTENSION_BLOCK_INSERTION_OPEN = false`), until the mobile app can preserve
+> this node. The block mounts and is tested here (`npm run smoke`); it cannot yet
+> be inserted from a Filarr menu.
 
-**Une horloge, pas une par évènement** (`src/affichage.ts`) : une seule
-minuterie récrit chaque seconde le texte des comptes, et `destroy()` l'arrête.
-Les comptes ne sont pas dans une région `aria-live` — un lecteur d'écran qui
-annoncerait chaque seconde rendrait la page inutilisable ; la date exacte est
-dans `<time datetime>`.
+**One clock, not one per event** (`src/affichage.ts`): a single timer rewrites
+the text of the countdowns every second, and `destroy()` stops it. The countdowns
+are not in an `aria-live` region — a screen reader announcing every second would
+make the page unusable; the exact date is in `<time datetime>`.
 
-**Des instants, pas des heures murales.** Les dates sont rangées en UTC
-(`2026-12-19T17:42:00.000Z`) : deux personnes dans deux fuseaux attendent le
-même moment. L'interface les montre et les saisit en heure locale
-(`<input type="datetime-local">`), validées à la sortie du champ.
+**Instants, not wall-clock times.** Dates are stored in UTC
+(`2026-12-19T17:42:00.000Z`): two people in two time zones wait for the same
+moment. The interface shows and accepts them in local time
+(`<input type="datetime-local">`), validated when the field loses focus.
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": { "noteBlock": { "label": "Compte à rebours" } }
 ```
 
-Le libellé est ce que Filarr affichera dans le menu d'insertion des notes.
+The label is what Filarr will show in the notes' insert menu.
 
-## Les formats
+## The formats
 
 ```json
 { "format": "filarr-rebours", "version": 1,
   "evenements": [{ "id": "e-7b33d4", "titre": "Départ en vacances", "date": "2026-12-19T17:42:00.000Z", "note": "…" }] }
 ```
 
-Écriture canonique (un fichier écrit par l'extension se relit à l'octet près),
-liste tenue dans l'ordre du temps. Les données d'un bloc : `{ "v": 1, "titre", "date" }`.
+Canonical output (a file written by the extension reads back byte for byte),
+list kept in chronological order. A block's data: `{ "v": 1, "titre", "date" }`.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Le banc d'essai monte aussi le bloc (`smoke.json`, clé `bloc`) : neuf, réglé,
-en lecture seule.
+The test harness also mounts the block (`smoke.json`, key `bloc`): new, set up,
+and read-only.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts      les deux points d'entrée
-src/editeur.ts    l'éditeur du fichier .rebours
-src/bloc.ts       le bloc de note
-src/rebours.ts    les formats, le calcul du compte, les dates locales (pur)
-src/affichage.ts  le texte d'un compte, l'horloge unique
-exemples/         une année d'évènements, un lancement de produit, les données d'un bloc
+src/index.ts      the two entry points
+src/editeur.ts    the .rebours file editor
+src/bloc.ts       the note block
+src/rebours.ts    the formats, the countdown computation, local dates (pure)
+src/affichage.ts  a countdown's text, the single clock
+exemples/         a year of events, a product launch, a block's data
 ```

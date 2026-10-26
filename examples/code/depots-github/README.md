@@ -1,12 +1,12 @@
-# Dépôts GitHub (`.github`)
+# Dépôts GitHub (GitHub repositories, `.github`)
 
-Suivez des dépôts GitHub : étoiles, tickets ouverts, dernière version — et ce qui
-a changé depuis le dernier relevé.
+Follow GitHub repositories: stars, open issues, latest release — and what has
+changed since the last check.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**Un secret que l'extension ne voit jamais.** Le manifeste déclare un secret,
-facultatif, attaché à l'en-tête `authorization` :
+**A secret the extension never sees.** The manifest declares an optional secret,
+attached to the `authorization` header:
 
 ```json
 "network": {
@@ -15,65 +15,65 @@ facultatif, attaché à l'en-tête `authorization` :
 }
 ```
 
-Ce qui se passe, et qui ne dépend pas de la bonne foi de l'extension :
+What happens, regardless of the extension's good faith:
 
-1. l'utilisateur saisit son jeton **dans Filarr** (Mes extensions › Dépôts GitHub ›
-   Secrets) — jamais dans l'extension ;
-2. Filarr l'envoie **une fois** au processus principal, qui le scelle dans le
-   trousseau de l'appareil (sans trousseau, rien n'est enregistré) ; même
-   l'interface de Filarr ne sait ensuite que « présent » ;
-3. à chaque requête vers `api.github.com`, le relais **ajoute lui-même** l'en-tête
-   `authorization`. L'extension ne le lit pas, ne peut pas le poser (l'hôte
-   refuserait la requête : `net_header`), et une redirection ne l'emporte jamais
-   vers un autre hôte ;
-4. le secret part à la désinstallation.
+1. the user enters their token **in Filarr** (My extensions › Dépôts GitHub ›
+   Secrets) — never in the extension;
+2. Filarr sends it **once** to the main process, which seals it in the device's
+   keychain (without a keychain, nothing is saved); after that, even Filarr's
+   interface only knows "present";
+3. on every request to `api.github.com`, the relay **adds the `authorization`
+   header itself**. The extension does not read it, cannot set it (the host
+   would refuse the request: `net_header`), and a redirect never carries it to
+   another host;
+4. the secret goes away on uninstall.
 
-L'extension ne sait donc pas si un jeton est là — seulement ses effets : une
-limite de débit plus haute (5 000 requêtes par heure au lieu de 60), ou un 401 si
-GitHub le refuse. Le texte du secret est saisi **tel quel** dans l'en-tête : pour
-GitHub, c'est `Bearer ` suivi du jeton (d'où le libellé). Un jeton en lecture
-seule suffit.
+So the extension does not know whether a token is there — only its effects: a
+higher rate limit (5,000 requests per hour instead of 60), or a 401 if GitHub
+rejects it. The secret's text is put into the header **as is**: for GitHub, that
+is `Bearer ` followed by the token (hence the label). A read-only token is
+enough.
 
-**La capacité `network`, et ses refus.** Chaque requête est montrée à
-l'utilisateur par Filarr avant de partir (méthode, adresse, en-têtes, et les
-secrets qui seront ajoutés, par leur libellé). Un relevé coûte **deux** requêtes
-(le dépôt, puis sa dernière version) : elles partent l'une après l'autre, et
-« Tout actualiser » enchaîne les dépôts au lieu d'empiler les demandes (Filarr
-en garde quatre en attente au plus, puis répond `busy`). Chaque échec a son
-message (`src/i18n.ts`) : refus (`net_refused`), web sans relais (`unavailable`),
-hors ligne, jeton refusé (401), limite de GitHub (403 « rate limit », 429),
-dépôt introuvable ou privé (404). Le 404 de `/releases/latest` n'est pas une
-erreur : il veut dire « aucune version publiée ».
+**The `network` capability, and its refusals.** Filarr shows every request to the
+user before it leaves (method, address, headers, and the secrets that will be
+added, by their label). A check costs **two** requests (the repository, then its
+latest release): they go out one after the other, and "Refresh all" goes through
+the repositories in sequence instead of piling up requests (Filarr keeps at most
+four pending, then answers `busy`). Every failure has its own message
+(`src/i18n.ts`): refusal (`net_refused`), web without a relay (`unavailable`),
+offline, token rejected (401), GitHub rate limit (403 "rate limit", 429),
+repository not found or private (404). A 404 from `/releases/latest` is not an
+error: it means "no published release".
 
-**Ce que le fichier garde.** La liste des dépôts et leur dernier relevé — c'est
-ce qui permet de signaler « nouvelle version depuis le dernier relevé ». Un relevé
-ne s'écrit que sur un geste (« Actualiser »), jamais à l'ouverture. En lecture
-seule, on peut actualiser : le résultat s'affiche, le fichier ne change pas.
+**What the file keeps.** The list of repositories and their last check — that is
+what makes it possible to flag "new release since the last check". A check is
+only written on a user action ("Refresh"), never on open. In read-only mode, you
+can refresh: the result is displayed, the file does not change.
 
-**Ce que `network` exclut** : ni `storage`, ni `picker`, ni `functions`, ni
-`noteBlock`. L'extension ne lit rien d'autre que le fichier ouvert.
+**What `network` rules out**: no `storage`, no `picker`, no `functions`, no
+`noteBlock`. The extension reads nothing but the open file.
 
-> ⚠ Le relais réseau n'existe que dans l'application de **bureau** ; sur le web,
-> toute requête rend `unavailable`, et l'extension le dit.
+> ⚠ The network relay only exists in the **desktop** app; on the web, every
+> request returns `unavailable`, and the extension says so.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Rien ne part sur le réseau pendant les vérifications : le banc d'essai répond
-avec `exemples/reponses/*.json` (`smoke.json`, clé `reseau`), y compris un 404 et
-une limite de débit. Les tests vérifient qu'aucune requête ne porte l'en-tête
-`authorization`.
+Nothing goes out on the network during verification: the test harness answers
+with `exemples/reponses/*.json` (`smoke.json`, key `reseau`), including a 404 and
+a rate limit. The tests check that no request carries the `authorization`
+header.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts      mount(), les relevés, la liste
-src/github.ts     les deux requêtes, la lecture des réponses, les statuts de GitHub
-src/depots.ts     le format .github et les noms de dépôt (pur)
-src/i18n.ts       les textes, et le message de chaque échec
-exemples/         une veille de trois dépôts (dont un jamais relevé), un fichier
-                  neuf, et des réponses réelles de l'API pour les tests
+src/index.ts      mount(), the checks, the list
+src/github.ts     the two requests, reading the responses, GitHub's statuses
+src/depots.ts     the .github format and repository names (pure)
+src/i18n.ts       the texts, and the message for each failure
+exemples/         a watch list of three repositories (one never checked), a new
+                  (empty) file, and real API responses for the tests
 ```

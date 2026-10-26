@@ -1,29 +1,29 @@
-# 🛒 Liste de courses — exemple sans code
+# 🛒 Liste de courses (shopping list) — no-code example
 
-Fichiers `.courses`. Une liste à cocher en texte brut, une ligne par article : « [ ] lait », « [x] pain ». Titres et notes gardés.
+`.courses` files. A plain-text checklist, one line per item: “[ ] lait”, “[x] pain”. Headings and notes are kept.
 
-## Ce qu’il montre
+## What it shows
 
-Montre le format **lignes** : chaque ligne `[ ] …` ou `[x] …` est un article (une puce `-` ou `*`
-devant est permise et reprise). La liste se coche, s’allonge (Entrée dans le champ d’ajout) et se
-réordonne ; la barre de progression suit. Les titres, les notes et les lignes vides restent à leur
-place : le fichier reste agréable à lire dans un éditeur de texte.
+Shows the **lines** format: each `[ ] …` or `[x] …` line is an item (a leading `-` or `*` bullet is
+allowed and written back). The list can be checked off, extended (Enter in the add field) and
+reordered; the progress bar follows. Headings, notes and blank lines stay in place: the file
+remains pleasant to read in a text editor.
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/liste-courses   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/liste-courses   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/liste-courses    # dist/liste-courses-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/liste-courses  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/liste-courses  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/liste-courses/dist/liste-courses-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/liste-courses/dist/liste-courses-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

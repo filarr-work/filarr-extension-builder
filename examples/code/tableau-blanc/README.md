@@ -1,101 +1,101 @@
-# Tableau blanc (`.tableau`) — co-édition en direct
+# Tableau blanc (whiteboard, `.tableau`) — live co-editing
 
-Un tableau blanc à plusieurs, en direct, dans un coffre partagé : traits à main
-levée et textes, que chacun déplace, efface ou annule. Hors d'un coffre partagé,
-il s'utilise seul, à l'identique.
+A whiteboard for several people, live, in a shared vault: freehand strokes and
+texts, which anyone can move, erase or undo. Outside a shared vault, it works the
+same way for a single user.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**La capacité `collab`, selon le motif de `docs/plugins/API.md` §3**
-(`src/salle.ts`). L'extension ne reçoit jamais le document de la salle, ni clé,
-ni jeton, ni présence : elle tient **son** `Y.Doc` (Yjs est embarqué dans le
-bundle, ~100 Kio) et échange des **octets** avec l'hôte.
+**The `collab` capability, following the pattern in [`API.md`](../../../docs/contract/API.md) §3**
+(`src/salle.ts`). The extension never receives the room's document, nor any key,
+token or presence: it holds **its own** `Y.Doc` (Yjs is bundled, ~100 KiB) and
+exchanges **bytes** with the host.
 
-1. `const doc = new Y.Doc()` ;
-2. appliquer `host.collab.initialUpdates` — ce que la salle contient déjà ;
-3. si `host.collab.seed` : construire le document depuis `initialBytes`, puis
-   `seeded()`, une fois ;
-4. `doc.on('update', (u, origin) => origin !== 'remote' && host.collab.sendUpdate(u))` ;
-5. `host.collab.onRemoteUpdate((u) => Y.applyUpdate(doc, u, 'remote'))` ;
-6. n'enregistrer par `saveBytes` que si `host.collab.isResponsible()`.
+1. `const doc = new Y.Doc()`;
+2. apply `host.collab.initialUpdates` — what the room already contains;
+3. if `host.collab.seed`: build the document from `initialBytes`, then
+   `seeded()`, once;
+4. `doc.on('update', (u, origin) => origin !== 'remote' && host.collab.sendUpdate(u))`;
+5. `host.collab.onRemoteUpdate((u) => Y.applyUpdate(doc, u, 'remote'))`;
+6. only save through `saveBytes` if `host.collab.isResponsible()`.
 
-Une précision d'ordre que le texte d'API.md laisse ouverte : l'écouteur de
-l'étape 4 est posé **avant** le semis de l'étape 3. Posé après, l'update du semis
-ne partirait jamais et les autres pages verraient une salle vide. Le semis se
-fait par lots, chacun sous le plafond d'**1 Mio par update** (au-delà, la page
-jette `collab_update_too_large`).
+One ordering detail that the text of API.md leaves open: the listener of step 4
+is set up **before** the seeding of step 3. Set up afterwards, the seeding update
+would never go out and the other pages would see an empty room. Seeding is done
+in batches, each under the ceiling of **1 MiB per update** (beyond it, the page
+throws `collab_update_too_large`).
 
-**Seul l'élu enregistre — pour toute la salle.** L'élu (décidé par l'hôte, jamais
-par l'extension) enregistre aussi les modifications des **autres** : elles sont
-dans son `Y.Doc`. Les autres pages ne signalent rien à l'hôte et affichent
-« Enregistré par un autre participant ». Quand l'élu change
-(`onResponsibleChange`), le nouveau reprend ce qui n'a pas encore été enregistré.
+**Only the elected peer saves — for the whole room.** The elected peer (chosen by
+the host, never by the extension) also saves the **others'** changes: they are in
+its `Y.Doc`. The other pages report nothing to the host and show "Saved by
+another participant". When the elected peer changes (`onResponsibleChange`), the
+new one picks up whatever has not been saved yet.
 
-**Le fichier reste du JSON** (`src/tableau.ts`) ; le `Y.Doc` n'est qu'un état de
-travail. Sa forme est choisie pour la co-édition :
+**The file stays JSON** (`src/tableau.ts`); the `Y.Doc` is only a working state.
+Its shape is chosen for co-editing:
 
-- une `Y.Map` d'identifiant vers objet simple : modifier un élément, c'est le
-  remplacer (le dernier qui écrit gagne, élément par élément) ;
-- l'ordre d'affichage est porté par `z` puis `id`, pas par l'ordre de la map :
-  deux pairs qui ont reçu les mêmes updates écrivent **les mêmes octets** ;
-- semer deux fois le même fichier (le filet de l'hôte quand le premier semeur
-  tarde) pose les mêmes clés aux mêmes valeurs : **aucun doublon**.
+- a `Y.Map` from identifier to plain object: modifying an element means replacing
+  it (last writer wins, element by element);
+- the display order is carried by `z` then `id`, not by the map's order: two
+  peers that have received the same updates write **the same bytes**;
+- seeding the same file twice (the host's safety net when the first seeder is
+  slow) sets the same keys to the same values: **no duplicates**.
 
-**Annuler ne défait que ses propres gestes** : `Y.UndoManager` ne suit que
-l'origine locale. On n'efface pas le trait que quelqu'un d'autre vient de tracer.
+**Undo only undoes your own actions**: `Y.UndoManager` only tracks the local
+origin. You do not erase the stroke someone else has just drawn.
 
-**Une update ne se valide pas** — l'hôte l'écrit lui-même : un pair malveillant
-peut vider le tableau, comme il pourrait l'écraser par `saveBytes` (le dégât est
-borné en taille et en débit, et réversible par les révisions). L'extension
-revalide donc chaque élément reçu comme s'il venait d'un fichier inconnu
-(`lireElement`) : couleurs `#rrggbb`, nombres bornés, textes sans saut de ligne.
+**Updates are not validated** — the host writes them itself: a malicious peer can
+empty the board, just as it could overwrite it through `saveBytes` (the damage is
+bounded in size and rate, and reversible through revisions). So the extension
+revalidates every element it receives as if it came from an unknown file
+(`lireElement`): `#rrggbb` colors, bounded numbers, texts without line breaks.
 
-**Lecture seule** : un lecteur voit la salle en direct, mais n'envoie rien
-(`sendUpdate` jetterait `read_only`) et n'enregistre rien.
+**Read-only**: a viewer sees the room live, but sends nothing (`sendUpdate`
+would throw `read_only`) and saves nothing.
 
-**Le clavier** : Tab parcourt les éléments, les flèches les déplacent (Maj : plus
-vite), Suppr les efface, Entrée sur un texte ouvre son champ ; « Ajouter un
-texte » ne demande pas de pointeur. Tracer un trait, lui, se fait au pointeur.
+**The keyboard**: Tab goes through the elements, arrow keys move them (Shift:
+faster), Delete erases them, Enter on a text opens its field; "Add text" needs no
+pointer. Drawing a stroke, however, is done with the pointer.
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": { "collab": true }
 ```
 
-Trois conditions pour que `host.collab` existe : la capacité déclarée et
-acceptée à l'installation (« Éditer à plusieurs, en direct, dans un coffre
-partagé »), un document ouvert dans un coffre partagé, et un document de 5 Mio
-au plus. Sinon `host.collab` vaut `undefined` : c'est le chemin par défaut, et
-l'éditeur le gère.
+Three conditions for `host.collab` to exist: the capability declared and
+accepted at install time ("Live co-editing in a shared vault"), a document open
+in a shared vault, and a document of 5 MiB at most. Otherwise `host.collab` is
+`undefined`: that is the default path, and the editor handles it.
 
-Débit : 60 updates par seconde (rafale 120) et 2 Mio/s ; au-delà, le pont coupe
-(`sandbox_collab_abuse`). Un trait n'émet qu'**une** update, au lâcher ; un
-déplacement aussi.
+Rate: 60 updates per second (burst of 120) and 2 MiB/s; beyond that, the bridge
+cuts off (`sandbox_collab_abuse`). A stroke emits only **one** update, on
+release; so does a move.
 
-## Ce qui reste à la charge de l'auteur
+## What remains up to the author
 
-Deux pairs peuvent faire tourner deux versions différentes de l'extension sur la
-même salle (`COLLAB-DESIGN.md`, §4.5) : gardez la forme du `Y.Doc` compatible
-d'une version à l'autre, ou changez de racine.
+Two peers can run two different versions of the extension in the same room
+([`COLLAB-DESIGN.md`](../../../docs/contract/COLLAB-DESIGN.md), §4.5): keep the
+shape of the `Y.Doc` compatible from one version to the next, or switch to a new
+root.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Le banc d'essai joue la salle à trois pages (une qui sème, une qui rejoint, un
-lecteur), relaie les updates comme l'hôte, et vérifie : un seul `seeded()`,
-convergence des octets, seul l'élu enregistre, passage de relais à un nouvel
-élu, double semis sans doublon, et le mode seul.
+The test harness plays the room with three pages (one that seeds, one that
+joins, a viewer), relays the updates the way the host does, and checks: a single
+`seeded()`, convergence of the bytes, only the elected peer saves, handover to a
+newly elected peer, double seeding without duplicates, and single-user mode.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts     mount(), l'élu, l'historique local, l'autosave
-src/salle.ts     le motif d'API.md §3 (et le mode seul)
-src/tableau.ts   le format JSON et sa forme dans le Y.Doc
-src/vue.ts       la surface SVG, le crayon, la sélection, le clavier
-exemples/        un atelier de réflexion, un plan de salon
+src/index.ts     mount(), the elected peer, the local history, autosave
+src/salle.ts     the API.md §3 pattern (and single-user mode)
+src/tableau.ts   the JSON format and its shape in the Y.Doc
+src/vue.ts       the SVG surface, the pen, the selection, the keyboard
+exemples/        a brainstorming workshop, a living-room plan
 ```

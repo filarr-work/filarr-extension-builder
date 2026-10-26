@@ -1,19 +1,19 @@
 # create-filarr-extension
 
-Crée un projet d'extension [Filarr](https://filarr.com), avec ou sans code, prêt à passer
-`filarr-ext check` tel quel.
+Creates a [Filarr](https://filarr.com) extension project, with or without code, ready to pass
+`filarr-ext check` as is.
 
 ```bash
-npm create filarr-extension@latest <nom> [-- options]
+npm create filarr-extension@latest <name> [-- options]
 ```
 
-| Option | Effet |
+| Option | Effect |
 | --- | --- |
-| `--template texte\|json\|binaire\|nocode` | le modèle (défaut : texte) |
-| `--lang ts\|js` | le langage des modèles avec code (défaut : ts) |
-| `--ext <extension>` | le type de fichier, sans point (défaut : tiré du nom) |
-| `--name "<nom affiché>"` | le nom de l'extension |
-| `--yes` | aucune question |
+| `--template texte\|json\|binaire\|nocode` | the template (default: texte) |
+| `--lang ts\|js` | the language of the code templates (default: ts) |
+| `--ext <extension>` | the file type, without the dot (default: derived from the name) |
+| `--name "<display name>"` | the extension's name |
+| `--yes` | no questions |
 
-Puis `npm install`, `npm run dev` (le simulateur), `npm run check`, `npm run pack`. Le guide et vingt
-exemples : [https://github.com/filarr-work/filarr-extension-builder](https://github.com/filarr-work/filarr-extension-builder).
+Then `cd <name>`, `npm install`, `npm run dev` (the simulator), `npm run check`, `npm run pack`. The guide and twenty
+examples: [https://github.com/filarr-work/filarr-extension-builder](https://github.com/filarr-work/filarr-extension-builder).

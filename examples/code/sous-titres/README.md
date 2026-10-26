@@ -1,41 +1,41 @@
-# Sous-titres (`.srt`, import des `.vtt`)
+# Sous-titres (subtitles, `.srt`, `.vtt` import)
 
-Édite des sous-titres SubRip : temps de début et de fin, texte, décalage global.
-Ouvre aussi les WebVTT et les convertit en `.srt`.
+Edits SubRip subtitles: start and end times, text, global offset. Also opens
+WebVTT files and converts them to `.srt`.
 
-## Ce que l'exemple montre
+## What the example shows
 
-**`imports: ["vtt"]`** — Filarr ouvre aussi les `.vtt` avec cet éditeur. Le
-fichier d'origine n'est **jamais** réécrit : la première sauvegarde crée un
-`.srt` à côté (c'est l'hôte qui le crée, avec le nom du fichier et l'extension
-native de l'éditeur). L'éditeur lit donc deux formats et n'en écrit qu'un
-(`src/srt.ts`). Ce que SRT ne sait pas dire — réglages de position
-(`align:start`), blocs `STYLE`, `NOTE`, `REGION`, voix `<v Alice>` — est compté
-et annoncé dans un bandeau, jamais passé sous silence ; les voix deviennent
-« Alice: … », les balises `<i>`, `<b>`, `<u>` sont gardées.
+**`imports: ["vtt"]`** — Filarr also opens `.vtt` files with this editor. The
+original file is **never** rewritten: the first save creates a `.srt` next to it
+(the host creates it, with the file's name and the editor's native extension).
+So the editor reads two formats and writes only one (`src/srt.ts`). Whatever SRT
+cannot express — positioning settings (`align:start`), `STYLE`, `NOTE` and
+`REGION` blocks, `<v Alice>` voices — is counted and announced in a banner, never
+passed over in silence; voices become "Alice: …", and the `<i>`, `<b>`, `<u>`
+tags are kept.
 
-**`functions.extractText`** — la recherche locale de Filarr trouve une
-réplique par ce qui est **dit** : sans numéros, sans temps, sans balises.
-Chercher « serrurier » trouve le fichier ; chercher « 00:00:12 » ne trouve rien.
+**`functions.extractText`** — Filarr's local search finds a cue by what is
+**said**: no numbers, no timings, no tags. Searching for "serrurier" finds the
+file; searching for "00:00:12" finds nothing.
 
-**`functions.exports`** — « Exporter en texte » produit une transcription en
-paragraphes (un silence de plus de deux secondes en ouvre un nouveau),
-« Exporter en JSON » les répliques avec leurs temps (millisecondes et `HH:MM:SS,mmm`).
+**`functions.exports`** — "Export as text" produces a transcript in paragraphs
+(a silence of more than two seconds starts a new one), "Export as JSON" the cues
+with their timings (milliseconds and `HH:MM:SS,mmm`).
 
-**Valider sans corriger.** Un temps se valide à la sortie du champ (ou Entrée),
-pas à chaque frappe ; un temps illisible reste affiché, marqué `aria-invalid`,
-avec le format attendu. Une fin avant le début, ou un chevauchement avec la
-réplique suivante, est signalé sous la ligne — un chevauchement peut être voulu,
-c'est à l'utilisateur de trancher.
+**Validate without correcting.** A time is validated when the field loses focus
+(or on Enter), not on every keystroke; an unreadable time stays displayed, marked
+`aria-invalid`, with the expected format. An end before the start, or an overlap
+with the next cue, is flagged under the row — an overlap can be intentional, it
+is up to the user to decide.
 
-**Le clavier.** Alt+↑/↓ : même champ, réplique précédente ou suivante.
-Ctrl+Entrée : insérer une réplique après celle-ci, dans le trou qui suit.
+**The keyboard.** Alt+↑/↓: same field, previous or next cue.
+Ctrl+Enter: insert a cue after this one, in the gap that follows.
 
-Et le contrat de tout éditeur : document neuf, lecture seule, `onDirty`,
-autosave à 2 s, codes de rejet, `getBytes` total (toujours du SRT, même pour un
-`.vtt` importé), `destroy`, thème, langue.
+And the contract of any editor: new (empty) document, read-only, `onDirty`,
+autosave at 2 s, rejection codes, total `getBytes` (always SRT, even for an
+imported `.vtt`), `destroy`, theme, language.
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": {
@@ -47,31 +47,31 @@ autosave à 2 s, codes de rejet, `getBytes` total (toujours du SRT, même pour u
 }
 ```
 
-`imports` doit être disjoint de `extensions` (le validateur de Filarr le
-vérifie). Les fonctions acceptent aussi un `.vtt` : la lecture reconnaît le
-format à son contenu (`WEBVTT`) autant qu'à son nom.
+`imports` must be disjoint from `extensions` (Filarr's validator checks it). The
+functions also accept a `.vtt`: the parser recognizes the format by its content
+(`WEBVTT`) as well as by its name.
 
-## Le format écrit
+## The written format
 
-Canonique : blocs numérotés à partir de 1, séparés par une ligne vide, temps en
-`HH:MM:SS,mmm`. La marque d'ordre des octets et les fins de ligne `\r\n` (très
-courantes en SRT) sont gardées : un fichier bien formé se relit et se réécrit à
-l'octet près. Une ligne vide dans un texte est retirée — elle couperait le bloc.
+Canonical: blocks numbered from 1, separated by a blank line, times as
+`HH:MM:SS,mmm`. The byte order mark and `\r\n` line endings (very common in SRT)
+are kept: a well-formed file reads back and rewrites byte for byte. A blank line
+inside a text is removed — it would split the block.
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts       mount(), le câblage
-src/srt.ts         lire SRT et WebVTT, écrire SRT (pur)
-src/operations.ts  insérer, supprimer, décaler, trier, valider (pur)
-src/fonctions.ts   texte parlé, transcription, JSON — les fonctions pures
-src/vue.ts         la liste des répliques, le clavier
-exemples/          un court-métrage en CRLF, un entretien avec BOM,
-                   une conférence en WebVTT (voix, styles, réglages, notes)
+src/index.ts       mount(), the wiring
+src/srt.ts         read SRT and WebVTT, write SRT (pure)
+src/operations.ts  insert, delete, shift, sort, validate (pure)
+src/fonctions.ts   spoken text, transcript, JSON — the pure functions
+src/vue.ts         the list of cues, the keyboard
+exemples/          a short film with CRLF line endings, an interview with a BOM,
+                   a conference talk in WebVTT (voices, styles, settings, notes)
 ```

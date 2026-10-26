@@ -1,28 +1,28 @@
-# 🗓️ Planning de la semaine — exemple sans code
+# 🗓️ Planning de la semaine (weekly planner) — no-code example
 
-Fichiers `.semaine`. Une semaine par fichier : une section par jour, chacune avec sa liste de tâches à cocher, et la progression de la semaine.
+`.semaine` files. One week per file: one section per day, each with its own task checklist, and the week’s progress.
 
-## Ce qu’il montre
+## What it shows
 
-Montre les **sections** : une par jour (le week-end replié par défaut), chacune avec sa barre de
-progression et sa **liste à cocher** propre. Les sept listes sont sept champs du même document JSON ;
-ajouter une tâche le lundi ne touche à rien d’autre.
+Shows **sections**: one per day (the weekend collapsed by default), each with its own progress bar
+and its own **checklist**. The seven lists are seven fields of the same JSON document; adding a task
+on Monday touches nothing else.
 
-Aucune ligne de code : tout est dans [`nocode.json`](nocode.json), lu par le moteur sans code de
-Filarr (voir [docs/nocode.md](../../../docs/nocode.md)). Les fichiers de [`exemples/`](exemples/) s’ouvrent dans
-le simulateur.
+Not a single line of code: everything is in [`nocode.json`](nocode.json), read by Filarr’s no-code
+engine (see [docs/nocode.md](../../../docs/nocode.md)). The files in [`exemples/`](exemples/) open in
+the simulator.
 
-## Le construire
+## Building it
 
-Depuis la racine du dépôt :
+From the repository root:
 
 ```bash
 npm install
-npm run check -w @filarr-examples/planning-semaine   # les contrôles du serveur et de Filarr
+npm run check -w @filarr-examples/planning-semaine   # the server’s and Filarr’s checks
 npm run pack -w @filarr-examples/planning-semaine    # dist/planning-semaine-1.0.0.filarrext
-npx filarr-ext dev -C examples/nocode/planning-semaine  # le simulateur, sur http://127.0.0.1:5199
+npx filarr-ext dev -C examples/nocode/planning-semaine  # the simulator, at http://127.0.0.1:5199
 ```
 
-Le paquet se remet à Filarr en le déposant dans **Place de marché › Publier**, ou, avec Filarr pour
-bureau : `npx filarr-ext publish examples/nocode/planning-semaine/dist/planning-semaine-1.0.0.filarrext`. La signature se
-fait dans Filarr, après relecture.
+You hand the package to Filarr by dropping it into **Marketplace › Publish**, or, with Filarr for
+desktop: `npx filarr-ext publish examples/nocode/planning-semaine/dist/planning-semaine-1.0.0.filarrext`. Signing
+happens in Filarr, after review.

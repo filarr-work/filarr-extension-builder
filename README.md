@@ -1,15 +1,18 @@
 # Filarr Extension Builder
 
-Créer, tester et empaqueter des extensions pour [Filarr](https://filarr.com), avec ou sans code.
+Create, test and package extensions for [Filarr](https://filarr.com), with or without code.
 
-- `packages/` — l'API, le moteur sans code, le simulateur et les outils en ligne de commande ;
-- `apps/builder` — l'atelier dans le navigateur ([docs/atelier.md](docs/atelier.md)) ;
-- `examples/` — vingt extensions d'exemple, dix avec du code et dix sans code ;
-- `docs/` — le guide : [l'atelier](docs/atelier.md), [la ligne de commande](docs/cli.md),
-  [le moteur sans code](docs/nocode.md).
+- `packages/` — the API, the no-code engine, the simulator and the command-line tools;
+- `apps/builder` — the in-browser workshop ([docs/workshop.md](docs/workshop.md));
+- `examples/` — twenty example extensions, ten with code and ten no-code;
+- `docs/` — the guide: [the workshop](docs/workshop.md), [the command line](docs/cli.md),
+  [the no-code engine](docs/nocode.md).
 
-![Filarr Builder : composer une extension sans code, avec l'aperçu du vrai moteur](docs/assets/screenshots/03-vue-et-style.webp)
+![Filarr Builder: composing a no-code extension, with a preview from the real engine](docs/assets/screenshots/03-vue-et-style.webp)
 
-Le contrat côté Filarr (protocole du bac à sable, capacités, format du paquet `.filarrext`)
-est décrit dans le dépôt de l'application : `docs/plugins/API.md`, `CAPACITES.md`,
-`PACKAGE.md`.
+The Filarr-side contract (sandbox protocol, capabilities, `.filarrext` package format)
+is described in this repository, in [`docs/contract/`](docs/contract/README.md):
+[API.md](docs/contract/API.md), [CAPABILITIES.md](docs/contract/CAPABILITIES.md),
+[PACKAGE.md](docs/contract/PACKAGE.md).
+
+Note: the tools' messages are currently in French.

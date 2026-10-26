@@ -1,42 +1,41 @@
-# Croquis (`.croquis`)
+# Croquis (sketch, `.croquis`)
 
-Dessin à main levée — souris, stylet, doigt ou clavier — avec annuler et rétablir.
+Freehand drawing — mouse, stylus, finger or keyboard — with undo and redo.
 
-## Ce que l'exemple montre
+## What the example shows
 
-Un éditeur complet (document neuf, lecture seule, `onDirty`, autosave à 2 s,
-codes de rejet, `getBytes`, `destroy`, thème, langue), et surtout quatre
-capacités du **palier 1 et 2**, qui ne donnent à l'extension **aucun accès
-supplémentaire** à vos données :
+A complete editor (new (empty) document, read-only, `onDirty`, autosave at 2 s,
+rejection codes, `getBytes`, `destroy`, theme, language), and above all four
+**tier 1 and 2** capabilities, which give the extension **no additional access**
+to your data:
 
-| Capacité | Ce qu'elle apporte | Où |
+| Capability | What it brings | Where |
 | --- | --- | --- |
-| `newDocument` | « Nouveau document › Croquis vierge » crée le fichier depuis une **graine** (le JSON d'un croquis vide, en base64) plutôt qu'un fichier de 0 octet | `filarr.extension.json` ; un test vérifie que la graine est exactement `ecrireCroquis(croquisVide())` |
-| `maxBytes` | relevé à 64 Mio (le plafond du pont) : un dessin riche dépasse le plafond ordinaire d'un éditeur (50 Mio) | `filarr.extension.json` |
-| `functions.thumbnail` | la carte du fichier montre le dessin, calculé **sans ouvrir l'éditeur** | `src/fonctions.ts`, `src/png.ts` |
-| `functions.exports` | « Exporter en page web » (SVG embarqué) et « en JSON » dans le menu du fichier | `src/fonctions.ts` |
+| `newDocument` | "New document › Croquis vierge" creates the file from a **seed** (the JSON of an empty sketch, in base64) rather than a 0-byte file | `filarr.extension.json`; a test checks that the seed is exactly `ecrireCroquis(croquisVide())` |
+| `maxBytes` | raised to 64 MiB (the bridge's ceiling): a rich drawing exceeds an editor's ordinary ceiling (50 MiB) | `filarr.extension.json` |
+| `functions.thumbnail` | the file's card shows the drawing, computed **without opening the editor** | `src/fonctions.ts`, `src/png.ts` |
+| `functions.exports` | "Export as web page" (embedded SVG) and "as JSON" in the file's menu | `src/fonctions.ts` |
 
-**Les fonctions pures** tournent dans une page que Filarr ouvre sans rien
-afficher, sans stockage, sans sélecteur, sans réseau, sur un fichier que
-**Filarr** a choisi. D'où une vignette produite sans `<canvas>` : un petit
-encodeur PNG (`src/png.ts`, couleurs indexées, blocs deflate stockés), testé en
-relisant ses octets avec `zlib`. Une vignette fait 15 à 20 Kio, sous le plafond
-de 96 Kio de l'hôte, qui la reconnaît à ses octets d'en-tête.
+**The pure functions** run in a page that Filarr opens without displaying
+anything, with no storage, no picker and no network, on a file that **Filarr**
+chose. Hence a thumbnail produced without `<canvas>`: a small PNG encoder
+(`src/png.ts`, indexed colors, stored deflate blocks), tested by reading its
+bytes back with `zlib`. A thumbnail weighs 15 to 20 KiB, under the host's 96 KiB
+ceiling; the host recognizes it by its header bytes.
 
-⚠ Le manifeste déclare `exports`, mais le bundle expose **`functions.export`**
-(au singulier), avec la cible dans `ctx.to`.
+⚠ The manifest declares `exports`, but the bundle exposes **`functions.export`**
+(singular), with the target in `ctx.to`.
 
-**L'export HTML n'interprète rien** du fichier : le nom de fichier est échappé,
-les couleurs sont validées (`#rrggbb`), les chemins ne contiennent que des
-nombres.
+**The HTML export interprets nothing** from the file: the file name is escaped,
+colors are validated (`#rrggbb`), paths contain only numbers.
 
-**Le clavier dessine aussi.** La feuille est focalisable : flèches pour déplacer
-le crayon (Maj : plus vite, Alt : au pixel), Entrée pour le poser puis le lever,
-Échap pour abandonner le trait. La couleur se choisit dans un groupe radio
-(flèches), l'épaisseur dans une liste. Ctrl+Z annule, Ctrl+Maj+Z ou Ctrl+Y
-rétablit — l'historique vit en mémoire, il n'est pas écrit dans le fichier.
+**The keyboard draws too.** The sheet is focusable: arrow keys move the pencil
+(Shift: faster, Alt: pixel by pixel), Enter puts it down then lifts it, Escape
+abandons the stroke. The color is picked in a radio group (arrow keys), the
+thickness from a list. Ctrl+Z undoes, Ctrl+Shift+Z or Ctrl+Y redoes — the
+history lives in memory, it is not written to the file.
 
-## Capacités
+## Capabilities
 
 ```json
 "capabilities": {
@@ -49,7 +48,7 @@ rétablit — l'historique vit en mémoire, il n'est pas écrit dans le fichier.
 }
 ```
 
-## Le format
+## The format
 
 ```
 {"format":"filarr-croquis","version":1,"largeur":1200,"hauteur":800,"fond":"#ffffff","traits":[
@@ -57,29 +56,29 @@ rétablit — l'historique vit en mémoire, il n'est pas écrit dans le fichier.
 ]}
 ```
 
-Un trait par ligne (un dessin se compare trait par trait), points à plat
-arrondis au dixième. Écriture canonique : un fichier écrit par l'extension se
-relit et se réécrit à l'octet près. Tout ce qui est lu est borné (couleurs,
-épaisseurs 1 à 64, 20 000 traits de 20 000 points).
+One stroke per line (so drawings can be diffed stroke by stroke), flat point
+lists rounded to one decimal place. Canonical output: a file written by the
+extension reads back and rewrites byte for byte. Everything read is bounded
+(colors, thicknesses 1 to 64, 20,000 strokes of 20,000 points).
 
-## Construire et vérifier
+## Build and check
 
 ```bash
 npm run build && npm run check && npm run smoke && npm test
 ```
 
-Le banc d'essai (`npm run smoke`) appelle aussi les fonctions pures sur chaque
-exemple et vérifie ce que l'hôte vérifierait : signature PNG, 96 Kio, JSON
-valide, page HTML complète.
+The test harness (`npm run smoke`) also calls the pure functions on each sample
+file and checks what the host would check: PNG signature, 96 KiB, valid JSON,
+complete HTML page.
 
-## Les fichiers
+## The files
 
 ```
-src/index.ts       mount(), l'historique branché sur l'autosave
-src/croquis.ts     le format (pur)
-src/historique.ts  annuler, rétablir (pur)
-src/fonctions.ts   vignette et exports — les fonctions pures
-src/png.ts         l'encodeur PNG et la toile de pixels (pur)
-src/vue.ts         la feuille SVG, le pointeur, le clavier
-exemples/          une maison, une spirale
+src/index.ts       mount(), the history wired to autosave
+src/croquis.ts     the format (pure)
+src/historique.ts  undo, redo (pure)
+src/fonctions.ts   thumbnail and exports — the pure functions
+src/png.ts         the PNG encoder and the pixel canvas (pure)
+src/vue.ts         the SVG sheet, the pointer, the keyboard
+exemples/          a house, a spiral
 ```
