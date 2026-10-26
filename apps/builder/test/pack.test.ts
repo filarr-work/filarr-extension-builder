@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { unzipSync } from 'fflate';
+import { ENGINE_VERSION } from '@filarr/nocode-engine';
 import { assemblePackage, verifyPackage } from '../../../packages/cli/src/package';
 import { runCheck } from '../../../packages/cli/src/check';
 import { buildProject } from '../src/lib/build';
@@ -38,7 +39,7 @@ describe('empaquetage — le paquet de PACKAGE.md, comme filarr-ext pack', () =>
     expect(text(a['nocode.json'])).toBe(text(b['nocode.json']));
     const da = JSON.parse(text(a['filarr-package.json']));
     const db = JSON.parse(text(b['filarr-package.json']));
-    expect(da.build).toEqual({ kind: 'nocode', tool: 'Filarr Builder 1.0.0', engine: '1.0.0' });
+    expect(da.build).toEqual({ kind: 'nocode', tool: 'Filarr Builder 1.0.0', engine: ENGINE_VERSION });
     expect({ ...da, build: null }).toEqual({ ...db, build: null });
     // La relecture de filarr-ext verify, telle quelle (new Function, sous Node), l’accepte.
     expect(verifyPackage(ours.bytes!).report.passed).toBe(true);

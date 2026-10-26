@@ -1,6 +1,6 @@
 {
   "name": "@filarr/extension-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Le contrat des extensions Filarr : types de l'hôte, defineExtension, manifeste, capacités et paquet .filarrext.",
   "license": "MIT",
   "repository": {

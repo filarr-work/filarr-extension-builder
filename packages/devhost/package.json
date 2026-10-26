@@ -1,6 +1,6 @@
 {
   "name": "@filarr/extension-devhost",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Le simulateur local des extensions Filarr : la page bac à sable de Filarr, un hôte qui rejoue le protocole v2, et des services simulés.",
   "license": "MIT",
   "repository": {

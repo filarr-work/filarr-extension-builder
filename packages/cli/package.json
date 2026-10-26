@@ -1,6 +1,6 @@
 {
   "name": "@filarr/extension-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "filarr-ext : construire, simuler, contrôler, empaqueter et remettre à Filarr une extension, avec ou sans code.",
   "license": "MIT",
   "repository": {
@@ -37,13 +37,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@filarr/extension-devhost": "1.0.0",
+    "@filarr/extension-devhost": "1.0.1",
     "esbuild": "^0.25.12",
     "fflate": "^0.8.2"
   },
   "devDependencies": {
-    "@filarr/extension-api": "1.0.0",
-    "@filarr/nocode-engine": "1.0.0"
+    "@filarr/extension-api": "1.0.1",
+    "@filarr/nocode-engine": "1.0.1"
   },
   "keywords": [
     "filarr",

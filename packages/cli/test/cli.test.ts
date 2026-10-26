@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { strToU8, unzipSync, zipSync } from 'fflate';
-import { parseNocodeConfigFromBundle } from '@filarr/nocode-engine';
+import { ENGINE_VERSION, parseNocodeConfigFromBundle } from '@filarr/nocode-engine';
 import { main } from '../src/main';
 import { runCheck } from '../src/check';
 import { assemblePackage, verifyPackage } from '../src/package';
@@ -119,7 +119,7 @@ describe('pack et verify', () => {
     const entries = unzipSync(bytes);
     expect(Object.keys(entries).sort()).toEqual(['bundle.js', 'filarr-package.json', 'nocode.json', 'screenshots/1.webp']);
     const desc = JSON.parse(new TextDecoder().decode(entries['filarr-package.json']));
-    expect(desc).toMatchObject({ format: 1, screenshots: ['screenshots/1.webp'], build: { kind: 'nocode', engine: '1.0.0' } });
+    expect(desc).toMatchObject({ format: 1, screenshots: ['screenshots/1.webp'], build: { kind: 'nocode', engine: ENGINE_VERSION } });
     expect(desc.build.tool).toMatch(/^filarr-ext \d+\.\d+\.\d+$/);
     expect(desc.manifest).toEqual((nocodeProject()['filarr.extension.json'] as { manifest: unknown }).manifest);
     const bundle = new TextDecoder().decode(entries['bundle.js']);
@@ -143,7 +143,7 @@ describe('pack et verify', () => {
     const parDefaut = assemblePackage(check, '1.0.0').description.build.tool;
     expect(parDefaut).toBe('filarr-ext 1.0.0');
     const { bytes, description } = assemblePackage(check, '1.0.0', { tool: 'Filarr Builder 1.0.0' });
-    expect(description.build).toEqual({ kind: 'nocode', tool: 'Filarr Builder 1.0.0', engine: '1.0.0' });
+    expect(description.build).toEqual({ kind: 'nocode', tool: 'Filarr Builder 1.0.0', engine: ENGINE_VERSION });
     expect(verifyPackage(bytes).report.passed).toBe(true);
   });
 

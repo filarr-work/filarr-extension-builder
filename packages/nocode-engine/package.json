@@ -1,6 +1,6 @@
 {
   "name": "@filarr/nocode-engine",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Le moteur sans code des extensions Filarr : une configuration déclarative devient un éditeur complet, et le bundle au format .filarrext.",
   "license": "MIT",
   "repository": {
@@ -38,7 +38,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@filarr/extension-api": "1.0.0"
+    "@filarr/extension-api": "1.0.1"
   },
   "keywords": [
     "filarr",
